@@ -29,9 +29,12 @@ class App extends Component {
     this.setState({ menu: { show: true, anchor: event.target } })
   };
 
-  handleClose = (event) => {
-    console.log(event.target)
+  handleClose = () => {
     this.setState({ menu: { show: false }})
+  }
+
+  handleMenuItemClick = (event, index) => {
+    
   }
 
   addNode = (node, source) =>{
