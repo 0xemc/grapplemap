@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^3.6.2",
+    "d3": "^5.7.0",
     "react": "^16.6.3",
+    "react-d3-graph": "^2.0.0-rc2",
     "react-dom": "^16.6.3",
     "react-scripts": "2.1.1"
   },
