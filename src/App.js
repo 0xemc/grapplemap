@@ -5,6 +5,7 @@ import { Graph } from 'react-d3-graph';
 
 import './graph.css'
 import { MenuItem } from '@material-ui/core';
+import FormDialog from './components/FormDialog';
 
 class App extends Component {
 
@@ -20,6 +21,9 @@ class App extends Component {
         show : false,
         anchor : null
       },
+      formDialog : {
+        show : false
+      },
       data : this.data
     }
   }
@@ -29,12 +33,14 @@ class App extends Component {
     this.setState({ menu: { show: true, anchor: event.target } })
   };
 
-  handleClose = () => {
-    this.setState({ menu: { show: false }})
+  handleMenuItemClick = (event, node) => {
+    if(node === "New"){
+
+    }
   }
 
-  handleMenuItemClick = (event, index) => {
-    
+  handleClose = () =>  {
+    this.setState({ menu: { show: false }})
   }
 
   addNode = (node, source) =>{
@@ -57,11 +63,13 @@ class App extends Component {
           anchorEl={this.state.menu.anchor}
           open={this.state.menu.show}
           onClose={this.handleClose}>
-           {this.state.data.nodes.map(node => 
-            <MenuItem key={node.id} onClick={this.handleClose}>{node.id}</MenuItem>
+           {this.state.data.nodes.map((node, index) => 
+            <MenuItem key={node.id} onClick={(event) => this.handleMenuItemClick(event, node.id)}>{node.id}</MenuItem>
             )}
-            <MenuItem key="new" onClick={this.handleClose}>New...</MenuItem>
+            <MenuItem key="new" onClick={(event) => this.handleMenuItemClick(event, "New")}>New...</MenuItem>
         </Menu>
+
+        <FormDialog></FormDialog>
       </div>
     );
   }
@@ -82,14 +90,10 @@ const myConfig = {
   }
 };
 
-
-
 // // graph event callbacks
 // const onClickGraph = function() {
 //   window.alert(`Clicked the graph background`);
 // };
-
-
 
 // const onRightClickNode = function(event, nodeId) {
 //   window.alert(`Right clicked node ${nodeId}`);
