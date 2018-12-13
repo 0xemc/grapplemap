@@ -10,8 +10,8 @@ import FormDialog from './components/FormDialog';
 class App extends Component {
 
   data = {
-    nodes: [{id:"Standup", color : "#1587B8", size: 500}],
-    links: [{source: "Standup", target:"Standup"}]
+    nodes: [{id:"Standing", color : "#1587B8", size: 500}],
+    links: [{source: "Standing", target:"Standing"}]
   }
 
   constructor(){
@@ -34,13 +34,15 @@ class App extends Component {
   };
 
   handleMenuItemClick = (event, node) => {
+    this.setState({ menu: { show: false }})
     if(node === "New"){
-
+      this.setState({formDialog : {show : true}})
     }
   }
 
   handleClose = () =>  {
     this.setState({ menu: { show: false }})
+    this.setState({formDialog : {show : false}})
   }
 
   addNode = (node, source) =>{
@@ -48,6 +50,9 @@ class App extends Component {
     if(!data.nodes.some(el => el.id === node.id)) data.nodes.push(node)
     if(!data.links.some(el => el.source === source && el.target === node.id)) data.links.push({ source: source, target: node.id })
     this.setState(this.data)
+  }
+
+  createHandler = (name) => {
   }
 
   render() {
@@ -69,7 +74,7 @@ class App extends Component {
             <MenuItem key="new" onClick={(event) => this.handleMenuItemClick(event, "New")}>New...</MenuItem>
         </Menu>
 
-        <FormDialog></FormDialog>
+        <FormDialog open={this.state.formDialog.show} onClose={this.handleClose}/>
       </div>
     );
   }
