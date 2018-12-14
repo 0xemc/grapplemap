@@ -19,7 +19,7 @@ export const Header = props => {
     <div className="header_wrapper">
         <span className="brand">GRAPPLE MAP</span>
         <img src={Logo} alt="Logo" />
-      <span className="float_right">{props.children}</span>
+      <span className="options">{props.children}</span>
     </div>
   );
 };

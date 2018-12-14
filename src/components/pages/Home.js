@@ -91,7 +91,7 @@ const stylesheet = [
 const Home = () => {
   return (
     <div>
-      <Header />
+      <Header><button>+</button></Header>
       <Graph
         className="graph"
         elements={data}
