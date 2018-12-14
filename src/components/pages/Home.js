@@ -42,11 +42,11 @@ const stylesheet = [
   {
     selector: "node",
     style: {
-      width: 70,
-      height: 70,
+      width: 75,
+      height: 75,
       label: "data(label)",
       color: "#1587B8",
-      "font-size": 16,
+      "font-size": 12,
       "background-color": "#fff",
       "border-width": 2,
       "border-style": "solid",
@@ -54,20 +54,23 @@ const stylesheet = [
       "box-shadow": "0px 2px 4px rgba(0, 0, 0, 0.25);",
       "text-valign": "center",
       "text-halign" : "center",
+      'text-transform' : 'uppercase',
       'text-wrap': 'wrap',
-      'text-max-width' : 70
+      'text-max-width' : 55
       }
   },
   {
     selector: "edge",
     style: {
+      'source-distance-from-node' : 15,
+      'target-distance-from-node' : 15,
       "curve-style": "bezier",
       "font-size": 14,
       "line-color": "#E5E5E5",
       width: 2,
       "arrow-scale": 1.5,
       "target-arrow-color": "#E5E5E5",
-      "target-arrow-shape": "triangle-backcurve"
+      "target-arrow-shape": "triangle-backcurve",
     }
   },
   {
@@ -77,6 +80,10 @@ const stylesheet = [
       label: "data(label)",
       'line-color' : '#A8A8A8',
       'target-arrow-color' : '#A8A8A8',
+      'text-background-opacity' : 1,
+      'text-background-color' : '#F9F9F9',
+      'text-background-shape' : 'roundrectangle',
+      'text-background-padding' : 5,
     }
   }
 ];
@@ -89,7 +96,9 @@ const Home = () => {
         className="graph"
         elements={data}
         stylesheet={stylesheet}
-        layout={{ name: "random" }}
+        layout={{ name: "breadthfirst" }}
+        minZoom={1}
+        maxZoom={0.5}
       />
     </div>
   );
