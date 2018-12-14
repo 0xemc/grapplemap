@@ -8,6 +8,7 @@
     "node-sass": "^4.11.0",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
+    "react-cytoscapejs": "^1.1.0",
     "react-dom": "^16.6.3",
     "react-responsive": "^6.0.1",
     "react-router-dom": "^4.3.1",
