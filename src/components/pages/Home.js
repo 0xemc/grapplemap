@@ -47,6 +47,7 @@ const stylesheet = [
       label: "data(label)",
       color: "#1587B8",
       "font-size": 12,
+      'font-family': 'Play, sans-serif',
       "background-color": "#fff",
       "border-width": 2,
       "border-style": "solid",
