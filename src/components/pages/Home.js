@@ -1,68 +1,98 @@
-import React from 'react';
+import React from "react";
 
-import { Header } from '../hoc/Layout'
-import Graph from 'react-cytoscapejs'
+import { Header } from "../hoc/Layout";
+import Graph from "react-cytoscapejs";
 
-import './Home.scss'
+import "./Home.scss";
 
-const nodes = [
-  { data: { id: 'one', label: 'Node 1' }, position: { x: window.innerWidth/2, y: window.innerHeight/2 } },
-  { data: { id: 'two', label: 'Node 2' }, position: { x: window.innerWidth/2 +200, y: window.innerHeight/2 } }
-]
+const positions = [
+  {
+    name: "Side Control"
+  },
+  {
+    name: "Back Control"
+  }
+];
 
-const edges = [
-  { data: { source: 'one', target: 'two', label: 'Edge from Node1 to Node2' } },
-  { data: { source: 'two', target: 'one', label: 'Edge from Node1 to Node2' } },
-  { data: { source: 'two', target: 'one', label: 'Edge from Node1 to Node2' } }
-]
+const transitions = [
+  {
+    name: "Gift Wrap",
+    source: "Side Control",
+    target: "Back Control",
+    url: "www.youtube.com",
+    notes: "Sunt elit nulla aliqua ipsum eu."
+  }
+];
 
-const data = Graph.normalizeElements({nodes : nodes, edges: edges})
+var nodes = positions.map(position => ({
+  data: { id: position.name, label: position.name}
+}));
+
+var edges = transitions.map(transition => ({
+  data: {
+    source: transition.source,
+    target: transition.target,
+    label: transition.name
+  }
+}));
+
+const data = Graph.normalizeElements({ nodes: nodes, edges: edges });
 
 const stylesheet = [
   {
-    selector: 'node',
+    selector: "node",
     style: {
-      width : 70,
+      width: 70,
       height: 70,
-      'label': 'data(label)',
-      'color' : '#1587B8',
-      'font-size' : 16,
-      'background-color': '#fff',
-      'border-width' : 2,
-      'border-style': 'solid',
-      'border-color': 'rgba(21, 135, 184, 0.75)',
-      'box-shadow' : '0px 2px 4px rgba(0, 0, 0, 0.25);',
-      'text-valign' : 'center'
+      label: "data(label)",
+      color: "#1587B8",
+      "font-size": 16,
+      "background-color": "#fff",
+      "border-width": 2,
+      "border-style": "solid",
+      "border-color": "rgba(21, 135, 184, 0.75)",
+      "box-shadow": "0px 2px 4px rgba(0, 0, 0, 0.25);",
+      "text-valign": "center",
+      "text-halign" : "center",
+      'text-wrap': 'wrap',
+      'text-max-width' : 70
+      }
+  },
+  {
+    selector: "edge",
+    style: {
+      "curve-style": "bezier",
+      "font-size": 14,
+      "line-color": "#E5E5E5",
+      width: 2,
+      "arrow-scale": 1.5,
+      "target-arrow-color": "#E5E5E5",
+      "target-arrow-shape": "triangle-backcurve"
     }
   },
   {
-    selector: 'edge',
+    selector: "edge:selected",
     style: {
-      'curve-style': 'bezier',
-      'line-color' : '#E5E5E5',
-      'width' : 2,
-      'arrow-scale' : 1.5,
-      'target-arrow-color' : '#E5E5E5',
-      'target-arrow-shape' : 'triangle-backcurve'
-    }
-  },{
-    selector: 'edge:selected',
-    style: {
-      'line-color' : '#907cff',
-      'target-arrow-color' : '#907cff',
+      'color': "#A8A8A8",
+      label: "data(label)",
+      'line-color' : '#A8A8A8',
+      'target-arrow-color' : '#A8A8A8',
     }
   }
-]
+];
 
 const Home = () => {
   return (
     <div>
-      <Header/>
-      <Graph className="graph" elements = {data} stylesheet={stylesheet}/>
+      <Header />
+      <Graph
+        className="graph"
+        elements={data}
+        stylesheet={stylesheet}
+        layout={{ name: "random" }}
+      />
     </div>
   );
 };
-
-
 
 export default Home;
