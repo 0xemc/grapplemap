@@ -1,6 +1,5 @@
 import React from "react";
 import Logo from "../../resources/icons/logo.png";
-import { Link } from "react-router-dom";
 
 import "./Layout.scss";
 
