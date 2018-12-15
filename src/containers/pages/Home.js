@@ -42,24 +42,19 @@ class Home extends Component {
     this.closeDialog()
   }
 
-  getGraphData = (positions, transitions) => {
-    
-   var data = graphTransform(positions, transitions)
-   console.log(data)
-   return data
-  }
   render() {
+    const graphData = graphTransform(this.state.positions, this.state.transitions)
     const { anchorEl} = this.state;
     return (
       <div>
         <Header><Button onClick={this.handleClick}>+</Button></Header>
         <Graph
           className="graph"
-          elements={this.getGraphData(this.state.positions, this.state.transitions)}
+          elements={graphData}
           stylesheet={Style}
           layout={{ name: "breadthfirst" }}
-          minZoom={1}
-          maxZoom={0.5}
+          // minZoom={1}
+          // maxZoom={0.5}
           cy={cy => this.cy = cy}
         />
         <Menu id="add-menu"
