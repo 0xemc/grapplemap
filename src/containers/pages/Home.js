@@ -10,13 +10,15 @@ import "./Home.scss";
 import PositionDialog from '../dialogs/PositionDialog';
 import {graphTransform, defaultPositions, defaultTransitions} from '../../data'
 import Style from '../../style'
+import TransitionDialog from '../dialogs/TransitionDialog';
 
 class Home extends Component {
   state = {
     positions : defaultPositions,
     transitions : defaultTransitions,
     anchorEl : null,
-    showDialog : false,
+    showTransitionDialog : false,
+    showPositionDialog : false,
   }
 
   handleClick = event => {
@@ -29,16 +31,26 @@ class Home extends Component {
 
   openPositionDialog = () => {
     this.setState({anchorEl : null})
-    this.setState({showDialog : true})
+    this.setState({showPositionDialog : true})
+  }
+
+  openTransitionDialog = () => {
+    this.setState({anchorEl : null})
+    this.setState({showTransitionDialog : true})
   }
 
   closeDialog = event => {
-    this.setState({showDialog : false})
+    this.setState({showTransitionDialog : false, showPositionDialog: false})
   }
 
   createPosition = (name, notes) => {
     const newPositions = [...this.state.positions, {name, notes}];
     this.setState({positions : newPositions})
+    this.closeDialog()
+  }
+  createTransition = (name,source,target,url,notes) => {
+    const newTransitions = [...this.state.transitions, {name,source,target,url,notes}];
+    this.setState({transitions : newTransitions})
     this.closeDialog()
   }
 
@@ -53,8 +65,9 @@ class Home extends Component {
           elements={graphData}
           stylesheet={Style}
           layout={{ name: "breadthfirst" }}
-          // minZoom={1}
-          // maxZoom={0.5}
+          zoom={0.5}
+          minZoom={0.9}
+          maxZoom={0.9}
           cy={cy => this.cy = cy}
         />
         <Menu id="add-menu"
@@ -63,9 +76,11 @@ class Home extends Component {
             onClose={this.handleClose}
           >
           <MenuItem onClose={this.handleClose} onClick={this.openPositionDialog}>Position</MenuItem>
-          <MenuItem onClose={this.handleClose}>Transition</MenuItem>
+          <MenuItem onClose={this.handleClose} onClick={this.openTransitionDialog}>Transition</MenuItem>
         </Menu>
-        <PositionDialog createHandler={this.createPosition} open={this.state.showDialog} onClose={this.closeDialog}/>
+        <PositionDialog createHandler={this.createPosition} open={this.state.showPositionDialog} onClose={this.closeDialog}/>
+        <TransitionDialog createHandler={this.createTransition} open={this.state.showTransitionDialog} onClose={this.closeDialog}
+          positions={this.state.positions}/>
       </div>
     );
   }
