@@ -17,6 +17,8 @@ class Home extends Component {
 
   cy;
 
+  fbUnsubscribe;
+
   state = {
     positions: [],
     transitions: [],
@@ -27,22 +29,29 @@ class Home extends Component {
     selectedTransition: null
   }
 
+  componentWillUnmount = () => {
+    this.fbUnsubscribe()
+  }
+
   componentDidMount = async () => {
-    const snapshot = await firestore
+      
+    this.fbListener = firestore
       .collection('users')
       .doc("michaeljosefcollins@gmail.com")
-      .get()
-      
-    const {positions, transitions} = snapshot.data()
-    this.setState({positions, transitions})
-    this.cy.layout({ name: "breadthfirst" }).run()
+      .onSnapshot(snapshot => 
+        {
+          const {positions, transitions} = snapshot.data()
+          console.log(positions)
+          this.setState({positions, transitions})
+          this.cy.layout({ name: "breadthfirst" }).run()
+        }
+      )
     // this.cy.on('tap', 'node', (e) => {
     //   const node = e.target;
     //   const newPos = this.state.positions.find(p => p.name === node.id());
     //   this.setState({ selectedPosition: newPos });
     //   this.openPositionDialog()
     // });
-    console.log(this.state.positions)
   }
 
   handleClick = event => {
@@ -76,7 +85,6 @@ class Home extends Component {
     let updatePos = this.state.positions.find(p => p.name === name)
     updatePos = {...updatePos, name, notes}
     const filteredPos = this.state.positions.filter(p => p.name !== name)
-    const result = [...filteredPos, updatePos];
     this.setState({ positions: [...filteredPos, updatePos] })
     this.closeDialog()
   }
@@ -87,7 +95,6 @@ class Home extends Component {
       .collection('users')
       .doc("michaeljosefcollins@gmail.com")
       .update('positions', newPositions)
-    this.setState({ positions: newPositions })
     this.closeDialog()
   }
 
