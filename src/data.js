@@ -22,8 +22,9 @@ export const defaultTransitions = [
 ];
 
 
-const posTransform = (positions) => positions.map(position => ({
-  data: { id: position.name, label: position.name}
+const posTransform = (positions) => positions.map(pos => ({
+  data: { id: pos.name, label: pos.name, notes: pos.notes, url: pos.url },
+  ...(pos.x && pos.y && { position: { x: pos.x, y: pos.y } })
 }));
 
 const traTransform = (transitions) => transitions.map(transition => ({

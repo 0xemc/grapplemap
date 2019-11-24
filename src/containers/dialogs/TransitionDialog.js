@@ -11,11 +11,18 @@ import "./TransitionDialog.scss"
 class TransitionDialog extends Component {
 
   state = {
-	name: "",
+    name: "",
     source: "",
     target: "",
     url: "",
     notes: ""
+  }
+
+  componentDidMount() {
+    const { transition } = this.props;
+    if (transition) {
+      this.setState({ ...transition })
+    }
   }
 
   handleChange = event => {
@@ -25,21 +32,22 @@ class TransitionDialog extends Component {
   };
 
   handleClick = () => {
-	const {name,source,target,url,notes} = this.state;
-    this.props.createHandler(name,source,target,url,notes)
+    const { name, source, target, url, notes } = this.state;
+    this.props.createHandler(name, source, target, url, notes)
   }
 
   render() {
+    const editing = this.props.transition != null;
     return (
       <Dialog
-	  className="transition-dialog"
-      open={this.props.open}
-      onClose={this.props.onClose}
-      aria-labelledby="form-dialog-title"
-    >
-	<DialogTitle>Create Transition</DialogTitle>
-      <DialogContent className="flex column">
-        <TextField
+        className="transition-dialog"
+        open={this.props.open}
+        onClose={this.props.onClose}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle>{ editing ? 'Edit' : 'Create'} Transition</DialogTitle>
+        <DialogContent className="flex column">
+          <TextField
             autoFocus
             margin="dense"
             id="name"
@@ -47,43 +55,45 @@ class TransitionDialog extends Component {
             variant="outlined"
             type="text"
             name="name"
+            disabled={editing}
+            value={this.state.name}
             onChange={this.handleChange}
           />
-		  <div class="source-target-div">
-			<FormControl variant="outlined" className="select-field">
-			<InputLabel id="select-source-label">Source</InputLabel>
-				<Select
-			labelid="select-source-label"
-				id="source"
-				name="source"
-				value={this.state.source}
-				onChange={this.handleChange}
-				labelWidth={1}
-				input={<OutlinedInput />}
-				>
-					{this.props.positions.map( t =>
-							<MenuItem key={t.name} value={t.name}>{t.name}</MenuItem>
-						)}
-			</Select>
-			</FormControl>
-			<FormControl variant="outlined" className="select-field">
-			<InputLabel id="select-target-label">Target</InputLabel>
-				<Select
-				labelid="select-target-label"
-				id="target"
-				name="target"
-				value={this.state.target}
-				onChange={this.handleChange}
-				labelWidth={1}
-				input={<OutlinedInput />}
-				>
-					{this.props.positions.map( t =>
-							<MenuItem  key={t.name} value={t.name}>{t.name}</MenuItem>
-						)}
-			</Select>
-			</FormControl>
-		</div>
-		<TextField
+          <div className="source-target-div">
+            <FormControl variant="outlined" className="select-field">
+              <InputLabel id="select-source-label">Source</InputLabel>
+              <Select
+                labelid="select-source-label"
+                id="source"
+                name="source"
+                value={this.state.source}
+                onChange={this.handleChange}
+                labelWidth={1}
+                input={<OutlinedInput />}
+              >
+                {this.props.positions.map(t =>
+                  <MenuItem key={t.name} value={t.name}>{t.name}</MenuItem>
+                )}
+              </Select>
+            </FormControl>
+            <FormControl variant="outlined" className="select-field">
+              <InputLabel id="select-target-label">Target</InputLabel>
+              <Select
+                labelid="select-target-label"
+                id="target"
+                name="target"
+                value={this.state.target}
+                onChange={this.handleChange}
+                labelWidth={1}
+                input={<OutlinedInput />}
+              >
+                {this.props.positions.map(t =>
+                  <MenuItem key={t.name} value={t.name}>{t.name}</MenuItem>
+                )}
+              </Select>
+            </FormControl>
+          </div>
+          <TextField
             autoFocus
             margin="dense"
             id="url"
@@ -91,15 +101,19 @@ class TransitionDialog extends Component {
             variant="outlined"
             type="text"
             name="url"
+            value={this.state.url}
             onChange={this.handleChange}
           />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={this.handleClick} color="primary">
-          Create
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.props.onCancel} color="primary">
+            Cancel
         </Button>
-      </DialogActions>
-    </Dialog>
+          <Button onClick={this.handleClick} color="primary">
+            Create
+        </Button>
+        </DialogActions>
+      </Dialog>
     );
   }
 }

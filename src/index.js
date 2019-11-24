@@ -7,7 +7,7 @@ import Routes from './utilities/Routes';
 const App = () => {
     return (
         <BrowserRouter>
-            <Routes/>
+            <Routes />
         </BrowserRouter>
     )
 }
