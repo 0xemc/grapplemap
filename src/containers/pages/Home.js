@@ -8,50 +8,73 @@ import Graph from "react-cytoscapejs";
 
 import "./Home.scss";
 import PositionDialog from '../dialogs/PositionDialog';
-import { graphTransform } from '../../data'
+import { graphTransform, defaultPositions, defaultTransitions } from '../../data'
 import Style from '../../style'
 import TransitionDialog from '../dialogs/TransitionDialog';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSave } from '@fortawesome/free-regular-svg-icons'
 
-import { firestore } from '../../firebase'
+import { firestore, auth, signInWithGoogle } from '../../firebase'
+import UserButton from '../../components/UserButton';
 class Home extends Component {
 
   cy;
 
-  fbUnsubscribe;
+  unsubscribeFirestore;
+  unsubscribeAuth;
 
   state = {
-    positions: [],
-    transitions: [],
+    positions: defaultPositions,
+    transitions: defaultTransitions,
     anchorEl: null,
     showTransitionDialog: false,
     showPositionDialog: false,
     selectedPosition: null,
-    selectedTransition: null
+    selectedTransition: null,
+    user: null
   }
 
   componentWillUnmount = () => {
-    this.fbUnsubscribe()
+    this.unsubscribeFirestore();
+    this.unsubscribeAuth();
   }
-
+  
   componentDidMount = async () => {
-      
-    this.fbListener = firestore
-      .collection('users')
-      .doc("michaeljosefcollins@gmail.com")
-      .onSnapshot(snapshot => 
-        {
-          const {positions, transitions} = snapshot.data()
-          console.log(positions)
-          this.setState({positions, transitions})
-          this.cy.layout({ name: "breadthfirst" }).run()
-        }
-      )
+    // auth.signOut()
+    this.unsubscribeAuth = auth.onAuthStateChanged( user => {
+      if(user != null){
+       this.unsubscribeFirestore = this.subscribeToUserData(user)
+       this.initUserData(user);
+      }
+      this.setState({user})
+    })
     // this.cy.on('tap', 'node', (e) => {
     //   const node = e.target;
     //   const newPos = this.state.positions.find(p => p.name === node.id());
     //   this.setState({ selectedPosition: newPos });
     //   this.openPositionDialog()
     // });
+  }
+
+  subscribeToUserData = (user) => firestore
+    .collection('users')
+    .doc(user.email)
+    .onSnapshot(snapshot => 
+      {
+        const data = snapshot.data();
+          const {positions, transitions} = data
+          this.setState({positions, transitions})
+          this.cy.layout({ name: "breadthfirst" }).run()
+          console.log(positions)
+      }
+    )
+
+  initUserData = user => {
+    const {positions, transitions} = this.state;
+    firestore
+      .collection('users')
+      .doc(user.email)
+      .set({positions, transitions})
   }
 
   handleClick = event => {
@@ -72,16 +95,19 @@ class Home extends Component {
     this.setState({ showTransitionDialog: true })
   }
 
+  handleSignInOut = () => {
+    if(this.state.user === null){
+      signInWithGoogle();
+    }else{
+      auth.signOut();
+    }
+  }
+
   closeDialog = event => {
     this.setState({ showTransitionDialog: false, showPositionDialog: false, selectedPosition: null })
   }
 
   updatePosition = (name, notes) => {
-    // const newPositions = [...this.state.positions.map(p => {
-    //   console.log(p.name, name)
-    //  return p.name === name ? ({ name, notes }) : p
-    // })];
-
     let updatePos = this.state.positions.find(p => p.name === name)
     updatePos = {...updatePos, name, notes}
     const filteredPos = this.state.positions.filter(p => p.name !== name)
@@ -89,33 +115,45 @@ class Home extends Component {
     this.closeDialog()
   }
 
-  createPosition = async (name, notes, x, y) => {
-    const newPositions = [...this.state.positions, { name, notes, x, y }];
-    await firestore
-      .collection('users')
-      .doc("michaeljosefcollins@gmail.com")
-      .update('positions', newPositions)
+  createPosition = async (name, notes) => {
+    const {user} = this.state;
+    const newPositions = [...this.state.positions, { name, notes }];
+    if(user){
+      await firestore
+        .collection('users')
+        .doc(user.email)
+        .update('positions', newPositions)
+    }else{
+      this.setState({positions: newPositions})
+    }
     this.closeDialog()
   }
 
   createTransition = async (name, source, target, url, notes) => {
+    const {user} = this.state;
     const newTransitions = [...this.state.transitions, { name, source, target, url, notes }];
-    
-    await firestore
-    .collection('users')
-    .doc("michaeljosefcollins@gmail.com")
-    .update('transitions', newTransitions)
-    
-    this.setState({ transitions: newTransitions })
+    if(user){
+      await firestore
+        .collection('users')
+        .doc(user.email)
+        .update('transitions', newTransitions)
+    }else{
+      this.setState({transitions: newTransitions})
+    }
     this.closeDialog()
   }
 
   render() {
     const graphData = graphTransform(this.state.positions, this.state.transitions)
-    const { anchorEl } = this.state;
+    const { anchorEl, user} = this.state;
     return (
       <div>
-        <Header><Button onClick={this.handleClick}>+</Button></Header>
+        <Header>
+          {user ? 
+            <UserButton imgSrc={user.photoURL} onClick={this.handleSignInOut} ></UserButton>
+            :
+            <Button onClick={this.handleSignInOut}><FontAwesomeIcon icon={faSave} /></Button>}
+          <Button onClick={this.handleClick}>+</Button></Header>
         <Graph
           className="graph"
           elements={graphData}
