@@ -2,20 +2,20 @@ import Graph from "react-cytoscapejs";
 
 export const defaultPositions = [
   {
-    name: "Side Control",
+    name: "Stand Up",
     notes: "Qui magna in magna labore."
   },
   {
-    name: "Back Control",
+    name: "Side Control",
     notes: "Anim enim anim ex proident ad dolore quis voluptate sint laboris."
   }
 ];
 
 export const defaultTransitions = [
   {
-    name: "Gift Wrap",
-    source: "Side Control",
-    target: "Back Control",
+    name: "Double Leg",
+    source: "Stand Up",
+    target: "Side Control",
     url: "www.youtube.com",
     notes: "Sunt elit nulla aliqua ipsum eu."
   }
