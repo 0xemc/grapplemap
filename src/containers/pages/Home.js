@@ -31,7 +31,8 @@ class Home extends Component {
     showPositionDialog: false,
     selectedPosition: null,
     selectedTransition: null,
-    user: null
+    user: null,
+    newUser: false
   }
 
   componentWillUnmount = () => {
@@ -40,11 +41,9 @@ class Home extends Component {
   }
   
   componentDidMount = async () => {
-    // auth.signOut()
     this.unsubscribeAuth = auth.onAuthStateChanged( user => {
       if(user != null){
        this.unsubscribeFirestore = this.subscribeToUserData(user)
-       this.initUserData(user);
       }
       this.setState({user})
     })
@@ -61,11 +60,18 @@ class Home extends Component {
     .doc(user.email)
     .onSnapshot(snapshot => 
       {
-        const data = snapshot.data();
+        console.log(this.state.newUser)
+        //Handle first login
+        if(this.state.newUser){
+          this.initUserData(user);
+          this.setState({newUser: false})
+        }else{
+          console.log(snapshot.data())
+          const data = snapshot.data();
           const {positions, transitions} = data
           this.setState({positions, transitions})
           this.cy.layout({ name: "breadthfirst" }).run()
-          console.log(positions)
+        }
       }
     )
 
@@ -95,9 +101,11 @@ class Home extends Component {
     this.setState({ showTransitionDialog: true })
   }
 
-  handleSignInOut = () => {
+  handleSignInOut = async () => {
     if(this.state.user === null){
-      signInWithGoogle();
+      const userCredentials = await signInWithGoogle();
+      console.log(userCredentials)
+      this.setState({newUser: userCredentials.additionalUserInfo.isNewUser})
     }else{
       auth.signOut();
     }
@@ -124,7 +132,9 @@ class Home extends Component {
         .doc(user.email)
         .update('positions', newPositions)
     }else{
-      this.setState({positions: newPositions})
+      this.setState({positions: newPositions},() => 
+        this.cy.layout({ name: "breadthfirst" }).run()
+      )
     }
     this.closeDialog()
   }
@@ -138,7 +148,9 @@ class Home extends Component {
         .doc(user.email)
         .update('transitions', newTransitions)
     }else{
-      this.setState({transitions: newTransitions})
+      this.setState({transitions: newTransitions}, () => 
+        this.cy.layout({ name: "breadthfirst" }).run()
+      )
     }
     this.closeDialog()
   }
