@@ -3,6 +3,8 @@
 .vscode
 *.orig
 
+functions/node_modules
+
 # dependencies
 /node_modules
 /.pnp
