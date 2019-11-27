@@ -37,8 +37,9 @@ class PositionDialog extends Component {
   handleClick = () => {
     if(this.props.position != null){
       this.props.updateHandler(this.props.position.name, this.state.notes);
+    }else{
+      this.props.createHandler(this.state.name, this.state.notes)
     }
-    this.props.createHandler(this.state.name, this.state.notes)
   }
 
   render() {

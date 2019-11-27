@@ -59,13 +59,11 @@ class Home extends Component {
     .doc(user.email)
     .onSnapshot(snapshot => 
       {
-        console.log(this.state.newUser)
         //Handle first login
         if(this.state.newUser){
           this.initUserData(user);
           this.setState({newUser: false})
         }else{
-          console.log(snapshot.data())
           const data = snapshot.data();
           const {positions, transitions} = data
           this.setState({positions, transitions})
@@ -103,7 +101,6 @@ class Home extends Component {
   handleSignInOut = async () => {
     if(this.state.user === null){
       const userCredentials = await signInWithGoogle();
-      console.log(userCredentials)
       this.setState({newUser: userCredentials.additionalUserInfo.isNewUser})
     }else{
       auth.signOut();
@@ -115,10 +112,12 @@ class Home extends Component {
   }
 
   updatePosition = (name, notes) => {
-    let updatePos = this.state.positions.find(p => p.name === name)
+    const {positions, transitions} = this.state;
+    let updatePos = positions.find(p => p.name === name)
     updatePos = {...updatePos, name, notes}
     const filteredPos = this.state.positions.filter(p => p.name !== name)
-    this.setState({ positions: [...filteredPos, updatePos] })
+    const updatedPos = [...filteredPos, updatePos]
+    this.updateGraph(transitions, updatedPos)
     this.closeDialog()
   }
 
