@@ -52,6 +52,13 @@ class Home extends Component {
       this.setState({ selectedPosition: newPos });
       this.openPositionDialog()
     });
+    this.cy.on('tap', 'edge', (e) => {
+      const edge = e.target;
+      const newTransition = this.state.transitions.find(p => p.name === edge.data().label);
+      console.log(edge.data().label)
+      this.setState({ selectedTransition: newTransition });
+      this.openTransitionDialog()
+    });
   }
 
   subscribeToUserData = (user) => firestore
@@ -115,9 +122,19 @@ class Home extends Component {
     const {positions, transitions} = this.state;
     let updatePos = positions.find(p => p.name === name)
     updatePos = {...updatePos, name, notes}
-    const filteredPos = this.state.positions.filter(p => p.name !== name)
+    const filteredPos = positions.filter(p => p.name !== name)
     const updatedPos = [...filteredPos, updatePos]
     this.updateGraph(transitions, updatedPos)
+    this.closeDialog()
+  }
+
+  updateTransition = (name, source, target, url, notes) => {
+    const {positions, transitions} = this.state;
+    let updateTransition = transitions.find(p => p.name === name)
+    updateTransition = {...updateTransition, name, source, target, url, notes}
+    const filteredTransitions = transitions.filter(p => p.name !== name)
+    const updatedTransitions = [...filteredTransitions, updateTransition]
+    this.updateGraph(updatedTransitions, positions)
     this.closeDialog()
   }
 
@@ -125,6 +142,12 @@ class Home extends Component {
     const newPositions = this.state.positions.filter(p => p.name !== name)
     const newTransitions = this.state.transitions.filter(t => t.source !== name && t.target !== name)
     this.updateGraph(newTransitions, newPositions)
+    this.closeDialog()
+  }
+
+  deleteTransition = (name) => {
+    const newTransitions = this.state.transitions.filter(p => p.name !== name)
+    this.updateGraph(newTransitions, this.state.positions)
     this.closeDialog()
   }
 
@@ -195,8 +218,14 @@ class Home extends Component {
           open={this.state.showPositionDialog}
           onClose={this.closeDialog}
           onCancel={this.closeDialog} />
-        <TransitionDialog createHandler={this.createTransition} open={this.state.showTransitionDialog} onClose={this.closeDialog}
+        <TransitionDialog 
+          transition={this.state.selectedTransition}
+          createHandler={this.createTransition}
+          updateHandler={this.updateTransition}
+          deleteHandler={this.deleteTransition}
+          open={this.state.showTransitionDialog}
           positions={this.state.positions}
+          onClose={this.closeDialog}
           onCancel={this.closeDialog} />
       </div>
     );
