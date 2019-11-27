@@ -11,8 +11,7 @@ import PositionDialog from '../dialogs/PositionDialog';
 import { graphTransform, defaultPositions, defaultTransitions } from '../../data'
 import Style from '../../style'
 import TransitionDialog from '../dialogs/TransitionDialog';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSave } from '@fortawesome/free-regular-svg-icons'
+import SaveIcon from '@material-ui/icons/Save';
 
 import { firestore, auth, signInWithGoogle } from '../../firebase'
 import UserButton from '../../components/UserButton';
@@ -47,12 +46,12 @@ class Home extends Component {
       }
       this.setState({user})
     })
-    // this.cy.on('tap', 'node', (e) => {
-    //   const node = e.target;
-    //   const newPos = this.state.positions.find(p => p.name === node.id());
-    //   this.setState({ selectedPosition: newPos });
-    //   this.openPositionDialog()
-    // });
+    this.cy.on('tap', 'node', (e) => {
+      const node = e.target;
+      const newPos = this.state.positions.find(p => p.name === node.id());
+      this.setState({ selectedPosition: newPos });
+      this.openPositionDialog()
+    });
   }
 
   subscribeToUserData = (user) => firestore
@@ -123,36 +122,39 @@ class Home extends Component {
     this.closeDialog()
   }
 
+  deletePosition = (name) => {
+    const newPositions = this.state.positions.filter(p => p.name !== name)
+    const newTransitions = this.state.transitions.filter(t => t.source !== name && t.target !== name)
+    this.updateGraph(newTransitions, newPositions)
+    this.closeDialog()
+  }
+
   createPosition = async (name, notes) => {
-    const {user} = this.state;
-    const newPositions = [...this.state.positions, { name, notes }];
-    if(user){
-      await firestore
-        .collection('users')
-        .doc(user.email)
-        .update('positions', newPositions)
-    }else{
-      this.setState({positions: newPositions},() => 
-        this.cy.layout({ name: "breadthfirst" }).run()
-      )
-    }
+    const {transitions, positions} = this.state;
+    const newPositions = [...positions, { name, notes }];
+    this.updateGraph(transitions, newPositions)
     this.closeDialog()
   }
 
   createTransition = async (name, source, target, url, notes) => {
+    const {transitions, positions} = this.state;
+    const newTransitions = [...transitions, { name, source, target, url, notes }];
+    this.updateGraph(newTransitions, positions);
+    this.closeDialog();
+  }
+
+  updateGraph = async (transitions, positions) => {
     const {user} = this.state;
-    const newTransitions = [...this.state.transitions, { name, source, target, url, notes }];
     if(user){
       await firestore
         .collection('users')
         .doc(user.email)
-        .update('transitions', newTransitions)
+        .set({transitions, positions})
     }else{
-      this.setState({transitions: newTransitions}, () => 
+      this.setState({transitions,positions}, () => 
         this.cy.layout({ name: "breadthfirst" }).run()
       )
     }
-    this.closeDialog()
   }
 
   render() {
@@ -164,7 +166,7 @@ class Home extends Component {
           {user ? 
             <UserButton imgSrc={user.photoURL} onClick={this.handleSignInOut} ></UserButton>
             :
-            <Button onClick={this.handleSignInOut}><FontAwesomeIcon icon={faSave} /></Button>}
+            <Button onClick={this.handleSignInOut}><SaveIcon/></Button>}
           <Button onClick={this.handleClick}>+</Button></Header>
         <Graph
           className="graph"
@@ -186,7 +188,14 @@ class Home extends Component {
           <MenuItem onClose={this.handleClose} onClick={this.openPositionDialog}>Position</MenuItem>
           <MenuItem onClose={this.handleClose} onClick={this.openTransitionDialog}>Transition</MenuItem>
         </Menu>
-        <PositionDialog position={this.state.selectedPosition} createHandler={this.createPosition} updateHandler={this.updatePosition} open={this.state.showPositionDialog} onClose={this.closeDialog} onCancel={this.closeDialog} />
+        <PositionDialog 
+          position={this.state.selectedPosition}
+          createHandler={this.createPosition}
+          updateHandler={this.updatePosition}
+          deleteHandler={this.deletePosition}
+          open={this.state.showPositionDialog}
+          onClose={this.closeDialog}
+          onCancel={this.closeDialog} />
         <TransitionDialog createHandler={this.createTransition} open={this.state.showTransitionDialog} onClose={this.closeDialog}
           positions={this.state.positions}
           onCancel={this.closeDialog} />

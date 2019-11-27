@@ -4,7 +4,11 @@ import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import { DialogTitle } from '@material-ui/core';
+import { IconButton, Typography } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete'
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+
+import './PositionDialog.scss'
 
 class PositionDialog extends Component {
 
@@ -38,16 +42,25 @@ class PositionDialog extends Component {
   }
 
   render() {
-    const { position } = this.props;
+    const { position, open, onClose, onCancel, deleteHandler } = this.props;
+    const {notes, name} = this.state;
     const editing = position != null;
   
     return (
       <Dialog
-        open={this.props.open}
-        onClose={this.props.onClose}
+        className="position-dialog"
+        open={open}
+        onClose={onClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle>{editing ? 'Edit' : 'Create'} Position</DialogTitle>
+        <MuiDialogTitle disableTypography>
+          <Typography variant="h6">{editing ? 'Edit' : 'Create'} Position</Typography>
+          {editing ? (
+            <IconButton className="delete-button" aria-label="close" onClick={() => deleteHandler(name)}>
+              <DeleteIcon />
+            </IconButton>
+          ) : null}
+        </MuiDialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -58,7 +71,7 @@ class PositionDialog extends Component {
             type="text"
             name="name"
             disabled={editing}
-            value={this.state.name}
+            value={name}
             onChange={this.handleChange}
           />
           <TextField
@@ -67,7 +80,7 @@ class PositionDialog extends Component {
             label="Notes"
             multiline
             rows="6"
-            value={this.state.notes}
+            value={notes}
             onChange={this.handleChange}
             margin="normal"
             variant="outlined"
@@ -75,7 +88,7 @@ class PositionDialog extends Component {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={this.props.onCancel} color="primary">
+          <Button onClick={onCancel} color="primary">
             Cancel
         </Button>
           <Button onClick={this.handleClick} color="primary">
