@@ -1,4 +1,6 @@
-<div class="navbar bg-base-100">
+<div
+  class="navbar bg-base-100 border-b-2 border-solid border-primary fixed z-50"
+>
   <div class="navbar-start">
     <div class="dropdown">
       <label tabindex="0" class="btn btn-ghost lg:hidden">
@@ -31,7 +33,9 @@
         <li><a>Item 3</a></li>
       </ul>
     </div>
-    <a href="https://grapplemap.com"><h1>GRAPPLEMAP</h1></a>
+    <a class="text-primary ml-5" href="https://grapplemap.com"
+      ><h1>GRAPPLEMAP</h1></a
+    >
   </div>
   <div class="navbar-center hidden lg:flex">
     <ul class="menu menu-horizontal px-1">

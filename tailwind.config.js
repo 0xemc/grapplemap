@@ -6,8 +6,8 @@ export default {
       "light",
       "black",
       {
-        mytheme: {
-          primary: "#000000",
+        grapplemap: {
+          primary: "#303030",
           secondary: "#fca311",
           accent: "#e5e5e5",
           neutral: "#ffffff",

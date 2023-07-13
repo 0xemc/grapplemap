@@ -3,10 +3,21 @@
 @tailwind utilities;
 
 h1 {
+  font-size: large;
+  font-weight: 700;
+}
+
+body {
   font-family: Play, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
-  font-size: large;
-  font-weight: 700;
+  height: 100vh;
+}
+
+:root[svelvet-theme="grapplemap"] {
+  font-family: Play, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
 }

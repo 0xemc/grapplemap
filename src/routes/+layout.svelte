@@ -13,4 +13,6 @@
 </svelte:head>
 
 <Navbar />
-<slot />
+<div class="min-h-full h-full">
+  <slot />
+</div>
