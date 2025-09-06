@@ -1,0 +1,14 @@
+{
+  "name": "lang",
+  "version": "1.0.0",
+  "scripts": {
+    "parse": "node run.ts"
+  },
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "ohm-js": "^17.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.1"
+  }
+}

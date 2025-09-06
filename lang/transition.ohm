@@ -1,0 +1,10 @@
+Transition {
+  Start   = FromTo
+  FromTo  = PositionStart _ "->" _ PositionEnd
+
+  PositionStart = nameChar+
+  PositionEnd = nameChar+
+  nameChar     = letter | digit | "_" | " "
+  
+  _ = (" " | "\t")*
+}
