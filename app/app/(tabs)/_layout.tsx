@@ -31,6 +31,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="graph"
+        options={{
+          title: "Graph",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "shuffle" : "shuffle-outline"}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="add"
         options={{
           title: "Add",
