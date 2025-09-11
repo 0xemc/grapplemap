@@ -1,33 +1,16 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View } from "react-native";
 import { Link } from "expo-router";
 
 export default function Index() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-      <Link href="/add" style={styles.button}>
+    <View className="flex-1 items-center justify-center bg-white">
+      <Text className="text-xl font-bold text-blue-500 ">
+        Welcome to Nativewind!
+      </Text>
+
+      <Link href="/add" className=" border-2 border-orange-500 p-2 rounded-md">
         Go to Add screen
       </Link>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#25292e",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  text: {},
-  button: {
-    fontSize: 20,
-    textDecorationLine: "underline",
-  },
-});
