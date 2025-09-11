@@ -9,10 +9,17 @@ const grammar = ohm.grammar(grammarContents);
 
 // 3. Create semantics to extract node names
 const semantics = grammar.createSemantics().addOperation("nodes", {
-  Start(ft) {
-    return ft.nodes();
+  _iter(...children) {
+    console.log(children.length);
+    return children.map((child) => child.nodes());
   },
-  FromTo(from, _1, arrow, _2, to) {
+  Lines(lines) {
+    return lines.nodes();
+  },
+  Line(rule) {
+    return rule.nodes();
+  },
+  Positions(from, _1, arrow, _2, to, _eol) {
     return [from.sourceString.trim(), to.sourceString.trim()];
   },
 });
@@ -22,8 +29,11 @@ const input = fs.readFileSync("./test.grpl", "utf-8");
 const matchResult = grammar.match(input);
 
 if (matchResult.succeeded()) {
-  console.log(semantics(matchResult).nodes());
-  // -> ["side-control", "side-guard"]
+  const results = semantics(matchResult).nodes();
+  // Filter out null values (comments and empty lines)
+  const transitions = results.filter((result) => result !== null);
+  console.log(transitions);
+  // -> [["Side Control", "Side Guard"]]
 } else {
   console.error(matchResult.message);
 }

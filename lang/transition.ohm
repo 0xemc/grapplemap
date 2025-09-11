@@ -1,10 +1,21 @@
 Transition {
-  Start   = FromTo
-  FromTo  = PositionStart _ "->" _ PositionEnd
+  Lines   = Line*
+  Line    = ( Positions | Step )
 
+  // Extract the positions
+  Positions  = PositionStart _ "->" _ PositionEnd endOfLine
   PositionStart = nameChar+
   PositionEnd = nameChar+
-  nameChar     = letter | digit | "_" | " "
+
+  comment = "#" anyChar*
+  space += comment
+
+  nameChar = ~endOfLine (letter | digit | "_" | " ")
+  stepChar = (letter | " ")
+
+  Step = "\t" digit "." _ stepChar+ 
   
   _ = (" " | "\t")*
+  endOfLine = "\n" | "\r\n" | "\r" | end
+  anyChar = ~endOfLine any
 }
