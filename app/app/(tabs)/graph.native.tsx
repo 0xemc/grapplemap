@@ -5,7 +5,8 @@ import { WebView } from "react-native-webview";
 export default function GraphScreen() {
   const webviewRef = useRef<WebView>(null);
   const source = useMemo(() => {
-    return require("../../assets/webview/graph/index.html");
+    // Load packaged HTML from graph package output
+    return { uri: require("graph-view/dist/webview/index.html") } as any;
   }, []);
 
   return (
