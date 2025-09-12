@@ -6,7 +6,7 @@ export default function GraphScreen() {
   const webviewRef = useRef<WebView>(null);
   const source = useMemo(() => {
     // Load packaged HTML from graph package output
-    return { uri: require("graph-view/dist/webview/index.html") } as any;
+    return require("graph-view/dist/webview/index.html");
   }, []);
 
   return (
