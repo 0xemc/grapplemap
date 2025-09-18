@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "parse": "node run.ts"
+    "parse": "node run.ts",
+    "parse:pers": "node parse-pers.ts"
   },
   "dependencies": {
     "fs": "^0.0.1-security",

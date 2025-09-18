@@ -1,21 +1,22 @@
 Transition {
-  Lines   = Line*
-  Line    = ( Positions | Step )
+  lines   = line*
+  line    = ( positions | step | comment) endOfLine
 
   // Extract the positions
-  Positions  = PositionStart _ "->" _ PositionEnd endOfLine
-  PositionStart = nameChar+
-  PositionEnd = nameChar+
+  positions  = positionStart "->" positionEnd
+  positionStart = (~(" " end)nameChar)+
+  positionEnd = nameChar+
 
-  comment = "#" anyChar*
+  stringDelimiter = " "
+  string = stringDelimiter (~stringDelimiter any)* stringDelimiter
+
+  comment = "#" (anyChar|space)* 
   space += comment
-
-  nameChar = ~endOfLine (letter | digit | "_" | " ")
+  nameChar = (letter | digit | "_" | " " )
   stepChar = (letter | " ")
 
-  Step = "\t" digit "." _ stepChar+ 
+  step = "\t" digit "." space stepChar+ 
   
-  _ = (" " | "\t")*
-  endOfLine = "\n" | "\r\n" | "\r" | end
+  endOfLine = "\\n" | "\\r\\n" | "\\r" | end
   anyChar = ~endOfLine any
 }
