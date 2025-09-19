@@ -32,6 +32,46 @@ export function loadText(filename: string): string | null {
   return MEMORY_STORE.get(key) ?? null;
 }
 
+export function listFiles(): string[] {
+  if (
+    Platform.OS === "web" &&
+    typeof window !== "undefined" &&
+    window.localStorage
+  ) {
+    const names: string[] = [];
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i);
+      if (!key) continue;
+      if (key.startsWith(STORAGE_PREFIX)) {
+        names.push(key.substring(STORAGE_PREFIX.length));
+      }
+    }
+    names.sort((a, b) => a.localeCompare(b));
+    return names;
+  }
+  const names: string[] = [];
+  for (const key of MEMORY_STORE.keys()) {
+    if (key.startsWith(STORAGE_PREFIX)) {
+      names.push(key.substring(STORAGE_PREFIX.length));
+    }
+  }
+  names.sort((a, b) => a.localeCompare(b));
+  return names;
+}
+
+export function removeFile(filename: string): void {
+  const key = getKey(filename);
+  if (
+    Platform.OS === "web" &&
+    typeof window !== "undefined" &&
+    window.localStorage
+  ) {
+    window.localStorage.removeItem(key);
+  } else {
+    MEMORY_STORE.delete(key);
+  }
+}
+
 export type SaveResult =
   | { ok: true; message: string }
   | { ok: false; message: string };
