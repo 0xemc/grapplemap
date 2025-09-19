@@ -8,17 +8,28 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { loadFile, saveFile, listFiles, removeFile } from "../../utils/storage";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  loadFile,
+  saveFile,
+  listFiles,
+  removeFile,
+  renameFile,
+} from "../../utils/storage";
 
 export default function AddScreen() {
   const [filename, setFilename] = useState("untitled.grpl");
   const [content, setContent] = useState("");
   const [files, setFiles] = useState<string[]>([]);
+  const [renaming, setRenaming] = useState<string | null>(null);
+  const [renameDraft, setRenameDraft] = useState<string>("");
 
   const save = () => {
     const result = saveFile(filename, content);
     if (result.ok) {
       Alert.alert("Saved", result.message);
+      // Ensure the sidebar reflects newly saved files
+      refreshFiles();
     } else {
       Alert.alert("Save failed", result.message);
     }
@@ -69,8 +80,41 @@ export default function AddScreen() {
     refreshFiles();
   };
 
+  const startRename = (name: string) => {
+    setRenaming(name);
+    setRenameDraft(name);
+  };
+
+  const commitRename = () => {
+    if (renaming == null) return;
+    const res = renameFile(renaming, renameDraft);
+    if (res.ok) {
+      if (filename === res.oldName) {
+        setFilename(res.newName);
+      }
+      Alert.alert("Renamed", res.message);
+      setRenaming(null);
+      setRenameDraft("");
+      refreshFiles();
+    } else {
+      Alert.alert("Rename failed", res.message);
+    }
+  };
+
+  const cancelRename = () => {
+    setRenaming(null);
+    setRenameDraft("");
+  };
+
   useEffect(() => {
     refreshFiles();
+  }, []);
+
+  // Auto-open the first file if nothing is selected yet
+  useEffect(() => {
+    if (files.length > 0 && filename === "untitled.grpl" && content === "") {
+      loadFromPicker(files[0]);
+    }
   }, []);
 
   return (
@@ -93,28 +137,83 @@ export default function AddScreen() {
               No files yet
             </Text>
           ) : (
-            files.map((name) => (
-              <View
-                key={name}
-                className="px-3 py-2 flex-row items-center justify-between"
-              >
-                <Pressable
-                  onPress={() => loadFromPicker(name)}
-                  className="flex-1 mr-2"
+            files.map((name) => {
+              const isActive = name === filename;
+              return (
+                <View
+                  key={name}
+                  className="px-3 py-2 flex-row items-center justify-between"
+                  style={{
+                    backgroundColor: isActive ? "#374151" : "transparent",
+                    borderLeftWidth: isActive ? 3 : 3,
+                    borderLeftColor: isActive ? "#3b82f6" : "transparent",
+                  }}
                 >
-                  <Text className="text-white" numberOfLines={1}>
-                    {name}
-                  </Text>
-                </Pressable>
-                <Pressable
-                  onPress={() => deleteFromPicker(name)}
-                  className="px-2 py-1 rounded-md"
-                  style={{ backgroundColor: "#b91c1c" }}
-                >
-                  <Text className="text-white">Del</Text>
-                </Pressable>
-              </View>
-            ))
+                  {renaming === name ? (
+                    <View className="flex-1 flex-row items-center gap-2">
+                      <TextInput
+                        value={renameDraft}
+                        onChangeText={setRenameDraft}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        className="flex-1 text-white px-2 py-1 rounded w-2"
+                        style={{ backgroundColor: "#1f2937" }}
+                      />
+                      <Pressable
+                        onPress={commitRename}
+                        className="px-2 py-1 rounded-md"
+                        style={{ backgroundColor: "#10b981" }}
+                      >
+                        <Ionicons name="checkmark" size={12} color="#ffffff" />
+                      </Pressable>
+                      <Pressable
+                        onPress={cancelRename}
+                        className="px-2 py-1 rounded-md"
+                        style={{ backgroundColor: "#6b7280" }}
+                      >
+                        <Ionicons name="close" size={12} color="#ffffff" />
+                      </Pressable>
+                    </View>
+                  ) : (
+                    <>
+                      <Pressable
+                        onPress={() => loadFromPicker(name)}
+                        className="flex-1 mr-2"
+                      >
+                        <Text
+                          className="text-white"
+                          numberOfLines={1}
+                          style={{ fontWeight: isActive ? "600" : "400" }}
+                        >
+                          {name}
+                        </Text>
+                      </Pressable>
+                      <Pressable
+                        onPress={() => startRename(name)}
+                        onBlur={cancelRename}
+                        className="px-1 py-1 rounded-md"
+                      >
+                        <Ionicons
+                          name="create-outline"
+                          size={12}
+                          color="#ffffff"
+                        />
+                      </Pressable>
+                      <Pressable
+                        onPress={() => deleteFromPicker(name)}
+                        className="px-2 py-1 rounded-md"
+                      >
+                        <Ionicons
+                          name="trash-outline"
+                          size={12}
+                          color="#ffffff"
+                        />
+                      </Pressable>
+                    </>
+                  )}
+                </View>
+              );
+            })
           )}
         </ScrollView>
       </View>

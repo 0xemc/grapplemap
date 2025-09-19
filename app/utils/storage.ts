@@ -109,3 +109,60 @@ export function loadFile(filename: string): LoadResult {
     return { ok: false, message };
   }
 }
+
+export type RenameResult =
+  | { ok: true; message: string; oldName: string; newName: string }
+  | { ok: false; message: string };
+
+export function renameFile(oldName: string, newName: string): RenameResult {
+  const from = oldName.trim();
+  const to = newName.trim();
+  if (!from) return { ok: false, message: "Original filename is required." };
+  if (!to) return { ok: false, message: "New filename is required." };
+  if (from === to)
+    return { ok: true, message: "No changes.", oldName: from, newName: to };
+
+  const fromKey = `${STORAGE_PREFIX}${from}`;
+  const toKey = `${STORAGE_PREFIX}${to}`;
+
+  try {
+    if (
+      Platform.OS === "web" &&
+      typeof window !== "undefined" &&
+      window.localStorage
+    ) {
+      const existing = window.localStorage.getItem(fromKey);
+      if (existing == null)
+        return { ok: false, message: `${from} does not exist.` };
+      const conflict = window.localStorage.getItem(toKey);
+      if (conflict != null)
+        return { ok: false, message: `${to} already exists.` };
+      window.localStorage.setItem(toKey, existing);
+      window.localStorage.removeItem(fromKey);
+      return {
+        ok: true,
+        message: `Renamed to ${to}`,
+        oldName: from,
+        newName: to,
+      };
+    } else {
+      const existing = MEMORY_STORE.get(fromKey);
+      if (existing == null)
+        return { ok: false, message: `${from} does not exist.` };
+      const conflict = MEMORY_STORE.get(toKey);
+      if (conflict != null)
+        return { ok: false, message: `${to} already exists.` };
+      MEMORY_STORE.set(toKey, existing);
+      MEMORY_STORE.delete(fromKey);
+      return {
+        ok: true,
+        message: `Renamed to ${to}`,
+        oldName: from,
+        newName: to,
+      };
+    }
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    return { ok: false, message };
+  }
+}
