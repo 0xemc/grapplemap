@@ -8,7 +8,7 @@ Transition {
  from_to = from "->" to nl
  from = any_char*
  to = any_char*
- step = digit "." " "? any_char+ nl
+ step = digit "." " "? any_char+ (nl | end)
  
  //Utils
  space_or_tab = " " | "\t"

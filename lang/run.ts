@@ -7,7 +7,8 @@ const grammar = ohm.grammar(grammarContents);
 
 const parseTransitions = grammar.createSemantics().addOperation("transitions", {
   blocks(first, _, rest, _end) {
-    return [first.transitions(), ...rest.transitions()];
+    //@todo workout why this explode is necessary
+    return [...first.transitions(), ...rest.transitions().flat().flat()];
   },
   _iter(...items) {
     return items.map((i) => i.transitions());
