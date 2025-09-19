@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   Platform,
@@ -32,16 +32,6 @@ export default function AddScreen() {
       refreshFiles();
     } else {
       Alert.alert("Save failed", result.message);
-    }
-  };
-
-  const load = () => {
-    const result = loadFile(filename);
-    if (result.ok) {
-      setContent(result.content);
-      Alert.alert("Loaded", result.message);
-    } else {
-      Alert.alert("Load failed", result.message);
     }
   };
 
@@ -115,7 +105,21 @@ export default function AddScreen() {
     if (files.length > 0 && filename === "untitled.grpl" && content === "") {
       loadFromPicker(files[0]);
     }
-  }, []);
+  }, [files]);
+
+  const interactingInsideRename = useRef(false);
+  const markInteracting = () => {
+    interactingInsideRename.current = true;
+    requestAnimationFrame(() => {
+      interactingInsideRename.current = false;
+    });
+  };
+
+  const handleRenameBlur = () => {
+    if (!interactingInsideRename.current) {
+      cancelRename();
+    }
+  };
 
   return (
     <View className="flex-1 bg-[#25292e] flex-row">
@@ -124,11 +128,11 @@ export default function AddScreen() {
         <View className="px-3 pt-3 pb-2 flex-row items-center justify-between">
           <Text className="text-white">Files</Text>
           <Pressable
-            onPress={refreshFiles}
+            onPress={reset}
             className="px-2 py-1 rounded-md"
-            style={{ backgroundColor: "#374151" }}
+            style={{ backgroundColor: "#6b7280" }}
           >
-            <Text className="text-white">Refresh</Text>
+            <Text className="text-white">New</Text>
           </Pressable>
         </View>
         <ScrollView style={{ flex: 1 }}>
@@ -147,6 +151,8 @@ export default function AddScreen() {
                     backgroundColor: isActive ? "#374151" : "transparent",
                     borderLeftWidth: isActive ? 3 : 3,
                     borderLeftColor: isActive ? "#3b82f6" : "transparent",
+                    position: renaming === name ? "relative" : undefined,
+                    zIndex: renaming === name ? 50 : undefined,
                   }}
                 >
                   {renaming === name ? (
@@ -154,12 +160,14 @@ export default function AddScreen() {
                       <TextInput
                         value={renameDraft}
                         onChangeText={setRenameDraft}
+                        onBlur={handleRenameBlur}
                         autoCapitalize="none"
                         autoCorrect={false}
                         className="flex-1 text-white px-2 py-1 rounded w-2"
                         style={{ backgroundColor: "#1f2937" }}
                       />
                       <Pressable
+                        onPressIn={markInteracting}
                         onPress={commitRename}
                         className="px-2 py-1 rounded-md"
                         style={{ backgroundColor: "#10b981" }}
@@ -167,6 +175,7 @@ export default function AddScreen() {
                         <Ionicons name="checkmark" size={12} color="#ffffff" />
                       </Pressable>
                       <Pressable
+                        onPressIn={markInteracting}
                         onPress={cancelRename}
                         className="px-2 py-1 rounded-md"
                         style={{ backgroundColor: "#6b7280" }}
@@ -177,6 +186,7 @@ export default function AddScreen() {
                   ) : (
                     <>
                       <Pressable
+                        onPressIn={markInteracting}
                         onPress={() => loadFromPicker(name)}
                         className="flex-1 mr-2"
                       >
@@ -189,8 +199,8 @@ export default function AddScreen() {
                         </Text>
                       </Pressable>
                       <Pressable
+                        onPressIn={markInteracting}
                         onPress={() => startRename(name)}
-                        onBlur={cancelRename}
                         className="px-1 py-1 rounded-md"
                       >
                         <Ionicons
@@ -200,6 +210,7 @@ export default function AddScreen() {
                         />
                       </Pressable>
                       <Pressable
+                        onPressIn={markInteracting}
                         onPress={() => deleteFromPicker(name)}
                         className="px-2 py-1 rounded-md"
                       >
@@ -239,21 +250,6 @@ export default function AddScreen() {
             style={{ backgroundColor: "#3b82f6" }}
           >
             <Text className="text-white">Save</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={load}
-            className="px-3 py-2 rounded-md"
-            style={{ backgroundColor: "#10b981" }}
-          >
-            <Text className="text-white">Load</Text>
-          </Pressable>
-          <Pressable
-            onPress={reset}
-            className="px-3 py-2 rounded-md"
-            style={{ backgroundColor: "#6b7280" }}
-          >
-            <Text className="text-white">New</Text>
           </Pressable>
         </View>
 
