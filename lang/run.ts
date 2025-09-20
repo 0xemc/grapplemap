@@ -1,39 +1,44 @@
 import fs from "fs";
 import * as ohm from "ohm-js";
 
-// 1. Load the grammar file as text
 const grammarContents = fs.readFileSync("./transition.ohm", "utf-8");
 
-// 2. Compile the grammar
 const grammar = ohm.grammar(grammarContents);
 
-// 3. Create semantics to extract node names
-const semantics = grammar.createSemantics().addOperation("nodes", {
-  _iter(...children) {
-    console.log(children.length);
-    return children.map((child) => child.nodes());
+const parseTransitions = grammar.createSemantics().addOperation("transitions", {
+  blocks(first, _, rest, _end) {
+    //@todo workout why this explode is necessary
+    return [...first.transitions(), ...rest.transitions().flat().flat()];
   },
-  Lines(lines) {
-    return lines.nodes();
+  _iter(...items) {
+    return items.map((i) => i.transitions());
   },
-  Line(rule) {
-    return rule.nodes();
+  transition_block(title, _nl, from_to, steps, _tail) {
+    return {
+      title: title.sourceString.trim(),
+      ...from_to.transitions(),
+      steps: steps.transitions(),
+    };
   },
-  Positions(from, _1, arrow, _2, to, _eol) {
-    return [from.sourceString.trim(), to.sourceString.trim()];
+  from_to(from, _arrow, to, _nl) {
+    return { from: from.sourceString.trim(), to: to.sourceString.trim() };
+  },
+  step(_n, _dot, _sp, text, _nl) {
+    return text.sourceString.trim();
+  },
+  _terminal() {
+    return this.sourceString;
   },
 });
 
-// 4. Read input from file and match against grammar
 const input = fs.readFileSync("./test.grpl", "utf-8");
 const matchResult = grammar.match(input);
 
+// console.log(grammar.trace(input));
+
 if (matchResult.succeeded()) {
-  const results = semantics(matchResult).nodes();
-  // Filter out null values (comments and empty lines)
-  const transitions = results.filter((result) => result !== null);
-  console.log(transitions);
-  // -> [["Side Control", "Side Guard"]]
+  const results = parseTransitions(matchResult).transitions();
+  console.log("results:", JSON.stringify(results, null, 2));
 } else {
   console.error(matchResult.message);
 }

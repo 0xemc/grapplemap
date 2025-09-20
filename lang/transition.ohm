@@ -1,21 +1,24 @@
+
+
 Transition {
-  Lines   = Line*
-  Line    = ( Positions | Step )
-
-  // Extract the positions
-  Positions  = PositionStart _ "->" _ PositionEnd endOfLine
-  PositionStart = nameChar+
-  PositionEnd = nameChar+
-
-  comment = "#" anyChar*
-  space += comment
-
-  nameChar = ~endOfLine (letter | digit | "_" | " ")
-  stepChar = (letter | " ")
-
-  Step = "\t" digit "." _ stepChar+ 
-  
-  _ = (" " | "\t")*
-  endOfLine = "\n" | "\r\n" | "\r" | end
-  anyChar = ~endOfLine any
+ blocks = block (block_delimiter block?)* end
+ block = (~block_delimiter transition_block)+ 
+ block_delimiter = "\n" nl*
+ 
+ transition_block = tags? title nl from_to step* (~"\n" any)*
+ title = any_char+
+ from_to = from "->" to nl
+ from = any_char*
+ to = any_char*
+ step = digit "." " "? any_char+ (nl | end)
+ 
+ tags = tag+ nl
+ tag = "[" tag_content "]"
+ tag_content = (~("]" | "\n") any)*
+ 
+ //Utils
+ space_or_tab = " " | "\t"
+ indent = "\t" | "    " | "  "
+ any_char = (letter | digit | "_" | " " )
+ nl = "\n"
 }

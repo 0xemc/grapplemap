@@ -17,6 +17,8 @@ async function build() {
   const htmlDest = path.join(outDir, "index.html");
   const html = await fs.promises.readFile(htmlSrc, "utf8");
 
+  const isDev = process.env.WEBVIEW_DEBUG === "1";
+
   const buildResult = await esbuild.build({
     entryPoints: [path.join(pkgRoot, "webview", "index.tsx")],
     bundle: true,
@@ -25,10 +27,13 @@ async function build() {
     target: ["es2020"],
     write: false,
     external: [],
-    define: { "process.env.NODE_ENV": '"production"' },
+    define: {
+      "process.env.NODE_ENV": isDev ? '"development"' : '"production"',
+    },
     loader: { ".png": "dataurl", ".svg": "dataurl", ".css": "empty" },
     jsx: "automatic",
-    minify: true,
+    minify: !isDev,
+    sourcemap: isDev ? "inline" : false,
     absWorkingDir: pkgRoot,
     alias: {
       "graph-view": path.join(pkgRoot, "src"),
