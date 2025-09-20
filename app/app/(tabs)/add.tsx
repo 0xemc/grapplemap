@@ -59,12 +59,6 @@ export default function AddScreen() {
     }
   };
 
-  // File rename/delete handled inside FileExplorer
-
-  useEffect(() => {
-    refreshFiles();
-  }, []);
-
   // Auto-open the first file if nothing is selected yet
   useEffect(() => {
     if (files.length > 0 && filename === "untitled.grpl" && content === "") {

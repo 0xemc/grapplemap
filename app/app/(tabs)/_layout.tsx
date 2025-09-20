@@ -30,7 +30,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      {/* <Tabs.Screen
+      <Tabs.Screen
         name="graph"
         options={{
           title: "Graph",
@@ -42,7 +42,7 @@ export default function TabLayout() {
             />
           ),
         }}
-      /> */}
+      />
       <Tabs.Screen
         name="add"
         options={{
