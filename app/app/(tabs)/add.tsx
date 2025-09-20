@@ -17,6 +17,121 @@ import {
   renameFile,
 } from "../../utils/storage";
 
+// Syntax highlighting utilities for .grpl content
+type HighlightSegment = { text: string; style?: any };
+
+const editorColors = {
+  default: "#e5e7eb",
+  tag: "#c7c8c977",
+  arrow: "#f59e0baa",
+  // arrow: "#e5e7eb",
+  stepNum: "#e5e7eb77",
+  title: "#60a5fa",
+  position: "#e5e7eb",
+};
+
+function isTitleLine(line: string): boolean {
+  const trimmed = line.trim();
+  if (trimmed.length === 0) return false;
+  if (/^\d+\.\s/.test(trimmed)) return false; // step line
+  if (trimmed.startsWith("[")) return false; // tag line
+  if (trimmed.includes("->")) return false; // from_to line
+  return true;
+}
+
+function tokenizeLine(line: string): HighlightSegment[] {
+  // Tag-only line like: [url: http://something]
+  if (/^\s*\[[^\]]+\]\s*$/.test(line)) {
+    return [{ text: line, style: { color: editorColors.tag } }];
+  }
+
+  // Title lines get a single styled segment
+  if (isTitleLine(line)) {
+    return [{ text: line, style: { color: editorColors.title } }];
+  }
+
+  const segments: HighlightSegment[] = [];
+
+  // Handle leading step number like: "1. ", "2.  ", including leading spaces
+  const stepMatch = line.match(/^(\s*)(\d+)(\.)\s*/);
+  let idx = 0;
+  if (stepMatch) {
+    const [full, leading, num, dot] = stepMatch;
+    if (leading) segments.push({ text: leading });
+    segments.push({ text: num, style: { color: editorColors.stepNum } });
+    segments.push({ text: dot + " " });
+    idx = full.length;
+  }
+
+  // If the remainder contains an arrow, highlight positions on both sides
+  const remainderForArrow = line.slice(idx);
+  const arrowIndex = remainderForArrow.indexOf("->");
+  if (arrowIndex !== -1) {
+    const left = remainderForArrow.slice(0, arrowIndex);
+    const right = remainderForArrow.slice(arrowIndex + 2);
+    if (left)
+      segments.push({ text: left, style: { color: editorColors.position } });
+    segments.push({ text: "->", style: { color: editorColors.arrow } });
+    if (right)
+      segments.push({ text: right, style: { color: editorColors.position } });
+    return segments.length === 0 ? [{ text: "" }] : segments;
+  }
+
+  // Tokenizer that highlights bracketed tags in the remainder
+  const remainder = line.slice(idx);
+  const tokenRegex = /(\[[^\]]+\))/g;
+  let lastIndex = 0;
+  let m: RegExpExecArray | null;
+  while ((m = tokenRegex.exec(remainder)) !== null) {
+    if (m.index > lastIndex) {
+      segments.push({ text: remainder.slice(lastIndex, m.index) });
+    }
+    const token = m[0];
+    if (token === "->") {
+      segments.push({ text: token, style: { color: editorColors.arrow } });
+    } else {
+      // bracketed tag
+      segments.push({ text: token, style: { color: editorColors.tag } });
+    }
+    lastIndex = m.index + token.length;
+  }
+  if (lastIndex < remainder.length) {
+    segments.push({ text: remainder.slice(lastIndex) });
+  }
+
+  // If no segments were added (empty line), preserve it
+  if (segments.length === 0) {
+    segments.push({ text: "" });
+  }
+
+  return segments;
+}
+
+function renderHighlighted(text: string, monoFont: string, fontSize: number) {
+  const lines = text.split("\n");
+  return (
+    <Text
+      style={{
+        color: editorColors.default,
+        fontFamily: monoFont as any,
+        fontSize,
+        lineHeight: fontSize * 1.4,
+      }}
+    >
+      {lines.map((line, i) => (
+        <Text key={i}>
+          {tokenizeLine(line).map((seg, j) => (
+            <Text key={j} style={seg.style}>
+              {seg.text}
+            </Text>
+          ))}
+          {i < lines.length - 1 ? "\n" : ""}
+        </Text>
+      ))}
+    </Text>
+  );
+}
+
 export default function AddScreen() {
   const [filename, setFilename] = useState("untitled.grpl");
   const [content, setContent] = useState("");
@@ -46,6 +161,14 @@ export default function AddScreen() {
     if (Platform.OS === "android") return "monospace";
     return 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
   }, []);
+
+  const editorFontSize = 14;
+
+  const highlighted = useMemo(
+    () =>
+      renderHighlighted(content, monoFont as unknown as string, editorFontSize),
+    [content, monoFont]
+  );
 
   const refreshFiles = () => {
     const names = listFiles();
@@ -251,22 +374,50 @@ export default function AddScreen() {
             contentContainerStyle={{ flexGrow: 1 }}
             keyboardShouldPersistTaps="handled"
           >
-            <TextInput
-              value={content}
-              onChangeText={setContent}
-              multiline
-              autoCapitalize="none"
-              autoCorrect={false}
-              className="flex-1 text-white p-3 rounded-md"
+            <View
               style={{
+                position: "relative",
                 backgroundColor: "#1e1e1e",
-                fontFamily: monoFont as any,
+                borderRadius: 6,
                 minHeight: 300,
+                height: "100%",
               }}
-              textAlignVertical="top"
-              placeholder="// Start typing your .grpl here"
-              placeholderTextColor="#9aa0a6"
-            />
+            >
+              {/* Highlighted layer */}
+              <View pointerEvents="none" style={{ padding: 12 }}>
+                {highlighted}
+              </View>
+
+              {/* Transparent input overlay */}
+              <TextInput
+                value={content}
+                onChangeText={setContent}
+                multiline
+                autoCapitalize="none"
+                autoCorrect={false}
+                style={[
+                  {
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
+                    padding: 12,
+                    color: "transparent",
+                    fontFamily: monoFont as any,
+                    fontSize: editorFontSize,
+                    lineHeight: editorFontSize * 1.4,
+                  },
+                  Platform.OS === "web"
+                    ? ({ caretColor: "#ffffff" } as any)
+                    : null,
+                ]}
+                textAlignVertical="top"
+                selectionColor="#2563eb"
+                placeholder="// Start typing your .grpl here"
+                placeholderTextColor="#9aa0a6"
+              />
+            </View>
           </ScrollView>
         </View>
       </View>
