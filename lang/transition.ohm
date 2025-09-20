@@ -1,14 +1,20 @@
+
+
 Transition {
  blocks = block (block_delimiter block?)* end
  block = (~block_delimiter transition_block)+ 
  block_delimiter = "\n" nl*
  
- transition_block = title nl from_to step* (~"\n" any)*
+ transition_block = tags? title nl from_to step* (~"\n" any)*
  title = any_char+
  from_to = from "->" to nl
  from = any_char*
  to = any_char*
  step = digit "." " "? any_char+ (nl | end)
+ 
+ tags = tag+ nl
+ tag = "[" tag_content "]"
+ tag_content = (~("]" | "\n") any)*
  
  //Utils
  space_or_tab = " " | "\t"

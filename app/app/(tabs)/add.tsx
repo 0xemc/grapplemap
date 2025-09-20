@@ -23,6 +23,7 @@ export default function AddScreen() {
   const [files, setFiles] = useState<string[]>([]);
   const [renaming, setRenaming] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState<string>("");
+  const inputRef = useRef<TextInput>(null);
 
   const save = () => {
     const result = saveFile(filename, content);
@@ -73,6 +74,12 @@ export default function AddScreen() {
   const startRename = (name: string) => {
     setRenaming(name);
     setRenameDraft(name);
+    // Focus on the inputRef: set focus to the filename input when starting a rename
+    setTimeout(() => {
+      if (inputRef && typeof inputRef.current?.focus === "function") {
+        inputRef.current?.focus();
+      }
+    }, 0);
   };
 
   const commitRename = () => {
@@ -106,20 +113,6 @@ export default function AddScreen() {
       loadFromPicker(files[0]);
     }
   }, [files]);
-
-  const interactingInsideRename = useRef(false);
-  const markInteracting = () => {
-    interactingInsideRename.current = true;
-    requestAnimationFrame(() => {
-      interactingInsideRename.current = false;
-    });
-  };
-
-  const handleRenameBlur = () => {
-    if (!interactingInsideRename.current) {
-      cancelRename();
-    }
-  };
 
   return (
     <View className="flex-1 bg-[#25292e] flex-row">
@@ -158,16 +151,20 @@ export default function AddScreen() {
                   {renaming === name ? (
                     <View className="flex-1 flex-row items-center gap-2">
                       <TextInput
+                        ref={inputRef}
                         value={renameDraft}
                         onChangeText={setRenameDraft}
-                        onBlur={handleRenameBlur}
                         autoCapitalize="none"
                         autoCorrect={false}
+                        onKeyPress={(e) => {
+                          if (e.nativeEvent.key === "Enter") {
+                            commitRename();
+                          }
+                        }}
                         className="flex-1 text-white px-2 py-1 rounded w-2"
                         style={{ backgroundColor: "#1f2937" }}
                       />
                       <Pressable
-                        onPressIn={markInteracting}
                         onPress={commitRename}
                         className="px-2 py-1 rounded-md"
                         style={{ backgroundColor: "#10b981" }}
@@ -175,7 +172,6 @@ export default function AddScreen() {
                         <Ionicons name="checkmark" size={12} color="#ffffff" />
                       </Pressable>
                       <Pressable
-                        onPressIn={markInteracting}
                         onPress={cancelRename}
                         className="px-2 py-1 rounded-md"
                         style={{ backgroundColor: "#6b7280" }}
@@ -186,7 +182,6 @@ export default function AddScreen() {
                   ) : (
                     <>
                       <Pressable
-                        onPressIn={markInteracting}
                         onPress={() => loadFromPicker(name)}
                         className="flex-1 mr-2"
                       >
@@ -199,7 +194,6 @@ export default function AddScreen() {
                         </Text>
                       </Pressable>
                       <Pressable
-                        onPressIn={markInteracting}
                         onPress={() => startRename(name)}
                         className="px-1 py-1 rounded-md"
                       >
@@ -210,7 +204,6 @@ export default function AddScreen() {
                         />
                       </Pressable>
                       <Pressable
-                        onPressIn={markInteracting}
                         onPress={() => deleteFromPicker(name)}
                         className="px-2 py-1 rounded-md"
                       >
