@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Platform } from "react-native";
 
 const MEMORY_STORE: Map<string, string> = new Map();
@@ -166,3 +167,16 @@ export function renameFile(oldName: string, newName: string): RenameResult {
     return { ok: false, message };
   }
 }
+
+export const useFileStorage = () => {
+  const [files, setFiles] = useState<string[]>([]);
+
+  useEffect(() => {
+    window.addEventListener("storage", (e) => {
+      if (e.key?.startsWith(STORAGE_PREFIX)) {
+        setFiles(listFiles());
+      }
+    });
+  }, []);
+  return { files, setFiles };
+};

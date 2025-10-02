@@ -9,22 +9,26 @@ import {
 } from "react-native";
 import { IdeEditor } from "../components/IdeEditor";
 import { FileExplorer } from "../components/FileExplorer";
-import { loadFile, saveFile, listFiles } from "../../utils/storage";
+import {
+  loadFile,
+  saveFile,
+  listFiles,
+  useFileStorage,
+} from "../../utils/storage";
+import { monoFont, useMonoFont } from "@/utils/fonts";
 
 // highlighting/editor overlay extracted to components
 
 export default function AddScreen() {
   const [filename, setFilename] = useState("untitled.grpl");
   const [content, setContent] = useState("");
-  const [files, setFiles] = useState<string[]>([]);
+  const { files } = useFileStorage();
   // Sidebar rename state handled in FileExplorer
 
   const save = () => {
     const result = saveFile(filename, content);
     if (result.ok) {
       Alert.alert("Saved", result.message);
-      // Ensure the sidebar reflects newly saved files
-      refreshFiles();
     } else {
       Alert.alert("Save failed", result.message);
     }
@@ -35,18 +39,9 @@ export default function AddScreen() {
     setContent("");
   };
 
-  const monoFont = useMemo(() => {
-    if (Platform.OS === "ios") return "Menlo";
-    if (Platform.OS === "android") return "monospace";
-    return 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
-  }, []);
+  const monoFont = useMonoFont();
 
   const editorFontSize = 14;
-
-  const refreshFiles = () => {
-    const names = listFiles();
-    setFiles(names);
-  };
 
   const loadFromPicker = (name: string) => {
     const result = loadFile(name);
@@ -75,13 +70,10 @@ export default function AddScreen() {
         onSelect={(name, fileContent) => {
           setFilename(name);
           setContent(fileContent);
-          refreshFiles();
         }}
         onRenamed={(oldName, newName) => {
           if (filename === oldName) setFilename(newName);
-          refreshFiles();
         }}
-        onDeleted={() => refreshFiles()}
       />
 
       {/* Editor area */}

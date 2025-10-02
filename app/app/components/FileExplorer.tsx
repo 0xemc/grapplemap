@@ -13,6 +13,7 @@ import {
   loadFile,
   removeFile,
   renameFile,
+  useFileStorage,
 } from "../../utils/storage";
 
 export function FileExplorer({
@@ -30,7 +31,7 @@ export function FileExplorer({
   onDeleted?: (name: string) => void;
   refreshKey?: number;
 }) {
-  const [files, setFiles] = useState<string[]>([]);
+  const { files, setFiles } = useFileStorage();
   const [renaming, setRenaming] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState<string>("");
   const inputRef = useRef<TextInput>(null);
