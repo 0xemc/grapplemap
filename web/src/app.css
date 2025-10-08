@@ -31,6 +31,18 @@ html, body, #svelte {
   --color-secondary-700: #0369a1;
   --color-secondary-800: #075985;
   --color-secondary-900: #0c4a6e;
+
+  /* chisel palette */
+  --color-chisel-50: #f2f4f7;
+  --color-chisel-100: #e6e9ef;
+  --color-chisel-200: #cfd5e1;
+  --color-chisel-300: #b1bbc9;
+  --color-chisel-400: #8f9aae;
+  --color-chisel-500: #6f7c94;
+  --color-chisel-600: #56627a;
+  --color-chisel-700: #434d61;
+  --color-chisel-800: #333b4a;
+  --color-chisel-900: #282c34;
 }
 
 @source "../node_modules/flowbite-svelte/dist";
