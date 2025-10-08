@@ -11,7 +11,11 @@
 	const dispatch = createEventDispatcher<{ select: { id: number } }>();
 
 	async function onAddFile() {
-		await createFile('untitled.txt', '');
+		const id = await createFile('untitled.txt', '');
+		if (typeof id === 'number') {
+			activeId = id;
+			dispatch('select', { id });
+		}
 	}
 
 	function onSelect(id: number) {
@@ -20,7 +24,16 @@
 	}
 
 	onMount(() => {
-		const s = filesStore.subscribe((r) => (files = r));
+		const s = filesStore.subscribe((r) => {
+			files = r;
+			if (files && files.length > 0) {
+				const exists = activeId != null && files.some((f) => f.id === activeId);
+				if (!exists) {
+					activeId = files[0].id ?? null;
+					if (activeId != null) dispatch('select', { id: activeId });
+				}
+			}
+		});
 		unsub = () => s();
 		return () => {
 			unsub?.();

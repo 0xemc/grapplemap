@@ -45,7 +45,7 @@
 				<button
 					on:click={onSave}
 					disabled={activeFileId === null || isSaving}
-					class="rounded bg-blue-600 px-3 py-1 text-xs text-white disabled:cursor-not-allowed disabled:opacity-50"
+					class="cursor-pointer rounded bg-blue-600 px-3 py-1 text-xs text-white disabled:cursor-not-allowed disabled:opacity-50"
 					>{isSaving ? 'Saving…' : 'Save'}</button
 				>
 			</div>
