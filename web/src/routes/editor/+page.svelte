@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { EditorView, keymap, highlightActiveLine } from '@codemirror/view';
-	import { EditorState } from '@codemirror/state';
+	import { EditorState, Compartment } from '@codemirror/state';
 	import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
 	import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 	import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
@@ -12,6 +12,15 @@
 
 	let host: HTMLDivElement | null = null;
 	let view: EditorView | null = null;
+	const themeCompartment = new Compartment();
+
+	function isDark() {
+		return document.documentElement.classList.contains('dark');
+	}
+
+	function currentThemeExt() {
+		return isDark() ? oneDark : [];
+	}
 
 	onMount(() => {
 		if (!host) return;
@@ -32,14 +41,21 @@
 				highlightSelectionMatches(),
 				autocompletion(),
 				javascript({ typescript: false }),
-				oneDark,
+				themeCompartment.of(currentThemeExt()),
 				EditorView.lineWrapping
 			]
 		});
 
 		view = new EditorView({ state, parent: host });
 
+		const observer = new MutationObserver(() => {
+			if (!view) return;
+			view.dispatch({ effects: themeCompartment.reconfigure(currentThemeExt()) });
+		});
+		observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
 		return () => {
+			observer.disconnect();
 			view?.destroy();
 			view = null;
 		};
