@@ -7,17 +7,7 @@
 		SidebarButton,
 		uiHelpers
 	} from 'flowbite-svelte';
-	import {
-		ChartOutline,
-		EditOutline,
-		GridSolid,
-		HomeOutline,
-		HomeSolid,
-		MailBoxSolid,
-		ShareNodesOutline,
-		ShareNodesSolid,
-		UserSolid
-	} from 'flowbite-svelte-icons';
+	import { EditOutline, HomeOutline, ShareNodesOutline } from 'flowbite-svelte-icons';
 	import { page } from '$app/state';
 	let activeUrl = $state(page.url.pathname);
 	const spanClass = 'flex-1 whitespace-nowrap';
@@ -36,7 +26,7 @@
 	isOpen={isDemoOpen}
 	closeSidebar={close}
 	params={{ x: -50, duration: 50 }}
-	class="z-50 h-full w-auto pt-6"
+	class="border-chisel-400 z-50 h-full w-auto border-r pt-6 dark:border-zinc-700"
 	classes={{ nonactive: 'p-2', active: 'p-2' }}
 >
 	<CloseButton onclick={close} color="gray" class="absolute right-2 top-2 p-2 md:hidden" />
