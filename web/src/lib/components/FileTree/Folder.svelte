@@ -1,13 +1,37 @@
-<script>
+<script lang="ts">
 	import File from './File.svelte';
 	import { slide } from 'svelte/transition';
+	import { createFile, createFolder, renameNode, deleteNode } from '$lib/db/fileTree';
 
 	export let expanded = false;
-	export let name;
-	export let files;
+	export let id: number;
+	export let name: string;
+	export let files: Array<{ id: number; type: 'folder' | 'file'; name: string; files?: any[] }> =
+		[];
 
 	function toggle() {
 		expanded = !expanded;
+	}
+
+	async function onAddFolder() {
+		await createFolder(id, 'New Folder');
+	}
+
+	async function onAddFile() {
+		await createFile(id, 'untitled.txt', '');
+	}
+
+	async function onRename() {
+		const next = prompt('Rename folder', name);
+		if (next && next.trim() && next !== name) {
+			await renameNode(id, next.trim());
+		}
+	}
+
+	async function onDelete() {
+		if (confirm(`Delete "${name}" and all its contents?`)) {
+			await deleteNode(id);
+		}
 	}
 </script>
 
@@ -48,9 +72,16 @@
 	{name}
 </button>
 
+<div class="flex items-center gap-1 text-xs opacity-80">
+	<button on:click={onAddFolder} title="New folder">+Folder</button>
+	<button on:click={onAddFile} title="New file">+File</button>
+	<button on:click={onRename} title="Rename">Rename</button>
+	<button on:click={onDelete} title="Delete">Delete</button>
+</div>
+
 {#if expanded}
 	<ul transition:slide={{ duration: 300 }}>
-		{#each files as file}
+		{#each files as file (file.id)}
 			<li>
 				{#if file.type === 'folder'}
 					<svelte:self {...file} />

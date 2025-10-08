@@ -2,6 +2,7 @@
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import ThemeSwitch from '$lib/components/ThemeSwitch.svelte';
+	import Sidebar from '$lib/components/Sidebar.svelte';
 
 	let { children } = $props();
 </script>
@@ -25,10 +26,17 @@
 </svelte:head>
 
 <div class="app-shell dark:bg-chisel-900 bg-white text-zinc-900 dark:text-zinc-100">
-	<div class="app-toolbar">
-		<ThemeSwitch />
+	<div class="flex">
+		<div class="w-[75px]">
+			<Sidebar />
+		</div>
+		<div class="flex w-full flex-col">
+			<div class="app-toolbar">
+				<ThemeSwitch />
+			</div>
+			{@render children?.()}
+		</div>
 	</div>
-	{@render children?.()}
 </div>
 
 <style>
