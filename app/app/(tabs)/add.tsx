@@ -9,13 +9,8 @@ import {
 } from "react-native";
 import { IdeEditor } from "../components/IdeEditor";
 import { FileExplorer } from "../components/FileExplorer";
-import {
-  loadFile,
-  saveFile,
-  listFiles,
-  useFileStorage,
-} from "../../utils/storage";
-import { monoFont, useMonoFont } from "@/utils/fonts";
+import { loadFile, saveFile, useFileStorage } from "../../utils/storage";
+import { useMonoFont } from "@/utils/fonts";
 
 // highlighting/editor overlay extracted to components
 

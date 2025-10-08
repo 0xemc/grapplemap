@@ -72,3 +72,5 @@ export function IdeEditor({
     </ScrollView>
   );
 }
+
+export default IdeEditor;

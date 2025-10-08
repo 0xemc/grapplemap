@@ -122,3 +122,5 @@ export function GrplHighlighter({
 }
 
 export const defaultColors = defaultEditorColors;
+
+export default GrplHighlighter;

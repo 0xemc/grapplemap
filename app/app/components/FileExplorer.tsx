@@ -211,3 +211,5 @@ export function FileExplorer({
     </View>
   );
 }
+
+export default FileExplorer;
