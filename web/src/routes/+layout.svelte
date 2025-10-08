@@ -1,12 +1,54 @@
 <script lang="ts">
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
+	import ThemeSwitch from '$lib/components/ThemeSwitch.svelte';
+	import Sidebar from '$lib/components/Sidebar.svelte';
 
 	let { children } = $props();
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<script>
+		(function () {
+			try {
+				var saved = localStorage.getItem('theme');
+				var pref = saved
+					? saved
+					: window.matchMedia('(prefers-color-scheme: dark)').matches
+						? 'dark'
+						: 'light';
+				if (pref === 'dark') document.documentElement.classList.add('dark');
+				else document.documentElement.classList.remove('dark');
+			} catch (e) {}
+		})();
+	</script>
 </svelte:head>
 
-{@render children?.()}
+<div class="app-shell dark:bg-chisel-900 bg-white text-zinc-900 dark:text-zinc-100">
+	<div class="flex">
+		<div class="w-[75px]">
+			<Sidebar />
+		</div>
+		<div class="flex w-full flex-col">
+			<div class="app-toolbar">
+				<ThemeSwitch />
+			</div>
+			{@render children?.()}
+		</div>
+	</div>
+</div>
+
+<style>
+	.app-shell {
+		min-height: 100dvh;
+		display: flex;
+		flex-direction: column;
+	}
+	.app-toolbar {
+		display: flex;
+		justify-content: flex-end;
+		padding: 8px 12px;
+		gap: 8px;
+	}
+</style>
