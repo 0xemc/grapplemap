@@ -24,7 +24,7 @@
 	</script>
 </svelte:head>
 
-<div class="app-shell bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100">
+<div class="app-shell dark:bg-chisel-900 bg-white text-zinc-900 dark:text-zinc-100">
 	<div class="app-toolbar">
 		<ThemeSwitch />
 	</div>

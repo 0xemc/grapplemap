@@ -1,16 +1,10 @@
 <script>
 	import Folder from './Folder.svelte';
 
-	let root = [
+	export let files = [
 		{
 			type: 'folder',
-			name: 'lib',
-			files: [{ type: 'file', name: 'index.ts' }],
-			expanded: true
-		},
-		{
-			type: 'folder',
-			name: 'routes',
+			name: 'Underhook',
 			files: [
 				{
 					type: 'folder',
@@ -37,5 +31,5 @@
 </script>
 
 <div class="min-w-45 z-50 min-h-64 rounded-lg border border-zinc-800 p-6 dark:border-zinc-700">
-	<Folder name="src" files={root} expanded />
+	<Folder name="Wrestling" {files} expanded />
 </div>
