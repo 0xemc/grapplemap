@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { renameNode, deleteNode } from '$lib/db/fileTree';
+	import { createEventDispatcher } from 'svelte';
 	export let id: number;
 	export let name: string;
+	export let active: boolean = false;
+
+	const dispatch = createEventDispatcher<{ select: void }>();
 
 	async function onRename() {
 		const next = prompt('Rename file', name);
@@ -15,9 +19,21 @@
 			await deleteNode(id);
 		}
 	}
+
+	function onSelect() {
+		dispatch('select');
+	}
 </script>
 
-<span class="flex w-fit items-center gap-1">
+<div
+	role="button"
+	tabindex="0"
+	class="flex w-full items-center gap-1 rounded px-1 py-0.5 text-left hover:bg-zinc-800/50 dark:hover:bg-zinc-700/40 {active
+		? 'bg-zinc-800/60 font-medium dark:bg-zinc-700/50'
+		: ''}"
+	on:click={onSelect}
+	on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelect()}
+>
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		width="18"
@@ -37,8 +53,44 @@
 		<path d="M16 17H8" />
 	</svg>
 	{name}
-	<span class="text-xs opacity-80">
-		<button on:click={onRename} title="Rename">Rename</button>
-		<button on:click={onDelete} title="Delete">Delete</button>
+	<span class="ml-auto flex items-center gap-1 text-xs opacity-80">
+		<button
+			on:click|stopPropagation={onRename}
+			title="Rename"
+			class="rounded p-0.5 hover:bg-zinc-800 dark:hover:bg-zinc-700"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="14"
+				height="14"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg
+			>
+		</button>
+		<button
+			on:click|stopPropagation={onDelete}
+			title="Delete"
+			class="rounded p-0.5 hover:bg-red-900/40 dark:hover:bg-red-900/40"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="14"
+				height="14"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				><polyline points="3 6 5 6 21 6" /><path
+					d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"
+				/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg
+			>
+		</button>
 	</span>
-</span>
+</div>

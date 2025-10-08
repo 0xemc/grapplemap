@@ -58,3 +58,13 @@ export async function deleteNode(id: number) {
     return db.nodes.delete(id);
 }
 
+
+export async function getFileById(id: number) {
+    return db.nodes.get(id);
+}
+
+export async function updateFileContent(id: number, content: string) {
+    const ts = Date.now();
+    await db.nodes.update(id, { content, updatedAt: ts });
+}
+

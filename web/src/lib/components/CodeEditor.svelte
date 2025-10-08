@@ -64,6 +64,17 @@
 			view = null;
 		};
 	});
+
+	export function setDoc(text: string) {
+		if (!view) return;
+		const current = view.state.doc.toString();
+		if (current === text) return;
+		view.dispatch({ changes: { from: 0, to: current.length, insert: text } });
+	}
+
+	export function getDoc(): string {
+		return view ? view.state.doc.toString() : '';
+	}
 </script>
 
 <div
