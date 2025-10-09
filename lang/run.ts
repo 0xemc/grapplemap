@@ -13,8 +13,9 @@ const parseTransitions = grammar.createSemantics().addOperation("transitions", {
   _iter(...items) {
     return items.map((i) => i.transitions());
   },
-  transition_block(title, _nl, from_to, steps, _tail) {
+  transition_block(tags, title, _nl, from_to, steps, _tail) {
     return {
+      tags: tags.sourceString.trim(),
       title: title.sourceString.trim(),
       ...from_to.transitions(),
       steps: steps.transitions(),
