@@ -56,3 +56,13 @@ html, body, #svelte {
     display: none;
   }
 }
+
+/* Ohm-based Transition tokens */
+.cm-transition-title { color: #22c55e; font-weight: 600; }
+.cm-transition-operator { color: #60a5fa; }
+.cm-transition-bracket { color: #a78bfa; }
+.cm-transition-punct { color: #cbd5e1; }
+.cm-transition-tag { color: #f59e0b; }
+.cm-transition-from { color: #38bdf8; }
+.cm-transition-to { color: #fb7185; }
+.cm-transition-number { color: #f472b6; }

@@ -11,3 +11,8 @@ declare global {
 }
 
 export {};
+
+declare module '*.ohm?raw' {
+  const src: string;
+  export default src;
+}
