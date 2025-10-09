@@ -11,7 +11,7 @@
 	const dispatch = createEventDispatcher<{ select: { id: number } }>();
 
 	async function onAddFile() {
-		const id = await createFile('untitled.txt', '');
+		const id = await createFile('untitled.grpl', '');
 		if (typeof id === 'number') {
 			activeId = id;
 			dispatch('select', { id });
@@ -47,14 +47,14 @@
 		<button
 			on:click={onAddFile}
 			title="New file"
-			class="rounded bg-zinc-800 px-2 py-1 text-[11px] hover:bg-zinc-700 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+			class="bg-chisel-50 hover:text-chisel-50 dark:hover:text-chisel-50 border-chisel-400 cursor-pointer rounded border px-2 py-1 text-[11px] hover:bg-zinc-700 dark:border-zinc-700 dark:bg-zinc-700 dark:hover:bg-zinc-600"
 			>New</button
 		>
 	</div>
 	{#if files}
 		<ul>
 			{#each files as f (f.id!)}
-				<li>
+				<li class="mb-1">
 					<File
 						id={f.id!}
 						name={f.name}

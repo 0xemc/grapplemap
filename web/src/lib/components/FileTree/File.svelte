@@ -28,8 +28,8 @@
 <div
 	role="button"
 	tabindex="0"
-	class="flex w-full items-center gap-1 rounded px-1 py-0.5 text-left hover:bg-zinc-800/50 dark:hover:bg-zinc-700/40 {active
-		? 'bg-zinc-800/60 font-medium dark:bg-zinc-700/50'
+	class="flex w-full cursor-pointer items-center gap-1 rounded px-1 py-0.5 text-left text-sm font-light hover:bg-zinc-500/50 dark:hover:bg-zinc-700/40 {active
+		? 'bg-chisel-200/60 font-medium dark:bg-zinc-700/50'
 		: ''}"
 	on:click={onSelect}
 	on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelect()}

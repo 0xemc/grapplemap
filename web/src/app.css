@@ -4,65 +4,94 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
-html, body, #svelte {
-  height: 100%;
+html,
+body,
+#svelte {
+	height: 100%;
 }
 @plugin 'flowbite/plugin';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme {
-  --color-secondary-50: #fff5f2;
-  --color-secondary-100: #fff1ee;
-  --color-secondary-200: #ffe4de;
-  --color-secondary-300: #ffd5cc;
-  --color-secondary-400: #ffbcad;
-  --color-secondary-500: #fe795d;
-  --color-secondary-600: #ef562f;
-  --color-secondary-700: #eb4f27;
-  --color-secondary-800: #cc4522;
-  --color-secondary-900: #a5371b;
-
-  --color-primary-50: #f0f9ff;
-  --color-primary-100: #e0f2fe;
-  --color-primary-200: #bae6fd;
-  --color-primary-300: #7dd3fc;
-  --color-primary-400: #38bdf8;
-  --color-primary-500: #0ea5e9;
-  --color-primary-600: #0284c7;
-  --color-primary-700: #0369a1;
-  --color-primary-800: #075985;
-  --color-primary-900: #0c4a6e;
-
-  /* chisel palette */
-  --color-chisel-50: #f2f4f7;
-  --color-chisel-100: #e6e9ef;
-  --color-chisel-200: #cfd5e1;
-  --color-chisel-300: #b1bbc9;
-  --color-chisel-400: #8f9aae;
-  --color-chisel-500: #6f7c94;
-  --color-chisel-600: #56627a;
-  --color-chisel-700: #434d61;
-  --color-chisel-800: #333b4a;
-  --color-chisel-900: #282c34;
-}
-
 @source "../node_modules/flowbite-svelte/dist";
 @source "../node_modules/flowbite-svelte-icons/dist";
 
+@theme {
+	--color-secondary-50: #fff5f2;
+	--color-secondary-100: #fff1ee;
+	--color-secondary-200: #ffe4de;
+	--color-secondary-300: #ffd5cc;
+	--color-secondary-400: #ffbcad;
+	--color-secondary-500: #fe795d;
+	--color-secondary-600: #ef562f;
+	--color-secondary-700: #eb4f27;
+	--color-secondary-800: #cc4522;
+	--color-secondary-900: #a5371b;
+
+	--color-primary-50: #f0f9ff;
+	--color-primary-100: #e0f2fe;
+	--color-primary-200: #bae6fd;
+	--color-primary-300: #7dd3fc;
+	--color-primary-400: #38bdf8;
+	--color-primary-500: #0ea5e9;
+	--color-primary-600: #0284c7;
+	--color-primary-700: #0369a1;
+	--color-primary-800: #075985;
+	--color-primary-900: #0c4a6e;
+
+	/* chisel palette */
+	--color-chisel-50: #f2f4f7;
+	--color-chisel-100: #e6e9ef;
+	--color-chisel-200: #cfd5e1;
+	--color-chisel-300: #b1bbc9;
+	--color-chisel-400: #8f9aae;
+	--color-chisel-500: #6f7c94;
+	--color-chisel-600: #56627a;
+	--color-chisel-700: #434d61;
+	--color-chisel-800: #333b4a;
+	--color-chisel-900: #282c34;
+
+	--background-color: var(--color-chisel-900);
+	--background-color-default: var(--color-chisel-900);
+}
+
 @layer base {
-  /* disable chrome cancel button */
-  input[type="search"]::-webkit-search-cancel-button {
-    display: none;
-  }
+	/* disable chrome cancel button */
+	input[type='search']::-webkit-search-cancel-button {
+		display: none;
+	}
 }
 
 /* Ohm-based Transition tokens */
-.cm-transition-title { color: #22c55e; font-weight: 600; }
-.cm-transition-operator { color: #60a5fa; }
-.cm-transition-bracket { color: #a78bfa; }
-.cm-transition-punct { color: #cbd5e1; }
-.cm-transition-tag { color: #f59e0b; }
-.cm-transition-from { color: #38bdf8; }
-.cm-transition-to { color: #fb7185; }
-.cm-transition-number { color: #f472b6; }
+.cm-transition-title {
+	color: #22c55e;
+	font-weight: 600;
+}
+.cm-transition-operator {
+	color: #60a5fa;
+}
+.cm-transition-bracket {
+	color: #a78bfa;
+}
+.cm-transition-punct {
+	color: #cbd5e1;
+}
+.cm-transition-tag {
+	color: #f59e0b;
+}
+.cm-transition-from {
+	color: #38bdf8;
+}
+.cm-transition-to {
+	color: #fb7185;
+}
+.cm-transition-number {
+	color: #f472b6;
+}
+
+.svelte-flow.dark {
+	--background-color: var(--color-chisel-900);
+}
+.svelte-flow {
+	--background-color: white;
+}
