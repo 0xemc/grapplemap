@@ -48,6 +48,13 @@ export function ohmHighlighter(options: OhmHighlighterOptions): Extension {
     semantics.addOperation<Token[]>(
       'tokens',
       {
+        _iter(this: any, ...children: any[]) {
+          const tokens: Token[] = [];
+          for (const ch of children) {
+            if (typeof ch?.tokens === 'function') tokens.push(...ch.tokens());
+          }
+          return tokens;
+        },
         _nonterminal(this: any, ...children: any[]) {
           const tokens: Token[] = [];
           for (const ch of children) {
@@ -90,7 +97,10 @@ export function ohmHighlighter(options: OhmHighlighterOptions): Extension {
       } as any
     );
 
-    const tokens: Token[] = semantics(result).tokens() as Token[];
+    const raw = semantics(result).tokens() as any;
+    const tokens: Token[] = (Array.isArray(raw) ? raw.flat(Infinity) : [])
+      .filter((t: any) => t && typeof t.from === 'number' && typeof t.to === 'number' && t.to > t.from)
+      .sort((a: Token, b: Token) => (a.from - b.from) || (a.to - b.to));
 
     if (!tokens.length) return Decoration.none;
 

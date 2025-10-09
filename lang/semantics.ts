@@ -5,8 +5,8 @@ export function createTransitionsSemantics(grammar: any) {
   return grammar
     .createSemantics()
     .addOperation('transitions', {
-      blocks(first: any, _a: any, rest: any, _end: any) {
-        return [...first.transitions(), ...rest.transitions().flat().flat()];
+      blocks(_a: any, rest: any, _end: any) {
+        return [...rest.transitions().flat().flat()];
       },
       _iter(this: any, ...items: any[]) {
         return items.map((i) => i.transitions());

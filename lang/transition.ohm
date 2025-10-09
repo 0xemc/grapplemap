@@ -1,5 +1,5 @@
 Transition {
- blocks = block (block_delimiter block?)* end
+ blocks = (block_delimiter? block)* end
  block = (~block_delimiter transition_block)+ 
  block_delimiter = "\n" nl*
  
