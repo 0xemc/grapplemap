@@ -4,6 +4,7 @@ import { Decoration, EditorView } from '@codemirror/view';
 import ohm from 'ohm-js';
 import { createTransitionsSemantics } from '@lang/semantics';
 import grammarSrc from '@lang/transition.ohm?raw';
+import { debugParse } from './transitionParser';
 
 type Token = { from: number; to: number; cls: string };
 
@@ -36,6 +37,7 @@ export function ohmHighlighter(options: OhmHighlighterOptions): Extension {
   function computeDecorations(text: string, grammar: ohm.Grammar | null) {
     if (!grammar) return Decoration.none;
 
+    debugParse(text)
     const result = grammar.match(text, startRule);
     if (result.failed()) return Decoration.none;
 
@@ -65,23 +67,23 @@ export function ohmHighlighter(options: OhmHighlighterOptions): Extension {
         },
 
         // Domain-specific rules
-        title(this: any) {
+        title(this: any, _chars: any) {
           const s = this.source;
           return [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-title' }];
         },
-        tag_content(this: any) {
+        tag_content(this: any, _chars: any) {
           const s = this.source;
           return [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-tag' }];
         },
-        from(this: any) {
+        from(this: any, _chars: any) {
           const s = this.source;
           return s.startIdx === s.endIdx ? [] : [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-from' }];
         },
-        to(this: any) {
+        to(this: any, _chars: any) {
           const s = this.source;
           return s.startIdx === s.endIdx ? [] : [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-to' }];
         },
-        digit(this: any) {
+        digit(this: any, _d: any) {
           const s = this.source;
           return [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-number' }];
         }
