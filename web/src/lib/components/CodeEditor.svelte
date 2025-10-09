@@ -9,8 +9,10 @@
 	import { lintKeymap } from '@codemirror/lint';
 	import { oneDark } from '@codemirror/theme-one-dark';
 	import { javascript } from '@codemirror/lang-javascript';
+	import { ohmHighlighter } from '$lib/utils/ohmHighlighter';
+	import { debugParse, parseTransitions, traceTransition } from '$lib/utils/transitionParser';
 
-	let { value = '', language = 'javascript' } = $props();
+	let { value = '', language = 'transition' } = $props();
 
 	let host: HTMLDivElement | null = null;
 	let view: EditorView | null = null;
@@ -28,6 +30,10 @@
 		if (!host) return;
 
 		const langExt = language === 'javascript' ? javascript({ typescript: false }) : [];
+		const customLangExt =
+			language === 'transition'
+				? ohmHighlighter({ grammarURL: '/transition.ohm', startRule: 'blocks' })
+				: [];
 
 		const state = EditorState.create({
 			doc: value,
@@ -45,6 +51,7 @@
 				highlightSelectionMatches(),
 				autocompletion(),
 				langExt,
+				customLangExt,
 				themeCompartment.of(currentThemeExt()),
 				EditorView.lineWrapping
 			]
@@ -74,6 +81,22 @@
 
 	export function getDoc(): string {
 		return view ? view.state.doc.toString() : '';
+	}
+
+	// Debug helpers: callable from parent or console
+	export async function debugParseDoc() {
+		const doc = getDoc();
+		return await debugParse(doc);
+	}
+
+	export async function parseDoc() {
+		const doc = getDoc();
+		return await parseTransitions(doc);
+	}
+
+	export async function traceDoc() {
+		const doc = getDoc();
+		return await traceTransition(doc);
 	}
 </script>
 

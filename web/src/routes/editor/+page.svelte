@@ -49,7 +49,7 @@
 					>{isSaving ? 'Saving…' : 'Save'}</button
 				>
 			</div>
-			<CodeEditor bind:this={editorRef} value={''} language="javascript" />
+			<CodeEditor bind:this={editorRef} value={''} language="transition" />
 		</div>
 	</div>
 </div>
