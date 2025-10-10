@@ -121,7 +121,7 @@
 		nodes = [...layouted.nodes];
 		edges = [...layouted.edges];
 
-		fitView();
+		fitView({ maxZoom: 1.2 });
 	}
 </script>
 
@@ -132,6 +132,7 @@
 	{colorMode}
 	connectionLineType={ConnectionLineType.SmoothStep}
 	defaultEdgeOptions={{ type: 'smoothstep', animated: true }}
+	max
 >
 	<Panel position="top-right">
 		<button onclick={() => onLayout('TB')}>vertical layout</button>
