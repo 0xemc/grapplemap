@@ -6,7 +6,6 @@
 	import { filesStore } from '$lib/stores/fileTree';
 	import { type FileT } from '$lib/db/fileTree';
 	import { type Transition } from '@lang/types';
-	import { parse } from '@lang/parse';
 	const nodeTypes = { textUpdater: TransitionNode };
 	let nodes = $state.raw([{ id: '2', position: { x: 0, y: 100 }, data: { label: '2' } }]);
 
@@ -25,10 +24,13 @@
 	});
 
 	$effect(() => {
-		transitions = files
-			?.map((f) => f.content ?? '')
-			.flatMap(parse)
-			.flatMap((res) => res?.transitions ?? []);
+		const promises = files?.map((f) => f.content ?? '').map(parseOnServer);
+
+		Promise.all(promises ?? []).then((res) => {
+			console.log(res);
+			const transitions = res.flatMap((r) => r.data);
+			console.log(transitions);
+		});
 	});
 
 	$effect(() => console.log(transitions));
@@ -39,6 +41,15 @@
 			position: { x: 0, y: 0 },
 			data: tr
 		};
+	}
+
+	async function parseOnServer(text: string) {
+		const r = await fetch('/api/parse', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ text })
+		});
+		return r.json();
 	}
 
 	let edges = $state.raw([{ id: 'e1-2', source: 'node-1', target: '2' }]);

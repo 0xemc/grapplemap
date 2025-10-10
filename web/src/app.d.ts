@@ -10,9 +10,17 @@ declare global {
 	}
 }
 
-export {};
+export { };
 
 declare module '*.ohm?raw' {
-  const src: string;
-  export default src;
+	const src: string;
+	export default src;
+}
+
+// Augment ohm-js types here so web build sees toRecipe/makeRecipe
+declare module 'ohm-js' {
+	interface Grammar {
+		toRecipe(superGrammarExpr?: string): string;
+	}
+	export function makeRecipe(recipe: unknown): import('ohm-js').Grammar;
 }

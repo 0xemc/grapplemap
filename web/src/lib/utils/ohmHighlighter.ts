@@ -1,7 +1,7 @@
 import type { Extension } from '@codemirror/state';
 import { RangeSetBuilder, StateEffect, StateField } from '@codemirror/state';
 import { Decoration, EditorView } from '@codemirror/view';
-import ohm from 'ohm-js';
+import * as ohm from 'ohm-js';
 import { transition } from "@lang/operations"
 import grammarSrc from '@lang/transition.ohm?raw';
 import { debugParse } from './transitionParser';
@@ -50,21 +50,21 @@ export function ohmHighlighter(options: OhmHighlighterOptions): Extension {
     semantics.addOperation<Token[]>(
       'tokens',
       {
-        _iter(this: any, ...children: any[]) {
+        _iter(this, ...children) {
           const tokens: Token[] = [];
           for (const ch of children) {
             if (typeof ch?.tokens === 'function') tokens.push(...ch.tokens());
           }
           return tokens;
         },
-        _nonterminal(this: any, ...children: any[]) {
+        _nonterminal(this, ...children) {
           const tokens: Token[] = [];
           for (const ch of children) {
             if (typeof ch?.tokens === 'function') tokens.push(...ch.tokens());
           }
           return tokens;
         },
-        _terminal(this: any) {
+        _terminal(this) {
           const text: string = this.sourceString;
           const from: number = this.source.startIdx;
           const to: number = this.source.endIdx;
@@ -76,23 +76,23 @@ export function ohmHighlighter(options: OhmHighlighterOptions): Extension {
         },
 
         // Domain-specific rules
-        title(this: any, _chars: any) {
+        title(this, _chars) {
           const s = this.source;
           return [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-title' }];
         },
-        tag_content(this: any, _chars: any) {
+        tag_content(this, _chars) {
           const s = this.source;
           return [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-tag' }];
         },
-        from(this: any, _chars: any) {
+        from(this, _chars) {
           const s = this.source;
           return s.startIdx === s.endIdx ? [] : [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-from' }];
         },
-        to(this: any, _chars: any) {
+        to(this, _chars) {
           const s = this.source;
           return s.startIdx === s.endIdx ? [] : [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-to' }];
         },
-        digit(this: any, _d: any) {
+        digit(this, _d) {
           const s = this.source;
           return [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-number' }];
         }
@@ -101,7 +101,7 @@ export function ohmHighlighter(options: OhmHighlighterOptions): Extension {
 
     const raw = semantics(result).tokens() as any;
     const tokens: Token[] = (Array.isArray(raw) ? raw.flat(Infinity) : [])
-      .filter((t: any) => t && typeof t.from === 'number' && typeof t.to === 'number' && t.to > t.from)
+      .filter((t) => t && typeof t.from === 'number' && typeof t.to === 'number' && t.to > t.from)
       .sort((a: Token, b: Token) => (a.from - b.from) || (a.to - b.to));
 
     if (!tokens.length) return Decoration.none;
@@ -116,7 +116,7 @@ export function ohmHighlighter(options: OhmHighlighterOptions): Extension {
       return Decoration.none;
     },
     update(decos, tr) {
-      let mapped = decos.map(tr.changes);
+      const mapped = decos.map(tr.changes);
       const grammar = tr.state.field(grammarField);
       const text = tr.state.doc.toString();
       const built = computeDecorations(text, grammar);

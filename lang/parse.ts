@@ -3,7 +3,8 @@ import * as ohm from "ohm-js";
 import { transition } from "./operations";
 import type { Transition } from "./types";
 
-const grammarContents = fs.readFileSync("./transition.ohm", "utf-8");
+const grammarUrl = new URL('./transition.ohm', import.meta.url);
+const grammarContents = fs.readFileSync(grammarUrl, "utf-8");
 const grammar = ohm.grammar(grammarContents);
 const semantics = grammar.createSemantics()
 
