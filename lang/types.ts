@@ -5,3 +5,7 @@ export type Transition = {
   to: string;
   steps: string[];
 };
+
+export type Position = {
+  title: string
+}
