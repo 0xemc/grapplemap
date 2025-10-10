@@ -1,11 +1,11 @@
 import Dexie from 'dexie';
 import type { Table } from 'dexie';
 
-export type NodeType = 'file';
+export type FileType = 'file';
 
-export interface Node {
+export interface FileT {
 	id?: number;
-	type: NodeType;
+	type: FileType;
 	name: string;
 	parentId?: number | null;
 	content?: string | null;
@@ -15,7 +15,7 @@ export interface Node {
 }
 
 class FileTreeDB extends Dexie {
-	nodes!: Table<Node, number>;
+	nodes!: Table<FileT, number>;
 
 	constructor() {
 		super('filetree');

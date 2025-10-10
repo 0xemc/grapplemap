@@ -10,7 +10,7 @@
 	import { oneDark } from '@codemirror/theme-one-dark';
 	import { javascript } from '@codemirror/lang-javascript';
 	import { ohmHighlighter } from '$lib/utils/ohmHighlighter';
-	import { debugParse, parseTransitions, traceTransition } from '$lib/utils/transitionParser';
+	import { debugParse, traceTransition } from '$lib/utils/transitionParser';
 
 	let { value = '', language = 'transition' } = $props();
 
@@ -91,7 +91,7 @@
 
 	export async function parseDoc() {
 		const doc = getDoc();
-		return await parseTransitions(doc);
+		// return await parseTransitions(doc);
 	}
 
 	export async function traceDoc() {

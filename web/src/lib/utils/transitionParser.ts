@@ -1,6 +1,6 @@
 import ohm from 'ohm-js';
-import { createTransitionsSemantics } from '@lang/semantics';
 import grammarSrc from '@lang/transition.ohm?raw';
+import { transition } from '@lang/operations';
 
 const grammar = ohm.grammar(grammarSrc);
 
@@ -32,7 +32,7 @@ export async function parseTransitions(text: string): Promise<ParseResult<any[]>
     };
   }
 
-  const semantics = createTransitionsSemantics(grammar);
+  const semantics = grammar.createSemantics().addOperation('transitions', transition)
 
   const transitions = semantics(result).transitions();
   return { ok: true, value: transitions };

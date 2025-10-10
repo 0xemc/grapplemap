@@ -2,7 +2,7 @@ import type { Extension } from '@codemirror/state';
 import { RangeSetBuilder, StateEffect, StateField } from '@codemirror/state';
 import { Decoration, EditorView } from '@codemirror/view';
 import ohm from 'ohm-js';
-import { createTransitionsSemantics } from '@lang/semantics';
+import { transition } from "@lang/operations"
 import grammarSrc from '@lang/transition.ohm?raw';
 import { debugParse } from './transitionParser';
 
@@ -41,8 +41,10 @@ export function ohmHighlighter(options: OhmHighlighterOptions): Extension {
     const result = grammar.match(text, startRule);
     if (result.failed()) return Decoration.none;
 
+
+
     // Reuse shared semantics and extend it with a tokenization operation
-    const baseSemantics = createTransitionsSemantics(grammar);
+    const baseSemantics = grammar.createSemantics().addOperation('transitions', transition)
     const semantics = grammar.extendSemantics(baseSemantics);
 
     semantics.addOperation<Token[]>(

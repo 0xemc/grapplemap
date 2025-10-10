@@ -3,11 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "parse": "node run.ts",
-    "parse:pers": "node parse-pers.ts"
+    "parse": "bun ./run.ts"
   },
   "dependencies": {
-    "fs": "^0.0.1-security",
     "ohm-js": "^17.2.1"
   },
   "devDependencies": {

@@ -2,9 +2,9 @@
 	import File from './File.svelte';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { filesStore } from '$lib/stores/fileTree';
-	import { createFile, type Node } from '$lib/db/fileTree';
+	import { createFile, type FileT } from '$lib/db/fileTree';
 
-	let files: Node[] | null = null;
+	let files: FileT[] | null = null;
 	let activeId: number | null = null;
 	let unsub: (() => void) | null = null;
 
