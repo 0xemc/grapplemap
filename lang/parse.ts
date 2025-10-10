@@ -1,6 +1,7 @@
 import fs from "fs";
 import * as ohm from "ohm-js";
 import { transition } from "./operations";
+import type { Transition } from "./types";
 
 const grammarContents = fs.readFileSync("./transition.ohm", "utf-8");
 const grammar = ohm.grammar(grammarContents);
@@ -8,7 +9,7 @@ const semantics = grammar.createSemantics()
 
 semantics.addOperation('transitions', transition)
 
-export const parse = (text: string) => {
+export const parse = (text: string): { transitions: Transition[] } | undefined => {
     const result = grammar.match(text)
     if (result.succeeded()) {
         const transitions = semantics(result).transitions()

@@ -1,19 +1,12 @@
 <script lang="ts">
-	import {
-		Background,
-		BackgroundVariant,
-		Controls,
-		MiniMap,
-		SvelteFlow,
-		type ColorMode
-	} from '@xyflow/svelte';
+	import { Controls, MiniMap, SvelteFlow, type ColorMode } from '@xyflow/svelte';
 	import TransitionNode from '../../lib/components/TransitionNode.svelte';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount } from 'svelte';
 	import { filesStore } from '$lib/stores/fileTree';
 	import { type FileT } from '$lib/db/fileTree';
 	import { type Transition } from '@lang/types';
-	import { promiseHooks } from 'v8';
+	import { parse } from '@lang/parse';
 	const nodeTypes = { textUpdater: TransitionNode };
 	let nodes = $state.raw([{ id: '2', position: { x: 0, y: 100 }, data: { label: '2' } }]);
 
@@ -21,7 +14,7 @@
 	onMount(() => observeTheme((t: Theme) => (colorMode = t)));
 
 	let files = $state<FileT[] | null>(null);
-	let transitions = $state<Transition[] | null>(null);
+	let transitions = $state<Transition[] | undefined>(undefined);
 
 	// Subscribe on mount; cleanup on teardown
 	$effect(() => {
@@ -29,6 +22,13 @@
 			files = v;
 		});
 		return () => unsub();
+	});
+
+	$effect(() => {
+		transitions = files
+			?.map((f) => f.content ?? '')
+			.flatMap(parse)
+			.flatMap((res) => res?.transitions ?? []);
 	});
 
 	$effect(() => console.log(transitions));
