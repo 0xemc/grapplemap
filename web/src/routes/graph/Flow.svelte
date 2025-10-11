@@ -52,7 +52,7 @@
 	$effect(() => console.log(transitions));
 
 	function transitionToEdge(tr: Transition) {
-		return { id: tr.title, source: tr.from, target: tr.to, animated: true };
+		return { id: tr.title, source: tr.from, target: tr.to, animated: true, label: tr.title };
 	}
 
 	function transitionToNodes(tr: Transition) {
@@ -83,9 +83,22 @@
 
 	function getLayoutedElements(nodes, edges, options) {
 		const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-		g.setGraph({ rankdir: options.direction });
+		g.setGraph({ rankdir: options.direction, ranksep: 140, nodesep: 100, edgesep: 40 });
 
-		edges.forEach((edge) => g.setEdge(edge.source, edge.target));
+		edges.forEach((edge) => {
+			const labelWidth = edge.measured?.width ?? 0; // measure your label if you render one
+			const labelHeight = edge.measured?.height ?? 0; // or choose a sensible default
+			g.setEdge(edge.source, edge.target, {
+				// If you have a label string you can pass it too; the box is what reserves space:
+				label: edge.label ?? '',
+				width: labelWidth + 1000,
+				height: labelHeight,
+				labelpos: 'c', // "l" | "r" | "c"
+				minlen: edge.minlen ?? 1, // >1 forces extra rank gaps for this edge
+				weight: edge.weight ?? 1 // crossing minimization priority
+			});
+		});
+
 		nodes.forEach((node) =>
 			g.setNode(node.id, {
 				...node,
@@ -121,7 +134,7 @@
 		nodes = [...layouted.nodes];
 		edges = [...layouted.edges];
 
-		fitView({ maxZoom: 1.2 });
+		fitView();
 	}
 </script>
 
@@ -132,7 +145,8 @@
 	{colorMode}
 	connectionLineType={ConnectionLineType.SmoothStep}
 	defaultEdgeOptions={{ type: 'smoothstep', animated: true }}
-	max
+	maxZoom={1.2}
+	minZoom={0.4}
 >
 	<Panel position="top-right">
 		<button onclick={() => onLayout('TB')}>vertical layout</button>
