@@ -41,7 +41,9 @@
 	});
 </script>
 
-<div class="min-w-45 z-50 min-h-64 rounded-lg border border-zinc-800 p-6 dark:border-zinc-700">
+<div
+	class="min-w-45 z-50 hidden min-h-64 rounded-lg border border-zinc-800 p-6 md:block dark:border-zinc-700"
+>
 	<div class="mb-2 flex items-center justify-between text-xs opacity-80">
 		<span class="uppercase tracking-wider opacity-70">Files</span>
 		<button
