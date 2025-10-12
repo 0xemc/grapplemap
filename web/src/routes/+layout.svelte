@@ -6,6 +6,7 @@
 	import { BottomNav, BottomNavItem, Tooltip } from 'flowbite-svelte';
 	import { EditOutline, HomeOutline, HomeSolid, ShareNodesOutline } from 'flowbite-svelte-icons';
 	import { page } from '$app/state';
+	import { replaceAll } from '@codemirror/search';
 
 	let { children } = $props();
 
@@ -93,6 +94,9 @@
 		</aside>
 		<div class="flex w-full flex-col">
 			<div class="app-toolbar">
+				<div>
+					<h1 class="m-0 text-lg font-semibold">{activeUrl.replace('/', '')}</h1>
+				</div>
 				<ThemeSwitch />
 			</div>
 			{@render children?.()}
@@ -108,7 +112,8 @@
 	}
 	.app-toolbar {
 		display: flex;
-		justify-content: flex-end;
+		justify-content: space-between;
+		align-items: center;
 		padding: 8px 12px;
 		gap: 8px;
 	}

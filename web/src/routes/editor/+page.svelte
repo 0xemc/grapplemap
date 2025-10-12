@@ -28,9 +28,6 @@
 </script>
 
 <div class="box-border flex h-full flex-col gap-3 p-4">
-	<div>
-		<h1 class="m-0 text-lg font-semibold">Editor</h1>
-	</div>
 	<div class="flex gap-3">
 		<FileTree on:select={handleSelect} />
 		<div class="flex min-h-[300px] flex-1 flex-col gap-2">

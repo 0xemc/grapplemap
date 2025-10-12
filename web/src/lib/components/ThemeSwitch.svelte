@@ -12,4 +12,4 @@
 	});
 </script>
 
-<DarkMode class="text-primary-500 dark:text-primary-600 dark:border-primary-900 border" />
+<DarkMode class="text-primary-500 dark:text-primary-600 dark:border-primary-900 " />
