@@ -47,16 +47,8 @@
 
 		edges = transitions?.map(transitionToEdge);
 		nodes = uniqueBy(transitions?.flatMap(transitionToNodes) ?? [], prop('id'));
+		// @todo Unsure why we need this slight delay for layout to work correctly
 		setTimeout(() => onLayout('LR'), 20);
-
-		Promise.all(promises ?? []).then((res) => {
-			console.log(res);
-			const transitions = res.flatMap((r) => r.data);
-			console.log(transitions);
-
-			edges = transitions.map(transitionToEdge);
-			// @todo Unsure why we need this slight delay for layout to work correctly
-		});
 	});
 
 	$effect(() => console.log(transitions));
