@@ -9,14 +9,16 @@
 		type ColorMode
 	} from '@xyflow/svelte';
 	import * as Dagre from '@dagrejs/dagre';
-	import { prop, uniqueBy } from 'remeda';
+	import { isNonNullish, isNullish, prop, uniqueBy } from 'remeda';
 	import TransitionNode from '../../lib/components/TransitionNode.svelte';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount } from 'svelte';
 	import { filesStore } from '$lib/stores/fileTree';
 	import { type FileT } from '$lib/db/fileTree';
 	import { type Transition } from '@lang/types';
-	import { transition } from '@lang/operations';
+	import { parse } from '@lang/parse';
+	import * as ohm from 'ohm-js';
+	import transitionRecipe from '@lang/recipes/transition.json';
 	const nodeTypes = { textUpdater: TransitionNode };
 	let nodes = $state.raw([{ id: '2', position: { x: 0, y: 100 }, data: { label: '2' } }]);
 	let edges = $state.raw([{ id: 'e1-2', source: 'node-1', target: '2' }]);
@@ -35,17 +37,25 @@
 		return () => unsub();
 	});
 
+	const grammar = ohm.makeRecipe(transitionRecipe);
 	$effect(() => {
-		const promises = files?.map((f) => f.content ?? '').map(parseOnServer);
+		const transitions = files
+			?.map(prop('content'))
+			.map((content) => parse(grammar, content ?? ''))
+			.flatMap((res) => res?.transitions)
+			.filter(isNonNullish);
+
+		edges = transitions?.map(transitionToEdge);
+		nodes = uniqueBy(transitions?.flatMap(transitionToNodes) ?? [], prop('id'));
+		setTimeout(() => onLayout('LR'), 20);
 
 		Promise.all(promises ?? []).then((res) => {
 			console.log(res);
 			const transitions = res.flatMap((r) => r.data);
 			console.log(transitions);
-			nodes = uniqueBy(transitions.flatMap(transitionToNodes), prop('id'));
+
 			edges = transitions.map(transitionToEdge);
 			// @todo Unsure why we need this slight delay for layout to work correctly
-			setTimeout(() => onLayout('LR'), 20);
 		});
 	});
 
@@ -55,28 +65,21 @@
 		return { id: tr.title, source: tr.from, target: tr.to, animated: true, label: tr.title };
 	}
 
-	function transitionToNodes(tr: Transition) {
-		return [
-			{
-				id: tr.from,
-				position: { x: 0, y: 0 },
-				data: { label: tr.from }
-			},
-			{
-				id: tr.to,
-				position: { x: 0, y: 0 },
-				data: { label: tr.to }
-			}
-		];
-	}
-
-	async function parseOnServer(text: string) {
-		const r = await fetch('/api/parse', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ text })
-		});
-		return r.json();
+	function transitionToNodes(tr?: Transition) {
+		return tr
+			? [
+					{
+						id: tr.from,
+						position: { x: 0, y: 0 },
+						data: { label: tr.from }
+					},
+					{
+						id: tr.to,
+						position: { x: 0, y: 0 },
+						data: { label: tr.to }
+					}
+				]
+			: [];
 	}
 
 	const { fitView } = useSvelteFlow();

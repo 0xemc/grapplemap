@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "parse": "bun ./run.ts"
+    "parse": "bun ./run.ts",
+    "recipe": "bun ./recipe.ts"
   },
   "dependencies": {
     "ohm-js": "^17.2.1"

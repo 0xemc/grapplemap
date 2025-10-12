@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import * as ohm from 'ohm-js';
 
-const src = fs.readFileSync(new URL('../transition.ohm', import.meta.url), 'utf8');
+const src = fs.readFileSync(new URL('./transition.ohm', import.meta.url), 'utf8');
 
 // Build recipe string, then parse to JSON
 const recipeStr = ohm.grammar(src).toRecipe();
@@ -16,5 +16,5 @@ for (const k of Object.keys(rules)) {
     if (r?.[1]?.sourceInterval) delete r[1].sourceInterval;   // rule-level meta
 }
 
-fs.writeFileSync(new URL('../transition.recipe.json', import.meta.url), JSON.stringify(recipe));
+fs.writeFileSync(new URL('./recipes/transition.json', import.meta.url), JSON.stringify(recipe));
 console.log('Wrote transition.recipe.json');

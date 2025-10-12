@@ -104,13 +104,3 @@
 	class="h-full min-h-[300px] flex-1 rounded border border-zinc-800 dark:border-zinc-700"
 	bind:this={host}
 ></div>
-
-<style>
-	.cm-editor {
-		height: 100%;
-	}
-	.cm-scroller {
-		height: 100%;
-		overflow: auto;
-	}
-</style>

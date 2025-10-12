@@ -3,7 +3,7 @@ import { RangeSetBuilder, StateEffect, StateField } from '@codemirror/state';
 import { Decoration, EditorView } from '@codemirror/view';
 import * as ohm from 'ohm-js';
 import { transition } from "@lang/operations"
-import grammarSrc from '@lang/transition.ohm?raw';
+import transitionRecipe from '@lang/recipes/transition.json';
 import { debugParse } from './transitionParser';
 
 type Token = { from: number; to: number; cls: string };
@@ -20,11 +20,7 @@ export function ohmHighlighter(options: OhmHighlighterOptions): Extension {
 
   const grammarField = StateField.define<ohm.Grammar | null>({
     create() {
-      try {
-        return ohm.grammar(grammarSrc);
-      } catch {
-        return null;
-      }
+      return ohm.makeRecipe(transitionRecipe);
     },
     update(value, tr) {
       for (const e of tr.effects) {

@@ -1,8 +1,8 @@
 import * as ohm from 'ohm-js';
-import grammarSrc from '@lang/transition.ohm?raw';
+import transitionRecipe from '@lang/recipes/transition.json';
 import { transition } from '@lang/operations';
 
-const grammar = ohm.grammar(grammarSrc);
+const grammar = ohm.makeRecipe(transitionRecipe);
 
 export async function matchTransition(text: string) {
   return grammar.match(text);
