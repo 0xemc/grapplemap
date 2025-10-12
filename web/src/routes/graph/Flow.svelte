@@ -19,6 +19,7 @@
 	import { parse } from '@lang/parse';
 	import * as ohm from 'ohm-js';
 	import transitionRecipe from '@lang/recipes/transition.json';
+	import { Button, ButtonGroup, Toggle } from 'flowbite-svelte';
 	const nodeTypes = { textUpdater: TransitionNode };
 	let nodes = $state.raw([{ id: '2', position: { x: 0, y: 100 }, data: { label: '2' } }]);
 	let edges = $state.raw([{ id: 'e1-2', source: 'node-1', target: '2' }]);
@@ -45,7 +46,7 @@
 			.flatMap((res) => res?.transitions)
 			.filter(isNonNullish);
 
-		edges = transitions?.map(transitionToEdge);
+		edges = (transitions ?? [])?.map(transitionToEdge);
 		nodes = uniqueBy(transitions?.flatMap(transitionToNodes) ?? [], prop('id'));
 		// @todo Unsure why we need this slight delay for layout to work correctly
 		setTimeout(() => onLayout('LR'), 20);
@@ -144,8 +145,10 @@
 	minZoom={0.4}
 >
 	<Panel position="top-right">
-		<button onclick={() => onLayout('TB')}>vertical layout</button>
-		<button onclick={() => onLayout('LR')}>horizontal layout</button>
+		<ButtonGroup>
+			<Button onclick={() => onLayout('LR')} class="">→ horizontal</Button>
+			<Button onclick={() => onLayout('TB')} class="">↓ vertical</Button>
+		</ButtonGroup>
 	</Panel>
 	<MiniMap />
 	<Controls />
