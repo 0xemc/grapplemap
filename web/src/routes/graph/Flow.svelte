@@ -150,6 +150,6 @@
 			<Button onclick={() => onLayout('TB')} class="">↓ vertical</Button>
 		</ButtonGroup>
 	</Panel>
-	<MiniMap />
+	<MiniMap class="md-block hidden" />
 	<Controls />
 </SvelteFlow>
