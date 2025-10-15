@@ -2,6 +2,7 @@
 	import FileTree from '$lib/components/FileTree/FileTree.svelte';
 	import CodeEditor from '$lib/components/CodeEditor.svelte';
 	import { getFileById, updateFileContent } from '$lib/db/fileTree';
+	import { Button } from 'flowbite-svelte';
 
 	let activeFileId: number | null = null;
 	let activeFileName = '';
@@ -39,11 +40,10 @@
 						<span class="opacity-70">No file selected</span>
 					{/if}
 				</div>
-				<button
-					on:click={onSave}
-					disabled={activeFileId === null || isSaving}
-					class="cursor-pointer rounded bg-blue-600 px-3 py-1 text-xs text-white disabled:cursor-not-allowed disabled:opacity-50"
-					>{isSaving ? 'Saving…' : 'Save'}</button
+				<Button
+					onclick={onSave}
+					class="cursor-pointer rounded bg-blue-600 px-3 py-1 text-xs text-white focus-within:outline-0 focus:ring-0 focus-visible:outline-0"
+					>Save</Button
 				>
 			</div>
 			<CodeEditor bind:this={editorRef} value={''} language="transition" />

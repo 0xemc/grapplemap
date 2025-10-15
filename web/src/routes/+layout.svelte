@@ -39,7 +39,7 @@
 <div class="app-shell dark:bg-chisel-900 bg-white text-zinc-900 dark:text-zinc-100">
 	<div class="flex">
 		<!-- Desktop Nav -->
-		<div class="w-[75px]">
+		<div class="hidden w-[75px] md:block">
 			<Sidebar />
 		</div>
 
