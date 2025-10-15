@@ -39,14 +39,12 @@
 <div class="app-shell dark:bg-chisel-900 bg-white text-zinc-900 dark:text-zinc-100">
 	<div class="flex">
 		<!-- Desktop Nav -->
-		<aside class="hidden border-r md:block">
-			<div class="w-[75px]">
-				<Sidebar />
-			</div>
-		</aside>
+		<div class="w-[75px]">
+			<Sidebar />
+		</div>
 
 		<!-- Mobile Nav -->
-		<aside class="md-hidden">
+		<aside class="md:hidden">
 			<BottomNav
 				position="absolute"
 				navType="application"

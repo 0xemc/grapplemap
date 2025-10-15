@@ -19,7 +19,6 @@
 	});
 </script>
 
-<SidebarButton onclick={toggle} class="mb-2" />
 <Sidebar
 	{activeUrl}
 	backdrop={false}
