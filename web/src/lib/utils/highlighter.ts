@@ -9,7 +9,6 @@ import { debugParse } from './transitionParser';
 type Token = { from: number; to: number; cls: string };
 
 export type OhmHighlighterOptions = {
-  grammarURL: string;
   startRule?: string;
 };
 

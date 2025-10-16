@@ -11,6 +11,9 @@
 	import { javascript } from '@codemirror/lang-javascript';
 	import { ohmHighlighter } from '$lib/utils/highlighter';
 	import { debugParse, traceTransition } from '$lib/utils/transitionParser';
+	// in CodeEditor.svelte
+	import { linter, lintGutter } from '@codemirror/lint';
+	import { matchTransition } from '$lib/utils/transitionParser';
 
 	let { value = '', language = 'transition' } = $props();
 
@@ -26,14 +29,29 @@
 		return isDark() ? oneDark : [];
 	}
 
+	const grammarLint = linter(async (view) => {
+		const text = view.state.doc.toString();
+		const m = await matchTransition(text);
+		if (!m.failed()) return [];
+
+		const interval = m.getInterval?.();
+		const from = interval?.startIdx ?? 0;
+		const to = Math.min(from + 1, view.state.doc.length);
+		return [
+			{
+				from,
+				to,
+				severity: 'error',
+				message: m.message ?? 'Syntax error'
+			}
+		];
+	});
+
 	onMount(() => {
 		if (!host) return;
 
 		const langExt = language === 'javascript' ? javascript({ typescript: false }) : [];
-		const customLangExt =
-			language === 'transition'
-				? ohmHighlighter({ grammarURL: '/transition.ohm', startRule: 'blocks' })
-				: [];
+		const customLangExt = language === 'transition' ? ohmHighlighter({ startRule: 'blocks' }) : [];
 
 		const state = EditorState.create({
 			doc: value,
@@ -53,7 +71,9 @@
 				langExt,
 				customLangExt,
 				themeCompartment.of(currentThemeExt()),
-				EditorView.lineWrapping
+				EditorView.lineWrapping,
+				lintGutter(),
+				grammarLint
 			]
 		});
 
