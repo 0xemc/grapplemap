@@ -9,7 +9,7 @@
 	import { lintKeymap } from '@codemirror/lint';
 	import { oneDark } from '@codemirror/theme-one-dark';
 	import { javascript } from '@codemirror/lang-javascript';
-	import { ohmHighlighter } from '$lib/utils/ohmHighlighter';
+	import { ohmHighlighter } from '$lib/utils/highlighter';
 	import { debugParse, traceTransition } from '$lib/utils/transitionParser';
 
 	let { value = '', language = 'transition' } = $props();
