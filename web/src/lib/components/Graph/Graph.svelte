@@ -9,8 +9,7 @@
 		type ColorMode
 	} from '@xyflow/svelte';
 	import * as Dagre from '@dagrejs/dagre';
-	import { isNonNullish, isNullish, prop, uniqueBy } from 'remeda';
-	import TransitionNode from '../../lib/components/TransitionNode.svelte';
+	import { isNonNullish, prop, uniqueBy } from 'remeda';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount } from 'svelte';
 	import { filesStore } from '$lib/stores/fileTree';
@@ -19,16 +18,24 @@
 	import { parse } from '@lang/parse';
 	import * as ohm from 'ohm-js';
 	import transitionRecipe from '@lang/recipes/transition.json';
-	import { Button, ButtonGroup, Toggle } from 'flowbite-svelte';
-	const nodeTypes = { textUpdater: TransitionNode };
-	let nodes = $state.raw([{ id: '2', position: { x: 0, y: 100 }, data: { label: '2' } }]);
-	let edges = $state.raw([{ id: 'e1-2', source: 'node-1', target: '2' }]);
+	import { Button, ButtonGroup, Modal, P } from 'flowbite-svelte';
+	import { transitionToEdge, transitionToNodes } from './utils';
+	import TransitionEdge from './TransitionEdge.svelte';
+	import TransitionModal from './TransitionModal.svelte';
+	import { setGraphContext } from './state.svelte';
 
+	let nodes = $state.raw([]);
+	let edges = $state.raw([]);
 	let colorMode = $state<ColorMode>(currentTheme());
-	onMount(() => observeTheme((t: Theme) => (colorMode = t)));
-
 	let files = $state<FileT[] | null>(null);
-	let transitions = $state<Transition[] | undefined>(undefined);
+
+	const { fitView } = useSvelteFlow();
+	const edgeTypes = { transition: TransitionEdge };
+	const grammar = ohm.makeRecipe(transitionRecipe);
+
+	setGraphContext();
+
+	onMount(() => observeTheme((t: Theme) => (colorMode = t)));
 
 	// Subscribe on mount; cleanup on teardown
 	$effect(() => {
@@ -38,7 +45,6 @@
 		return () => unsub();
 	});
 
-	const grammar = ohm.makeRecipe(transitionRecipe);
 	$effect(() => {
 		const transitions = files
 			?.map(prop('content'))
@@ -51,31 +57,6 @@
 		// @todo Unsure why we need this slight delay for layout to work correctly
 		setTimeout(() => onLayout('LR'), 20);
 	});
-
-	$effect(() => console.log(transitions));
-
-	function transitionToEdge(tr: Transition) {
-		return { id: tr.title, source: tr.from, target: tr.to, animated: true, label: tr.title };
-	}
-
-	function transitionToNodes(tr?: Transition) {
-		return tr
-			? [
-					{
-						id: tr.from,
-						position: { x: 0, y: 0 },
-						data: { label: tr.from }
-					},
-					{
-						id: tr.to,
-						position: { x: 0, y: 0 },
-						data: { label: tr.to }
-					}
-				]
-			: [];
-	}
-
-	const { fitView } = useSvelteFlow();
 
 	function getLayoutedElements(nodes, edges, options) {
 		const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
@@ -137,7 +118,7 @@
 <SvelteFlow
 	bind:nodes
 	bind:edges
-	{nodeTypes}
+	{edgeTypes}
 	{colorMode}
 	connectionLineType={ConnectionLineType.SmoothStep}
 	defaultEdgeOptions={{ type: 'smoothstep', animated: true }}
@@ -153,3 +134,5 @@
 	<MiniMap class="md-block hidden" />
 	<Controls />
 </SvelteFlow>
+
+<TransitionModal />
