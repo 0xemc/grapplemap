@@ -5,10 +5,10 @@ Transition {
  block_delimiter = "\n" nl*
  
  transition_block = tags? title nl from_to step* (~"\n" any)*
- title = any_char+
+ title = (letter | " ")+
  from_to = from "->" to nl
- from = any_char*
- to = any_char*
+ from = (letter | " ")*
+ to = (letter | " ")*
  step = digit "." " "? any_char+ (nl | end)
  
  tags = (tag | " ")+ nl
@@ -18,6 +18,6 @@ Transition {
  //Utils
  space_or_tab = " " | "\t"
  indent = "\t" | "    " | "  "
- any_char = (letter | digit | "_" | " " )
+ any_char = (letter | digit | "_" | " " | "-" | ",")
  nl = "\n"
 }
