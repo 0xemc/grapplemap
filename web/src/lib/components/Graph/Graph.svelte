@@ -58,17 +58,26 @@
 		setTimeout(() => onLayout('LR'), 20);
 	});
 
+	function measureLabel(text: string): { width: number; height: number } {
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d')!;
+		// keep this in sync with your EdgeLabel styles
+		ctx.font = '14px Inter, system-ui, sans-serif';
+		const w = Math.ceil(ctx.measureText(text).width);
+		// padding + line height roughly matching your EdgeLabel class
+		return { width: w + 20, height: 28 };
+	}
+
 	function getLayoutedElements(nodes, edges, options) {
 		const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-		g.setGraph({ rankdir: options.direction, ranksep: 140, nodesep: 100, edgesep: 40 });
+		g.setGraph({ rankdir: options.direction, ranksep: 140, nodesep: 100, edgesep: 100 });
 
 		edges.forEach((edge) => {
-			const labelWidth = edge.measured?.width ?? 0; // measure your label if you render one
-			const labelHeight = edge.measured?.height ?? 0; // or choose a sensible default
+			const { width: labelWidth, height: labelHeight } = measureLabel(edge.label); // measure your label if you render one
 			g.setEdge(edge.source, edge.target, {
 				// If you have a label string you can pass it too; the box is what reserves space:
 				label: edge.label ?? '',
-				width: labelWidth + 1000,
+				width: labelWidth,
 				height: labelHeight,
 				labelpos: 'c', // "l" | "r" | "c"
 				minlen: edge.minlen ?? 1, // >1 forces extra rank gaps for this edge
