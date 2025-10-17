@@ -1,8 +1,9 @@
 <script lang="ts">
-	import File from './File.svelte';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { filesStore } from '$lib/stores/fileTree';
-	import { createFile, type FileT } from '$lib/db/fileTree';
+	import { db } from '$lib/db';
+	import type { File as FileT } from '$lib/db/files';
+	import File from './File.svelte';
 
 	let files: FileT[] | null = null;
 	let activeId: number | null = null;
@@ -11,7 +12,7 @@
 	const dispatch = createEventDispatcher<{ select: { id: number } }>();
 
 	async function onAddFile() {
-		const id = await createFile('untitled.grpl', '');
+		const id = await db.file().create('untitled.grpl', '');
 		if (typeof id === 'number') {
 			activeId = id;
 			dispatch('select', { id });

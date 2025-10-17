@@ -13,7 +13,6 @@
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount } from 'svelte';
 	import { filesStore } from '$lib/stores/fileTree';
-	import { type FileT } from '$lib/db/fileTree';
 	import { type Transition } from '@lang/types';
 	import { parse } from '@lang/parse';
 	import * as ohm from 'ohm-js';
@@ -23,11 +22,12 @@
 	import TransitionEdge from './TransitionEdge.svelte';
 	import TransitionModal from './TransitionModal.svelte';
 	import { setGraphContext } from './state.svelte';
+	import type { File } from '$lib/db/files';
 
 	let nodes = $state.raw([]);
 	let edges = $state.raw([]);
 	let colorMode = $state<ColorMode>(currentTheme());
-	let files = $state<FileT[] | null>(null);
+	let files = $state<File[] | null>(null);
 
 	const { fitView } = useSvelteFlow();
 	const edgeTypes = { transition: TransitionEdge };

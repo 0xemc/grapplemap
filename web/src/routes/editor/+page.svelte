@@ -1,8 +1,8 @@
 <script lang="ts">
 	import FileTree from '$lib/components/FileTree/FileTree.svelte';
 	import CodeEditor from '$lib/components/CodeEditor.svelte';
-	import { getFileById, updateFileContent } from '$lib/db/fileTree';
 	import { Button } from 'flowbite-svelte';
+	import { db } from '$lib/db';
 
 	let activeFileId: number | null = null;
 	let activeFileName = '';
@@ -11,7 +11,7 @@
 
 	async function handleSelect(e: CustomEvent<{ id: number }>) {
 		activeFileId = e.detail.id;
-		const file = await getFileById(activeFileId);
+		const file = await db.file().getById(activeFileId);
 		activeFileName = file?.name ?? '';
 		editorRef?.setDoc(file?.content ?? '');
 	}
@@ -21,7 +21,7 @@
 		isSaving = true;
 		try {
 			const content = editorRef?.getDoc() ?? '';
-			await updateFileContent(activeFileId, content);
+			await db.file().write(activeFileId, content);
 		} finally {
 			isSaving = false;
 		}

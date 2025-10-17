@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { renameNode, deleteNode } from '$lib/db/fileTree';
+	import { db } from '$lib/db';
 	import { createEventDispatcher } from 'svelte';
 	export let id: number;
 	export let name: string;
@@ -10,13 +10,13 @@
 	async function onRename() {
 		const next = prompt('Rename file', name);
 		if (next && next.trim() && next !== name) {
-			await renameNode(id, next.trim());
+			await db.file().rename(id, next.trim());
 		}
 	}
 
 	async function onDelete() {
 		if (confirm(`Delete "${name}"?`)) {
-			await deleteNode(id);
+			await db.file().delete(id);
 		}
 	}
 
