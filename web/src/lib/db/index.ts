@@ -1,10 +1,12 @@
 import Dexie, { type EntityTable } from 'dexie';
-import { Files, type File } from './files';
-import { Transitions } from './transitions';
+import { Files, type File } from './tables/files';
+import { Transitions, type Transition } from './tables/transitions';
+import { Positions, type Position } from './tables/positions';
 
 class Database extends Dexie {
     files!: EntityTable<File, 'id'>;
-    transitions!: Transitions
+    positions!: EntityTable<Position, 'id'>;
+    transitions!: EntityTable<Transition, 'id'>;
 
     constructor() {
         super('grapplemap');
@@ -16,6 +18,14 @@ class Database extends Dexie {
 
     file() {
         return new Files(this.files);
+    }
+
+    position() {
+        return new Positions(this.positions)
+    }
+
+    transition() {
+        return new Transitions(this.transitions)
     }
 }
 
