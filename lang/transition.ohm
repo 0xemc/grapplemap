@@ -11,7 +11,8 @@ Transition {
  to = title_char*
  title_char = (letter | digit | " " | "/" )
  
- step = digit "." " "? any_char+ (nl | end)
+ step = number "." " "? any_char+ (nl | end)
+ number = digit+
  
  tags = (tag | " ")+ nl
  tag = ("[" | "(") tag_content ("]" | ")")
