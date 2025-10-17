@@ -2,7 +2,8 @@
 	import { Button, Modal, P } from 'flowbite-svelte';
 	import { getGraphContext } from './state.svelte';
 	let graph = getGraphContext();
-	export let transition_id: string;
+
+	graph.selected_edge;
 </script>
 
 <Modal

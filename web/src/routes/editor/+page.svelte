@@ -3,6 +3,9 @@
 	import CodeEditor from '$lib/components/CodeEditor.svelte';
 	import { Button } from 'flowbite-svelte';
 	import { db } from '$lib/db';
+	import { parse } from '@lang/parse';
+	import { grammar } from '$lib/utils/grammar';
+	import { isNonNullish } from 'remeda';
 
 	let activeFileId: number | null = null;
 	let activeFileName = '';
@@ -21,7 +24,25 @@
 		isSaving = true;
 		try {
 			const content = editorRef?.getDoc() ?? '';
-			await db.file().write(activeFileId, content);
+			/**
+			 * Transactions should only exist in the database as utility for querying
+			 * Delete all transactions for the file before upserting new updates
+			 * @todo extract this
+			 * */
+			await db.transaction('rw', db.files, db.transitions, async () => {
+				await db.files.update(activeFileId as number, { content, updatedAt: Date.now() });
+				await db.transitions
+					.where('file_id')
+					.equals(activeFileId as number)
+					.delete();
+
+				const transitions = parse(grammar, content)
+					?.transitions.filter(isNonNullish)
+					.map((t) => ({ ...t, file_id: activeFileId as number }));
+				if (transitions?.length) {
+					await db.transitions.bulkPut(transitions);
+				}
+			});
 		} finally {
 			isSaving = false;
 		}

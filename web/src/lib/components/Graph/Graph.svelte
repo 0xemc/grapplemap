@@ -9,53 +9,35 @@
 		type ColorMode
 	} from '@xyflow/svelte';
 	import * as Dagre from '@dagrejs/dagre';
-	import { isNonNullish, prop, uniqueBy } from 'remeda';
+	import { prop, uniqueBy } from 'remeda';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
-	import { onMount } from 'svelte';
-	import { filesStore } from '$lib/stores/fileTree';
-	import { type Transition } from '@lang/types';
-	import { parse } from '@lang/parse';
-	import * as ohm from 'ohm-js';
-	import transitionRecipe from '@lang/recipes/transition.json';
+	import { onMount, tick } from 'svelte';
 	import { Button, ButtonGroup, Modal, P } from 'flowbite-svelte';
 	import { transitionToEdge, transitionToNodes } from './utils';
 	import TransitionEdge from './TransitionEdge.svelte';
 	import TransitionModal from './TransitionModal.svelte';
 	import { setGraphContext } from './state.svelte';
-	import type { File } from '$lib/db/files';
+	import { liveQuery } from 'dexie';
+	import { db } from '$lib/db';
 
-	let nodes = $state.raw([]);
-	let edges = $state.raw([]);
+	let transitions = liveQuery(async () => await db.transitions.toArray());
+
+	let edges = $derived(($transitions ?? []).map(transitionToEdge));
+	let nodes = $derived(uniqueBy(($transitions ?? []).flatMap(transitionToNodes), prop('id')));
+
 	let colorMode = $state<ColorMode>(currentTheme());
-	let files = $state<File[] | null>(null);
 
 	const { fitView } = useSvelteFlow();
 	const edgeTypes = { transition: TransitionEdge };
-	const grammar = ohm.makeRecipe(transitionRecipe);
 
 	setGraphContext();
-
 	onMount(() => observeTheme((t: Theme) => (colorMode = t)));
 
-	// Subscribe on mount; cleanup on teardown
 	$effect(() => {
-		const unsub = filesStore.subscribe((v) => {
-			files = v;
-		});
-		return () => unsub();
-	});
+		const t = $transitions; // establishes dependency
+		if (!t || t.length === 0) return;
 
-	$effect(() => {
-		const transitions = files
-			?.map(prop('content'))
-			.map((content) => parse(grammar, content ?? ''))
-			.flatMap((res) => res?.transitions)
-			.filter(isNonNullish);
-
-		edges = (transitions ?? [])?.map(transitionToEdge);
-		nodes = uniqueBy(transitions?.flatMap(transitionToNodes) ?? [], prop('id'));
-		// @todo Unsure why we need this slight delay for layout to work correctly
-		setTimeout(() => onLayout('LR'), 20);
+		tick().then(() => onLayout('LR')); // wait for DOM
 	});
 
 	function measureLabel(text: string): { width: number; height: number } {

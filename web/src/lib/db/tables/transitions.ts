@@ -7,17 +7,18 @@ export interface Transition {
     from: string;
     to: string;
     steps: string[];
+    file_id: number
 };
 
 export class Transitions {
-    #table!: EntityTable<Transition, 'id'>;
+    table!: EntityTable<Transition, 'id'>;
 
     constructor(table: EntityTable<Transition, 'id'>) {
-        this.#table = table
+        this.table = table
     }
 
     /** Takes a full string of transition definitions and loads them in to the database */
-    load(content: string) {
+    add(content: string) {
 
     }
 }
