@@ -9,7 +9,9 @@
 	let transitions = liveQuery(() => db.transitions.toArray());
 
 	// Purely derived from in-memory data + current selection
-	let transition = $derived(($transitions ?? []).find((t) => t.title === graph.selected_edge));
+	let transition = $derived(
+		($transitions ?? []).find((t) => t.title === graph.selected_transition)
+	);
 
 	function extractUrlFromTags(tags: string | undefined | null): string | null {
 		if (!tags) return null;
