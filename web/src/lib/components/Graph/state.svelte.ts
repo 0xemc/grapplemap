@@ -2,15 +2,15 @@ import { isNonNullish } from "remeda"
 import { getContext, setContext } from "svelte"
 
 export class GraphState {
-    #selected_edge?: string = $state()
+    #selected_transition?: string = $state()
     #modal = $state(false)
 
-    get selected_edge() {
-        return this.#selected_edge
+    get selected_transition() {
+        return this.#selected_transition
     }
 
-    set selected_edge(n: string | undefined) {
-        this.#selected_edge = n
+    set selected_transition(n: string | undefined) {
+        this.#selected_transition = n
         if (isNonNullish(n)) {
             this.openModal();
         } else {

@@ -97,3 +97,7 @@ body,
 .svelte-flow {
 	--background-color: white;
 }
+
+.svelte-flow__edge-label {
+	padding: 0;
+}

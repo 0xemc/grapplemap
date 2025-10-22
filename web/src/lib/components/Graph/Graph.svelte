@@ -12,11 +12,11 @@
 		type Edge
 	} from '@xyflow/svelte';
 	import * as Dagre from '@dagrejs/dagre';
-	import { prop, uniqueBy } from 'remeda';
+	import { entries, groupBy, prop, uniqueBy } from 'remeda';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount, tick } from 'svelte';
 	import { Button, ButtonGroup, Modal, P } from 'flowbite-svelte';
-	import { measureLabel, transitionToEdge, transitionToNodes, type GraphNode } from './utils';
+	import { measureLabel, transitionsToEdges, transitionToNodes, type GraphNode } from './utils';
 	import TransitionEdge from './TransitionEdge.svelte';
 	import TransitionModal from './TransitionModal.svelte';
 	import { setGraphContext } from './state.svelte';
@@ -27,7 +27,7 @@
 
 	let transitions = liveQuery(async () => await db.transitions.toArray());
 
-	let edges = $derived(($transitions ?? []).map(transitionToEdge));
+	let edges = $derived(transitionsToEdges($transitions ?? []));
 	let nodes = $derived(uniqueBy(($transitions ?? []).flatMap(transitionToNodes), prop('id')));
 
 	let colorMode = $state<ColorMode>(currentTheme());

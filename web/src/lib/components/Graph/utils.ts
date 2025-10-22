@@ -1,15 +1,29 @@
 import type { Transition } from "@lang/types";
-import type { EdgeProps, InternalNode, Node } from "@xyflow/svelte";
+import type { Edge, EdgeProps, InternalNode, Node } from "@xyflow/svelte";
+import { groupBy } from "remeda";
 
-export function transitionToEdge(tr: Transition) {
-    return {
-        id: tr.title,
-        source: tr.from,
-        target: tr.to,
-        animated: true,
-        label: tr.title,
-        type: 'transition'
-    };
+
+export function transitionsToEdges(trs: Transition[]): Edge[] {
+    const groups = groupBy(trs, (t) => `${t.from}__${t.to}`);
+
+    return Object.entries(groups).map(([key, items]) => {
+        const [from, to] = key.split('__');
+        const label =
+            items.length === 1 ? items[0].title : `${items.length} transitions`;
+
+        return {
+            id: `${from}->${to}`,
+            source: from,
+            target: to,
+            type: 'transition',
+            animated: true,
+            label,
+            data: {
+                transitions: items,                // full objects if you need them
+                titles: items.map((t) => t.title), // quick access
+            },
+        };
+    });
 }
 
 export type GraphNode = {
