@@ -13,7 +13,7 @@
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount, tick } from 'svelte';
 	import { Button, ButtonGroup, Modal, P } from 'flowbite-svelte';
-	import { transitionToEdge, transitionToNodes } from './utils';
+	import { measureLabel, transitionToEdge, transitionToNodes } from './utils';
 	import TransitionEdge from './TransitionEdge.svelte';
 	import TransitionModal from './TransitionModal.svelte';
 	import { setGraphContext } from './state.svelte';
@@ -39,16 +39,6 @@
 
 		tick().then(() => onLayout('LR')); // wait for DOM
 	});
-
-	function measureLabel(text: string): { width: number; height: number } {
-		const canvas = document.createElement('canvas');
-		const ctx = canvas.getContext('2d')!;
-		// keep this in sync with your EdgeLabel styles
-		ctx.font = '14px Inter, system-ui, sans-serif';
-		const w = Math.ceil(ctx.measureText(text).width);
-		// padding + line height roughly matching your EdgeLabel class
-		return { width: w + 20, height: 28 };
-	}
 
 	function getLayoutedElements(nodes, edges, options) {
 		const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
