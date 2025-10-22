@@ -121,11 +121,11 @@
 		{/if}
 		{#if transition.steps?.length}
 			<P><b>Steps</b>:</P>
-			<ul class="list-disc pl-6">
+			<ol class="list-inside list-decimal pl-6">
 				{#each transition.steps as step}
 					<li>{step}</li>
 				{/each}
-			</ul>
+			</ol>
 		{/if}
 	{:else}
 		<P>No transition selected.</P>

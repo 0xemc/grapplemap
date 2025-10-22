@@ -6,19 +6,24 @@
 		SvelteFlow,
 		useSvelteFlow,
 		Panel,
-		type ColorMode
+		type ColorMode,
+		type InternalNode,
+		type Node,
+		type Edge
 	} from '@xyflow/svelte';
 	import * as Dagre from '@dagrejs/dagre';
 	import { prop, uniqueBy } from 'remeda';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount, tick } from 'svelte';
 	import { Button, ButtonGroup, Modal, P } from 'flowbite-svelte';
-	import { measureLabel, transitionToEdge, transitionToNodes } from './utils';
+	import { measureLabel, transitionToEdge, transitionToNodes, type GraphNode } from './utils';
 	import TransitionEdge from './TransitionEdge.svelte';
 	import TransitionModal from './TransitionModal.svelte';
 	import { setGraphContext } from './state.svelte';
 	import { liveQuery } from 'dexie';
 	import { db } from '$lib/db';
+
+	setGraphContext();
 
 	let transitions = liveQuery(async () => await db.transitions.toArray());
 
@@ -26,13 +31,12 @@
 	let nodes = $derived(uniqueBy(($transitions ?? []).flatMap(transitionToNodes), prop('id')));
 
 	let colorMode = $state<ColorMode>(currentTheme());
+	onMount(() => observeTheme((t: Theme) => (colorMode = t)));
 
 	const { fitView } = useSvelteFlow();
 	const edgeTypes = { transition: TransitionEdge };
 
-	setGraphContext();
-	onMount(() => observeTheme((t: Theme) => (colorMode = t)));
-
+	/** Layout on initial load */
 	$effect(() => {
 		const t = $transitions; // establishes dependency
 		if (!t || t.length === 0) return;
@@ -40,12 +44,16 @@
 		tick().then(() => onLayout('LR')); // wait for DOM
 	});
 
-	function getLayoutedElements(nodes, edges, options) {
+	function getLayoutedElements(
+		nodes: GraphNode[],
+		edges: Edge[],
+		options: { direction: 'LR' | 'TB' }
+	) {
 		const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
 		g.setGraph({ rankdir: options.direction, ranksep: 140, nodesep: 100, edgesep: 100 });
 
 		edges.forEach((edge) => {
-			const { width: labelWidth, height: labelHeight } = measureLabel(edge.label); // measure your label if you render one
+			const { width: labelWidth, height: labelHeight } = measureLabel(edge.label ?? ''); // measure your label if you render one
 			g.setEdge(edge.source, edge.target, {
 				// If you have a label string you can pass it too; the box is what reserves space:
 				label: edge.label ?? '',
@@ -86,7 +94,7 @@
 		};
 	}
 
-	function onLayout(direction) {
+	function onLayout(direction: 'LR' | 'TB') {
 		const layouted = getLayoutedElements(nodes, edges, { direction });
 
 		nodes = [...layouted.nodes];

@@ -14,7 +14,7 @@
 	import { prop } from 'remeda';
 	let props: EdgeProps = $props();
 
-	const { getNode, getInternalNode } = useSvelteFlow();
+	const { getInternalNode } = useSvelteFlow();
 
 	/** Used for self referencial edges*/
 	let srcNode = $derived(() => getInternalNode(props.source));
@@ -44,7 +44,7 @@
 		<div class="flex flex-col items-center gap-1">
 			<span>{props.label}</span>
 			<!-- icons -->
-			<div class="flex w-full justify-between px-1">
+			<div class="flex w-full justify-between px-1 opacity-70">
 				<div class="flex items-center">
 					<svg
 						width="6"

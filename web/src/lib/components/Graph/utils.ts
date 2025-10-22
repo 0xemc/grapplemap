@@ -12,7 +12,13 @@ export function transitionToEdge(tr: Transition) {
     };
 }
 
-export function transitionToNodes(tr?: Transition) {
+export type GraphNode = {
+    id: string,
+    position: { x: number, y: number },
+    data: { label: string }
+};
+
+export function transitionToNodes(tr?: Transition): GraphNode[] {
     return tr
         ? [
             {
@@ -31,7 +37,7 @@ export function transitionToNodes(tr?: Transition) {
 
 
 
-export function getSelfLoopPath(edge: EdgeProps, node: InternalNode<Node>) {
+export function getSelfLoopPath(edge: EdgeProps, node?: InternalNode<Node>) {
     const sx = edge.sourceX
     const sy = edge.sourceY
 
@@ -48,10 +54,9 @@ export function getSelfLoopPath(edge: EdgeProps, node: InternalNode<Node>) {
     const y2 = sy - h;
 
 
-    const x3 = x1 - (node.measured.width ?? 0) / 4;
-    const y3 = y1 - (node.measured.height ?? 0) / 2;
+    const x3 = x1 - (node?.measured.width ?? 0) / 4;
+    const y3 = y1 - (node?.measured.height ?? 0) / 2;
 
-    console.log(node)
 
     // rectangular loop with sharp corners
     const d = [
