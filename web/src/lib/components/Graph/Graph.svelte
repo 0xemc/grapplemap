@@ -58,7 +58,7 @@
 				// If you have a label string you can pass it too; the box is what reserves space:
 				label: edge.label ?? '',
 				width: labelWidth,
-				height: labelHeight,
+				height: (edge.data?.transitions?.length ?? 0) * 50, //@todo extract this hard coded 50px value
 				labelpos: 'c', // "l" | "r" | "c"
 				minlen: edge.minlen ?? 1, // >1 forces extra rank gaps for this edge
 				weight: edge.weight ?? 1 // crossing minimization priority

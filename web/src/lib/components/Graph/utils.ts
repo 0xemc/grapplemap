@@ -3,7 +3,7 @@ import type { Edge, EdgeProps, InternalNode, Node } from "@xyflow/svelte";
 import { groupBy } from "remeda";
 
 
-export function transitionsToEdges(trs: Transition[]): Edge[] {
+export function transitionsToEdges(trs: Transition[]): Edge<{ transitions: Transition[] }, 'transition'>[] {
     const groups = groupBy(trs, (t) => `${t.from}__${t.to}`);
 
     return Object.entries(groups).map(([key, items]) => {
@@ -19,13 +19,11 @@ export function transitionsToEdges(trs: Transition[]): Edge[] {
             animated: true,
             label,
             data: {
-                transitions: items,                // full objects if you need them
-                titles: items.map((t) => t.title), // quick access
+                transitions: items,
             },
         };
     });
 }
-
 export type GraphNode = {
     id: string,
     position: { x: number, y: number },
