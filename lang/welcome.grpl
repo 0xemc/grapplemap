@@ -1,0 +1,30 @@
+// Welcome to GrappleLang
+// This file introduces the language used by the app to generate your game as a graph.
+// Lines starting with // are comments and are ignored by the parser.
+//
+// Each transition block has this shape:
+//   [optional tags]
+//   Title
+//   From Position -> To Position
+//   1. Step one
+//   2. Step two
+//
+// Tips:
+// - Syntax highlighting will only show when there are no errors in the editor
+// - Use [] or () to add tags on a single line (e.g. [url:URL] (gi) [level:beginner]).
+// - Keep comments outside the block lines (not between tags/title/from->to/steps).
+// - Allowed step text chars: letters, digits, underscore, space, -, ,, &, ', /, :
+// - Blank lines between transitions are fine.
+
+// Example
+(url:https://www.youtube.com/watch?v=eHMBWw4iZRQ&list=PL5kA-Cs1gYP9qUhms6dphz6GGSQ2yCJQp)
+Kneeling elbow escape
+Closed Guard -> Half Guard
+1. Hands to hips
+2. Elbows in
+3. Knee to the middle
+4. Other knee to the side
+5. Hips back
+6. Step over
+
+// Add your own transitions below and then view them in the Graph by clicking the icon in the sidebar

@@ -20,7 +20,7 @@ if (useRecipe) {
     grammar = ohm.grammar(grammarContents);
 }
 
-const input = fs.readFileSync("./test.grpl", "utf-8");
+const input = fs.readFileSync("./welcome.grpl", "utf-8");
 
 const { transitions } = parse(grammar, input) ?? {}
 

@@ -1,26 +1,32 @@
-
 Transition {
- blocks = (block_delimiter? block)* end
- block = (~block_delimiter transition_block)+ 
- block_delimiter = "\n" nl*
- 
- transition_block = tags? title nl from_to step* (~"\n" any)*
- title = title_char+
- from_to = from "->" to nl
- from = title_char*
- to = title_char*
- title_char = (letter | digit | " " | "/" )
- 
- step = number "." " "? any_char+ (nl | end)
- number = digit+
- 
- tags = (tag | " ")+ nl
- tag = ("[" | "(") tag_content ("]" | ")")
- tag_content = (~("]" | ")" | "\n") any)*
- 
- //Utils
- space_or_tab = " " | "\t"
- indent = "\t" | "    " | "  "
- any_char = (letter | digit | "_" | " " | "-" | "," | "&" | "'" | "/" | ":")
- nl = "\n"
+  blocks = skip (block skip)* end
+  block = skip (transition_block)+ skip
+  
+  transition_block = skip tags? title nl from_to step* (~"\n" any)* skip
+  title = title_char+
+  from_to = from "->" to nl
+  from = title_char*
+  to = title_char*
+
+  title_char = (letter | digit | " " | "/")
+
+  // Nested steps
+  steps = step (nl step)*
+  step = number "." " "? any_char+ (nl | end)
+  number = digit+
+
+  tags = (tag | " ")+ nl
+  tag = ("[" | "(") tag_content ("]" | ")")
+  tag_content = (~("]" | ")" | "\n") any)*
+
+  // Utils
+  space_or_tab = " " | "\t"
+  indent = "\t" | "    " | "  "
+  stepText = any_char+
+  any_char = (letter | digit | "_" | " " | "-" | "," | "&" | "'" | "/" | ":")
+  nl = "\n"
+
+  // Comments and ignored whitespace
+  comment = "//" (~nl any)*
+  skip = (space_or_tab | nl | comment)*
 }

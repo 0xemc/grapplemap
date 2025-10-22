@@ -1,11 +1,14 @@
 const transition = {
-  blocks(_a: any, rest: any, _end: any) {
-    return [...rest.transitions().flat().flat()];
+  blocks(_: any, block: any, __: any, ___: any) {
+    return [...block.transitions().flat().flat()];
+  },
+  block(_: any, transition: any, __: any) {
+    return transition.transitions()
   },
   _iter(this: any, ...items: any[]) {
     return items.map((i) => i.transitions());
   },
-  transition_block(tags: any, title: any, _nl: any, from_to: any, steps: any, _tail: any) {
+  transition_block(_: any, tags: any, title: any, _nl: any, from_to: any, steps: any, __: any, ___: any) {
     return {
       tags: tags.sourceString.trim(),
       title: title.sourceString.trim(),
