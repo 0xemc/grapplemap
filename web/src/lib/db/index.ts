@@ -2,7 +2,8 @@ import Dexie, { type EntityTable } from 'dexie';
 import { Files, type File } from './tables/files';
 import { Transitions, type Transition } from './tables/transitions';
 import { Positions, type Position } from './tables/positions';
-import defaultFile from '@lang/test.grpl?raw';
+import welcomeFile from '@lang/welcome.grpl?raw';
+import beginnersFile from '@lang/no-gi-beginners.grpl?raw';
 import { parse } from '@lang/parse';
 import { grammar } from '$lib/utils/grammar';
 import { isNonNullish } from 'remeda';
@@ -26,16 +27,28 @@ class Database extends Dexie {
             const fileId = await this.files.add({
                 name: 'welcome.grpl',
                 parentId: null,
-                content: defaultFile,
+                content: welcomeFile,
+                order: 1,
+                createdAt: ts,
+                updatedAt: ts
+            });
+
+            const beginnersId = await this.files.add({
+                name: 'no-gi-beginners.grpl',
+                parentId: null,
+                content: beginnersFile,
                 order: 1,
                 createdAt: ts,
                 updatedAt: ts
             });
 
             // 2) Parse and seed transitions so the graph renders immediately
-            const transitions = parse(grammar, defaultFile)?.transitions
-                .filter(isNonNullish)
-                .map((t) => ({ ...t, file_id: fileId }));
+            const welcomeTransitions = parse(grammar, welcomeFile)?.transitions.filter(isNonNullish)
+                .map((t) => ({ ...t, file_id: fileId })) ?? [];
+            const beginnersTransitions = parse(grammar, beginnersFile)?.transitions.filter(isNonNullish)
+                .map((t) => ({ ...t, file_id: beginnersId })) ?? [];
+
+            const transitions = [...welcomeTransitions, ...beginnersTransitions]
 
             if (transitions?.length) {
                 await this.transitions.bulkPut(transitions);
