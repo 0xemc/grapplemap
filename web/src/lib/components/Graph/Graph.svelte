@@ -7,14 +7,12 @@
 		useSvelteFlow,
 		Panel,
 		type ColorMode,
-		type InternalNode,
-		type Node,
 		type Edge
 	} from '@xyflow/svelte';
 	import * as Dagre from '@dagrejs/dagre';
-	import { entries, groupBy, prop, uniqueBy } from 'remeda';
+	import { prop, uniqueBy } from 'remeda';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
-	import { onMount, tick } from 'svelte';
+	import { onMount } from 'svelte';
 	import { Button, ButtonGroup, Modal, P } from 'flowbite-svelte';
 	import { measureLabel, transitionsToEdges, transitionToNodes, type GraphNode } from './utils';
 	import TransitionEdge from './TransitionEdge.svelte';
@@ -53,7 +51,7 @@
 		g.setGraph({ rankdir: options.direction, ranksep: 140, nodesep: 100, edgesep: 100 });
 
 		edges.forEach((edge) => {
-			const { width: labelWidth, height: labelHeight } = measureLabel(edge.label ?? ''); // measure your label if you render one
+			const { width: labelWidth } = measureLabel(edge.label ?? ''); // measure your label if you render one
 			g.setEdge(edge.source, edge.target, {
 				// If you have a label string you can pass it too; the box is what reserves space:
 				label: edge.label ?? '',

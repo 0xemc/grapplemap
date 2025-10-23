@@ -101,3 +101,8 @@ body,
 .svelte-flow__edge-label {
 	padding: 0;
 }
+
+.svelte-flow__handle {
+	display: none;
+	cursor: none;
+}
