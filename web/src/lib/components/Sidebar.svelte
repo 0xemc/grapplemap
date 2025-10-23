@@ -11,7 +11,7 @@
 	import { page } from '$app/state';
 	let activeUrl = $state(page.url.pathname);
 	const spanClass = 'flex-1 whitespace-nowrap';
-	const { toggle, isOpen, close } = uiHelpers();
+	const { isOpen, close } = uiHelpers();
 	let isDemoOpen = $state(false);
 	$effect(() => {
 		isDemoOpen = isOpen;
@@ -28,7 +28,6 @@
 	class="border-chisel-400 z-50 h-full w-auto border-r pt-6 dark:border-zinc-700"
 	classes={{ nonactive: 'p-2', active: 'p-2' }}
 >
-	<CloseButton onclick={close} color="gray" class="absolute right-2 top-2 p-2 md:hidden" />
 	<SidebarGroup>
 		<SidebarItem href="/" {spanClass}>
 			{#snippet icon()}

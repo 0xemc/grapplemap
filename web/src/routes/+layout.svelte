@@ -39,12 +39,12 @@
 <div class="app-shell dark:bg-chisel-900 bg-white text-zinc-900 dark:text-zinc-100">
 	<div class="flex">
 		<!-- Desktop Nav -->
-		<div class="hidden w-[75px] md:block">
+		<div class="hidden w-[58px] md:block">
 			<Sidebar />
 		</div>
 
 		<!-- Mobile Nav -->
-		<aside class="md:hidden">
+		<nav class="md:hidden">
 			<BottomNav
 				position="absolute"
 				navType="application"
@@ -69,16 +69,6 @@
 					<ShareNodesOutline class={iconClass} />
 				</BottomNavItem>
 				<Tooltip arrow={false}>Graph</Tooltip>
-				<!-- <div class="flex items-center justify-center">
-				  <BottomNavItem btnName="Create new item" appBtnPosition="middle" class="bg-primary-600 hover:bg-primary-700 group focus:ring-primary-300 dark:focus:ring-primary-800 inline-flex h-10 w-10 items-center justify-center rounded-full font-medium focus:ring-4 focus:outline-hidden">
-					<PlusOutline class="text-white" />
-				  </BottomNavItem>
-				  <Tooltip arrow={false}>Create new item</Tooltip>
-				</div> -->
-				<!-- <BottomNavItem btnName="Settings" appBtnPosition="middle">
-				  <AdjustmentsVerticalOutline class="group-hover:text-primary-600 dark:group-hover:text-primary-500 mb-1 h-6 w-6 text-gray-500 dark:text-gray-400" />
-				</BottomNavItem>
-				<Tooltip arrow={false}>Settings</Tooltip> -->
 				<BottomNavItem
 					btnName="Editor"
 					appBtnPosition="right"
@@ -89,8 +79,8 @@
 				</BottomNavItem>
 				<Tooltip arrow={false}>Editor</Tooltip>
 			</BottomNav>
-		</aside>
-		<div class="flex w-full flex-col">
+		</nav>
+		<div class="flex h-screen w-full flex-col">
 			<div class="app-toolbar">
 				<div>
 					<h1 class="m-0 text-lg font-semibold">{activeUrl.replace('/', '')}</h1>
@@ -112,7 +102,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 8px 12px;
+		padding: 8px 24px;
 		gap: 8px;
 	}
 </style>

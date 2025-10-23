@@ -3,7 +3,7 @@
 	import { SvelteFlowProvider } from '@xyflow/svelte';
 </script>
 
-<div style:width="100vw" style:height="100vh">
+<div style:width="100%" style:height="100%">
 	<SvelteFlowProvider>
 		<Graph />
 	</SvelteFlowProvider>
