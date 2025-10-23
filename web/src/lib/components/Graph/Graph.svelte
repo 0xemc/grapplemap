@@ -74,6 +74,7 @@
 			<Button onclick={() => onLayout('BT')} class="">↑ vertical</Button>
 		</ButtonGroup>
 	</Panel>
+	<Panel position="top-left"></Panel>
 	<MiniMap class="md-block hidden" />
 	<Controls />
 </SvelteFlow>
