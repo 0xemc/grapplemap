@@ -1,8 +1,8 @@
 <script lang="ts">
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
-	import ThemeSwitch from '$lib/components/ThemeSwitch.svelte';
-	import Sidebar from '$lib/components/Sidebar.svelte';
+	import ThemeSwitch from '$lib/components/theme-switch.svelte';
+	import Sidebar from '$lib/components/sidebar.svelte';
 	import { BottomNav, BottomNavItem, Tooltip } from 'flowbite-svelte';
 	import { EditOutline, HomeOutline, HomeSolid, ShareNodesOutline } from 'flowbite-svelte-icons';
 	import { page } from '$app/state';

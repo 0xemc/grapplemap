@@ -1,6 +1,6 @@
 <script lang="ts">
-	import FileTree from '$lib/components/FileTree/FileTree.svelte';
-	import CodeEditor from '$lib/components/CodeEditor.svelte';
+	import FileTree from '$lib/components/filetree/file-tree.svelte';
+	import CodeEditor from '$lib/components/code-editor.svelte';
 	import { Button } from 'flowbite-svelte';
 	import { db } from '$lib/db';
 	import { parse } from '@lang/parse';

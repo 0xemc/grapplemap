@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Graph from '$lib/components/Graph/Graph.svelte';
+	import Graph from '$lib/components/graph/graph.svelte';
 	import { SvelteFlowProvider } from '@xyflow/svelte';
 </script>
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Transition } from '@lang/types';
 	import { VideoCameraSolid } from 'flowbite-svelte-icons';
-	import { getGraphContext } from './state.svelte';
+	import { getGraphContext } from './graph.state.svelte';
 	type Props = {
 		transition: Transition;
 	};

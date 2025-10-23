@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { db } from '$lib/db';
-	import File from './File.svelte';
+	import File from './file.svelte';
 	import { liveQuery } from 'dexie';
 
 	let activeId: number | null = $state(null);

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button, Modal, P } from 'flowbite-svelte';
-	import { getGraphContext } from './state.svelte';
+	import { getGraphContext } from './graph.state.svelte';
 	import { db } from '$lib/db';
 	import { liveQuery } from 'dexie';
 	let graph = getGraphContext();

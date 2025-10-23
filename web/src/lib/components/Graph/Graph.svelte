@@ -20,10 +20,10 @@
 		transitionsToEdges,
 		transitionToNodes,
 		type GraphNode
-	} from './utils';
-	import TransitionEdge from './TransitionEdge.svelte';
-	import TransitionModal from './TransitionModal.svelte';
-	import { setGraphContext } from './state.svelte';
+	} from './graph.utils';
+	import TransitionEdge from './transition-edge.svelte';
+	import TransitionModal from './transition-modal.svelte';
+	import { setGraphContext } from './graph.state.svelte';
 	import { liveQuery } from 'dexie';
 	import { db } from '$lib/db';
 
