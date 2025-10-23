@@ -9,12 +9,18 @@
 		type ColorMode,
 		type Edge
 	} from '@xyflow/svelte';
-	import * as Dagre from '@dagrejs/dagre';
+
 	import { prop, uniqueBy } from 'remeda';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount } from 'svelte';
 	import { Button, ButtonGroup, Modal, P } from 'flowbite-svelte';
-	import { measureLabel, transitionsToEdges, transitionToNodes, type GraphNode } from './utils';
+	import {
+		getLayoutedElements,
+		measureLabel,
+		transitionsToEdges,
+		transitionToNodes,
+		type GraphNode
+	} from './utils';
 	import TransitionEdge from './TransitionEdge.svelte';
 	import TransitionModal from './TransitionModal.svelte';
 	import { setGraphContext } from './state.svelte';
@@ -41,56 +47,6 @@
 
 		setTimeout(() => onLayout('LR'), 20); // wait for DOM
 	});
-
-	function getLayoutedElements(
-		nodes: GraphNode[],
-		edges: Edge[],
-		options: { direction: 'LR' | 'TB' }
-	) {
-		const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-		g.setGraph({ rankdir: options.direction, ranksep: 140, nodesep: 100, edgesep: 100 });
-
-		edges.forEach((edge) => {
-			const { width: labelWidth } = measureLabel(edge.label ?? ''); // measure your label if you render one
-			g.setEdge(edge.source, edge.target, {
-				// If you have a label string you can pass it too; the box is what reserves space:
-				label: edge.label ?? '',
-				width: labelWidth,
-				height: (edge.data?.transitions?.length ?? 0) * 50, //@todo extract this hard coded 50px value
-				labelpos: 'c', // "l" | "r" | "c"
-				minlen: edge.minlen ?? 1, // >1 forces extra rank gaps for this edge
-				weight: edge.weight ?? 1 // crossing minimization priority
-			});
-		});
-
-		nodes.forEach((node) =>
-			g.setNode(node.id, {
-				...node,
-				width: node.measured?.width ?? 0,
-				height: node.measured?.height ?? 0
-			})
-		);
-
-		Dagre.layout(g);
-
-		return {
-			nodes: nodes.map((node) => {
-				const position = g.node(node.id);
-				// We are shifting the dagre node position (anchor=center center) to the top left
-				// so it matches the Svelte Flow node anchor point (top left).
-				const x = position.x - (node.measured?.width ?? 0) / 2;
-				const y = position.y - (node.measured?.height ?? 0) / 2;
-
-				return {
-					...node,
-					position: { x, y },
-					sourcePosition: options.direction === 'LR' ? 'right' : 'bottom',
-					targetPosition: options.direction === 'LR' ? 'left' : 'top'
-				};
-			}),
-			edges
-		};
-	}
 
 	function onLayout(direction: 'LR' | 'TB') {
 		const layouted = getLayoutedElements(nodes, edges, { direction });

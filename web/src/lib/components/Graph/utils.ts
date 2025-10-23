@@ -1,7 +1,7 @@
 import type { Transition } from "@lang/types";
 import type { Edge, EdgeProps, InternalNode, Node } from "@xyflow/svelte";
 import { groupBy } from "remeda";
-
+import * as Dagre from '@dagrejs/dagre';
 
 export function transitionsToEdges(trs: Transition[]): Edge<{ transitions: Transition[] }, 'transition'>[] {
     const groups = groupBy(trs, (t) => `${t.from}__${t.to}`);
@@ -94,4 +94,57 @@ export function measureLabel(text: string): { width: number; height: number } {
     const w = Math.ceil(ctx.measureText(text).width);
     // padding + line height roughly matching your EdgeLabel class
     return { width: w + 20, height: 28 };
+}
+
+export function getLayoutedElements(
+    nodes: GraphNode[],
+    edges: Edge[],
+    options: { direction: 'LR' | 'TB' }
+) {
+    const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
+    // g.setGraph({ rankdir: options.direction, ranksep: 50, nodesep: 100, edgesep: 300 });
+    g.setGraph({ rankdir: options.direction, ranksep: 140, nodesep: 100, edgesep: 120 });
+
+    edges.forEach((edge) => {
+        const { width: labelWidth } = measureLabel(edge.label ?? ''); // measure your label if you render one
+
+        console.log('transitions ' + edge.id, edge.data)
+        g.setEdge(edge.source, edge.target, {
+            // If you have a label string you can pass it too; the box is what reserves space:
+            label: edge.label ?? '',
+            width: labelWidth,
+            height: (edge.data?.transitions?.length ?? 0) * 50, //@todo extract this hard coded 50px value
+            labelpos: 'c', // "l" | "r" | "c"
+            minlen: edge.minlen ?? 1, // >1 forces extra rank gaps for this edge
+            weight: edge.weight ?? 1 // crossing minimization priority
+        });
+    });
+
+    nodes.forEach((node) =>
+        g.setNode(node.id, {
+            ...node,
+            width: node.measured?.width ?? 0,
+            height: node.measured?.height ?? 0
+        })
+    );
+
+    Dagre.layout(g);
+
+    return {
+        nodes: nodes.map((node) => {
+            const position = g.node(node.id);
+            // We are shifting the dagre node position (anchor=center center) to the top left
+            // so it matches the Svelte Flow node anchor point (top left).
+            const x = position.x - (node.measured?.width ?? 0) / 2;
+            const y = position.y - (node.measured?.height ?? 0) / 2;
+
+            return {
+                ...node,
+                position: { x, y },
+                sourcePosition: options.direction === 'LR' ? 'right' : 'bottom',
+                targetPosition: options.direction === 'LR' ? 'left' : 'top'
+            };
+        }),
+        edges
+    };
 }

@@ -103,6 +103,6 @@ body,
 }
 
 .svelte-flow__handle {
-	display: none;
+	visibility: hidden;
 	cursor: none;
 }
