@@ -41,7 +41,7 @@
 		const t = $transitions; // establishes dependency
 		if (!t || t.length === 0) return;
 
-		tick().then(() => onLayout('LR')); // wait for DOM
+		setTimeout(() => onLayout('LR'), 20); // wait for DOM
 	});
 
 	function getLayoutedElements(
