@@ -14,6 +14,7 @@
 	// in CodeEditor.svelte
 	import { linter, lintGutter } from '@codemirror/lint';
 	import { matchTransition } from '$lib/utils/transitionParser';
+	import { goto } from '$app/navigation';
 
 	let { value = '', language = 'transition' } = $props();
 
@@ -73,7 +74,43 @@
 				themeCompartment.of(currentThemeExt()),
 				EditorView.lineWrapping,
 				lintGutter(),
-				grammarLint
+				grammarLint,
+				EditorView.domEventHandlers({
+					click: (event, view) => {
+						// ctrlKey on Win/Linux, metaKey on macOS
+						const isCtrlLike = event.ctrlKey || event.metaKey;
+						if (!isCtrlLike) return false;
+
+						// Find word under cursor
+						const pos = view.posAtCoords({ x: event.clientX, y: event.clientY });
+						if (pos == null) return false;
+						const line = view.state.doc.lineAt(pos);
+						// simple tokenization: match identifier-like token around pos
+						const rel = pos - line.from;
+						const before = line.text.slice(0, rel);
+						const after = line.text.slice(rel);
+						const left = before.match(/[A-Za-z0-9_.-]*$/)?.[0] ?? '';
+						const right = after.match(/^[A-Za-z0-9_.-]*/)?.[0] ?? '';
+						const token = (left + right).trim();
+						if (!token) return false;
+
+						// Navigate to graph with edge query
+						goto(`/graph?transition=${encodeURIComponent(token)}`);
+						return true;
+					},
+					keydown: (event, view) => {
+						if (event.ctrlKey || event.metaKey) view.dom.classList.add('cm-ctrl-like');
+						return false;
+					},
+					keyup: (_event, view) => {
+						view.dom.classList.remove('cm-ctrl-like');
+						return false;
+					},
+					blur: (_event, view) => {
+						view.dom.classList.remove('cm-ctrl-like');
+						return false;
+					}
+				})
 			]
 		});
 

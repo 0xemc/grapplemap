@@ -91,6 +91,11 @@ body,
 	color: #f472b6;
 }
 
+.cm-ctrl-like .cm-transition-title:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
 .svelte-flow.dark {
 	--background-color: var(--color-chisel-900);
 }

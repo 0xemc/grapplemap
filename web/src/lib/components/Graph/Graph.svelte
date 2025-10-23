@@ -26,6 +26,7 @@
 	import { setGraphContext } from './graph.state.svelte';
 	import { liveQuery } from 'dexie';
 	import { db } from '$lib/db';
+	import { page } from '$app/state';
 
 	setGraphContext();
 
@@ -56,6 +57,33 @@
 
 		fitView();
 	}
+
+	// // Focus edge from query param when available and data is ready
+	// $effect(() => {
+	// 	const id = page.url.searchParams.get('transition');
+	// 	if (!id) return;
+	// 	if (!edges?.length || !nodes?.length) return;
+
+	// 	const isActive = (e: Edge) => e.data?.transitions?.some((t) => t.title === id) ?? false;
+
+	// 	// Only update if selection state differs
+	// 	const needsUpdate = edges.some((e) => (e.selected ?? false) !== isActive(e));
+	// 	if (needsUpdate) {
+	// 		edges = edges.map((e) => ({ ...e, selected: isActive(e) }));
+	// 	}
+
+	// 	const activeEdge = edges.find(isActive);
+	// 	if (!activeEdge) return;
+
+	// 	const endpoints = nodes.filter((n) => n.id === activeEdge.source || n.id === activeEdge.target);
+	// 	if (endpoints.length) {
+	// 		try {
+	// 			fitView({ nodes: endpoints, padding: 0.2 });
+	// 		} catch {
+	// 			fitView();
+	// 		}
+	// 	}
+	// });
 </script>
 
 <SvelteFlow
