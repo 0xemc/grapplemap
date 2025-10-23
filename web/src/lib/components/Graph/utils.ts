@@ -99,16 +99,15 @@ export function measureLabel(text: string): { width: number; height: number } {
 export function getLayoutedElements(
     nodes: GraphNode[],
     edges: Edge[],
-    options: { direction: 'LR' | 'TB' }
+    options: { direction: 'LR' | 'BT' }
 ) {
     const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
     // g.setGraph({ rankdir: options.direction, ranksep: 50, nodesep: 100, edgesep: 300 });
-    g.setGraph({ rankdir: options.direction, ranksep: 140, nodesep: 100, edgesep: 120 });
+    g.setGraph({ rankdir: options.direction, ranksep: 140, nodesep: 50, edgesep: 200 });
 
     edges.forEach((edge) => {
         const { width: labelWidth } = measureLabel(edge.label ?? ''); // measure your label if you render one
 
-        console.log('transitions ' + edge.id, edge.data)
         g.setEdge(edge.source, edge.target, {
             // If you have a label string you can pass it too; the box is what reserves space:
             label: edge.label ?? '',
@@ -141,8 +140,8 @@ export function getLayoutedElements(
             return {
                 ...node,
                 position: { x, y },
-                sourcePosition: options.direction === 'LR' ? 'right' : 'bottom',
-                targetPosition: options.direction === 'LR' ? 'left' : 'top'
+                sourcePosition: options.direction === 'LR' ? 'right' : 'top',
+                targetPosition: options.direction === 'LR' ? 'left' : 'bottom'
             };
         }),
         edges

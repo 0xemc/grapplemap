@@ -45,10 +45,10 @@
 		const t = $transitions; // establishes dependency
 		if (!t || t.length === 0) return;
 
-		setTimeout(() => onLayout('LR'), 20); // wait for DOM
+		setTimeout(() => onLayout('BT'), 20); // wait for DOM
 	});
 
-	function onLayout(direction: 'LR' | 'TB') {
+	function onLayout(direction: 'LR' | 'BT') {
 		const layouted = getLayoutedElements(nodes, edges, { direction });
 
 		nodes = [...layouted.nodes];
@@ -71,7 +71,7 @@
 	<Panel position="top-right">
 		<ButtonGroup>
 			<Button onclick={() => onLayout('LR')} class="">→ horizontal</Button>
-			<Button onclick={() => onLayout('TB')} class="">↓ vertical</Button>
+			<Button onclick={() => onLayout('BT')} class="">↑ vertical</Button>
 		</ButtonGroup>
 	</Panel>
 	<MiniMap class="md-block hidden" />
