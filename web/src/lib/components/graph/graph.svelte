@@ -15,69 +15,23 @@
 	import { onMount } from 'svelte';
 	import { Button, ButtonGroup, Modal, P } from 'flowbite-svelte';
 	import { Listgroup, ListgroupItem } from 'flowbite-svelte';
-	import {
-		getLayoutedElements,
-		measureLabel,
-		transitionsToEdges,
-		transitionToNodes,
-		type GraphNode
-	} from '../graph/graph.utils';
+	import { getLayoutedElements, transitionsToEdges, transitionToNodes } from '../graph/graph.utils';
 	import TransitionEdge from '../graph/transition-edge.svelte';
 	import TransitionModal from '../transition-modal/transition-modal.svelte';
 	import { setGraphContext } from '../graph/graph.state.svelte';
 	import { liveQuery } from 'dexie';
 	import { db } from '$lib/db';
-	import { page } from '$app/state';
-	import { filesStore } from '$lib/stores/fileTree';
 
 	setGraphContext();
 
 	let transitions = liveQuery(async () => await db.transitions.toArray());
-	let files = $derived($filesStore ?? []);
 
 	// Selected file IDs control which transitions render
 	let selectedFileIds = $state<Set<number>>(new Set());
 	let fileQuery = $state('');
 
-	$effect(() => {
-		// Initialize selection to all files when files first load
-		const f = files as any[];
-		if (!f || f.length === 0) return;
-		if (selectedFileIds.size === 0) {
-			selectedFileIds = new Set(f.map((x) => x.id));
-		}
-	});
-
-	function toggleFileSelection(id: number, checked: boolean) {
-		const next = new Set(selectedFileIds);
-		if (checked) next.add(id);
-		else next.delete(id);
-		selectedFileIds = next;
-	}
-
-	function selectAllFiles() {
-		const f = files as any[];
-		if (!f) return;
-		selectedFileIds = new Set(f.map((x) => x.id));
-	}
-
-	function clearAllFiles() {
-		selectedFileIds = new Set();
-	}
-
-	let visibleFiles = $derived(
-		(files as any[]).filter((f) =>
-			fileQuery ? (f.name || '').toLowerCase().includes(fileQuery.toLowerCase()) : true
-		)
-	);
-
-	let filteredTransitions = $derived(
-		($transitions ?? []).filter((t) => selectedFileIds.has((t as any).file_id))
-	);
-	let edges: Edge[] = $derived(transitionsToEdges(filteredTransitions ?? []) as unknown as Edge[]);
-	let nodes = $derived(
-		uniqueBy((filteredTransitions ?? []).flatMap(transitionToNodes), prop('id'))
-	);
+	let edges: Edge[] = $derived(transitionsToEdges($transitions ?? []) as unknown as Edge[]);
+	let nodes = $derived(uniqueBy(($transitions ?? []).flatMap(transitionToNodes), prop('id')));
 
 	let colorMode = $state<ColorMode>(currentTheme());
 	onMount(() => observeTheme((t: Theme) => (colorMode = t)));
@@ -87,7 +41,7 @@
 
 	/** Layout on initial load */
 	$effect(() => {
-		const t = filteredTransitions; // establishes dependency
+		const t = $transitions; // establishes dependency
 		if (!t || t.length === 0) return;
 
 		setTimeout(() => onLayout('BT'), 20); // wait for DOM
