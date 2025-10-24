@@ -1,5 +1,5 @@
 import type { Transition } from "@lang/types";
-import type { Edge, EdgeProps, InternalNode, Node } from "@xyflow/svelte";
+import { MarkerType, type Edge, type EdgeProps, type InternalNode, type Node } from "@xyflow/svelte";
 import { groupBy } from "remeda";
 import * as Dagre from '@dagrejs/dagre';
 
@@ -18,6 +18,9 @@ export function transitionsToEdges(trs: Transition[]): Edge<{ transitions: Trans
             type: 'transition',
             animated: true,
             label,
+            markerEnd: {
+                type: MarkerType.ArrowClosed,
+            },
             data: {
                 transitions: items,
             },

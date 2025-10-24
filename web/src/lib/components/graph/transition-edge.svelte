@@ -23,11 +23,12 @@
 	let path = $derived(pathData[0]);
 	let labelX = $derived(pathData[1]);
 	let labelY = $derived(pathData[2]);
+	const { markerStart, markerEnd } = props;
 
 	const transitions = $derived(((props.data as any)?.transitions as Transition[]) ?? []);
 </script>
 
-<BaseEdge {path} />
+<BaseEdge {path} {markerEnd} {markerStart} />
 <EdgeLabel
 	class="dark:bg-chisel-700 border-chisel-100 rounded border bg-white p-12 shadow "
 	x={labelX}
