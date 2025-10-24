@@ -1,7 +1,7 @@
-import type { Transition } from "@lang/types";
 import { MarkerType, type Edge, type EdgeProps, type InternalNode, type Node } from "@xyflow/svelte";
 import { groupBy } from "remeda";
 import * as Dagre from '@dagrejs/dagre';
+import type { Transition } from "$lib/db/tables/transitions";
 
 export function transitionsToEdges(trs: Transition[]): Edge<{ transitions: Transition[] }, 'transition'>[] {
     const groups = groupBy(trs, (t) => `${t.from}__${t.to}`);

@@ -17,7 +17,7 @@
 // - Blank lines between transitions are fine.
 
 // Example
-(url:https://www.youtube.com/watch?v=eHMBWw4iZRQ&list=PL5kA-Cs1gYP9qUhms6dphz6GGSQ2yCJQp)
+[attacking][defending](anothertag)[tag4](url:https://www.youtube.com/watch?v=eHMBWw4iZRQ&list=PL5kA-Cs1gYP9qUhms6dphz6GGSQ2yCJQp)
 Kneeling elbow escape
 Closed Guard -> Half Guard
 1. Hands to hips

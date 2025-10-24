@@ -5,12 +5,18 @@ const transition = {
   block(_: any, transition: any, __: any) {
     return transition.transitions()
   },
+  tags(items: any, _nl: any) {
+    return items.transitions().filter((s: string) => s.trim()).map((s: string) => s.trim());
+  },
+  tag(_open: any, content: any, _close: any) {
+    return content.sourceString.trim();
+  },
   _iter(this: any, ...items: any[]) {
     return items.map((i) => i.transitions());
   },
   transition_block(_: any, tags: any, title: any, _nl: any, from_to: any, steps: any, __: any, ___: any) {
     return {
-      tags: tags.sourceString.trim(),
+      tags: tags.transitions(),
       title: title.sourceString.trim(),
       ...from_to.transitions(),
       steps: steps.transitions()

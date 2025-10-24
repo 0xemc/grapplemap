@@ -2,7 +2,7 @@ import type { EntityTable } from "dexie";
 
 export interface Transition {
     id: number;
-    tags: string;
+    tags: string[];
     title: string;
     from: string;
     to: string;
@@ -17,8 +17,4 @@ export class Transitions {
         this.table = table
     }
 
-    /** Takes a full string of transition definitions and loads them in to the database */
-    add(content: string) {
-
-    }
 }

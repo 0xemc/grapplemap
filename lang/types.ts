@@ -1,5 +1,5 @@
 export type Transition = {
-  tags: string;
+  tags: string[];
   title: string;
   from: string;
   to: string;
