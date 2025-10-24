@@ -8,8 +8,6 @@ export function transitionsToEdges(trs: Transition[]): Edge<{ transitions: Trans
 
     return Object.entries(groups).map(([key, items]) => {
         const [from, to] = key.split('__');
-        const label =
-            items.length === 1 ? items[0].title : `${items.length} transitions`;
 
         return {
             id: `${from}->${to}`,
@@ -17,7 +15,6 @@ export function transitionsToEdges(trs: Transition[]): Edge<{ transitions: Trans
             target: to,
             type: 'transition',
             animated: true,
-            label,
             markerEnd: {
                 type: MarkerType.ArrowClosed,
             },

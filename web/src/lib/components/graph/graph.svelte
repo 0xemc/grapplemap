@@ -23,7 +23,7 @@
 		type GraphNode
 	} from '../graph/graph.utils';
 	import TransitionEdge from '../graph/transition-edge.svelte';
-	import TransitionModal from '../graph/transition-modal.svelte';
+	import TransitionModal from '../transition-modal/transition-modal.svelte';
 	import { setGraphContext } from '../graph/graph.state.svelte';
 	import { liveQuery } from 'dexie';
 	import { db } from '$lib/db';

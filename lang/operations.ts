@@ -16,7 +16,7 @@ const transition = {
   },
   transition_block(_: any, tags: any, title: any, _nl: any, from_to: any, steps: any, __: any, ___: any) {
     return {
-      tags: tags.transitions(),
+      tags: tags.transitions().flat(),
       title: title.sourceString.trim(),
       ...from_to.transitions(),
       steps: steps.transitions()
@@ -30,7 +30,7 @@ const transition = {
   },
   _terminal(this: any) {
     return this.sourceString;
-  }
+  },
 };
 
 export {
