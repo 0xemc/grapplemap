@@ -3,7 +3,7 @@
 	import { liveQuery } from 'dexie';
 	import { Button, Listgroup, ListgroupItem } from 'flowbite-svelte';
 
-	let files = liveQuery(async () => await db.files.toArray());
+	export let files: File[];
 
 	// $effect(() => {
 	// 	// Initialize selection to all files when files first load
@@ -34,8 +34,8 @@
 
 <div class="dark:bg-chisel-700 w-60 rounded bg-white p-2 shadow">
 	<div class="mb-2 flex items-center justify-between gap-2">
-		<Button size="xs" onclick={selectAllFiles}>All</Button>
-		<Button size="xs" color="light" onclick={clearAllFiles}>None</Button>
+		<Button size="xs">All</Button>
+		<Button size="xs" color="light">None</Button>
 	</div>
 	<div class="max-h-64 overflow-auto pr-1">
 		<Listgroup class="space-y-1">
