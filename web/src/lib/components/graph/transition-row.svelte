@@ -7,7 +7,7 @@
 	};
 	let { transition }: Props = $props();
 
-	const has_video = $derived(transition.tags?.some((t) => t.includes('url:')));
+	const has_video = $derived((transition?.tags ?? []).some((t) => t.includes('url:')));
 	let state = getGraphContext();
 </script>
 
