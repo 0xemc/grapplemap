@@ -111,3 +111,8 @@ body,
 	visibility: hidden;
 	cursor: none;
 }
+
+button,
+input[type='checkbox'] {
+	cursor: pointer;
+}

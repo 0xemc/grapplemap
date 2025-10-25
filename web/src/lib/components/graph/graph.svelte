@@ -106,7 +106,7 @@
 			<Button onclick={() => onLayout('BT')} class="">↑ vertical</Button>
 		</ButtonGroup>
 	</Panel>
-	<Panel position="top-left">
+	<Panel position="top-left" class="shadow-none">
 		<FileSelect files={$files} onChange={onFilesChange} />
 	</Panel>
 	<MiniMap class="md-block hidden" />
