@@ -40,7 +40,7 @@
 	let transitions = $derived(
 		$_transitions
 			?.filter((t) => (fileIds?.length ? fileIds?.includes(t.file_id) : true))
-			.filter((t) => intersection(tagIds, t.tags).length)
+			.filter((t) => (tagIds.length ? intersection(tagIds, t.tags).length : true))
 	);
 
 	let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []) as unknown as Edge[]);
