@@ -13,7 +13,6 @@
 	import { prop, unique, uniqueBy } from 'remeda';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount } from 'svelte';
-	import { Button, ButtonGroup } from 'flowbite-svelte';
 	import { getLayoutedElements, transitionsToEdges, transitionToNodes } from '../graph/graph.utils';
 	import TransitionEdge from '../graph/transition-edge.svelte';
 	import TransitionModal from '../transition-modal/transition-modal.svelte';
@@ -31,14 +30,15 @@
 	const { fitView } = useSvelteFlow();
 	const edgeTypes = { transition: TransitionEdge };
 	let fileIds = $derived(page.url.searchParams.getAll('file').map(Number));
-	let selected = $derived(page.url.searchParams.getAll('tag'));
+	let tagIds = $derived(page.url.searchParams.getAll('tag'));
 	let files = liveQuery(async () => await db.files.toArray());
 	let _transitions = liveQuery(async () => await db.transitions.toArray());
-	let transitions = $derived(
-		$_transitions?.filter((t) => (fileIds?.length ? fileIds?.includes(t.file_id) : true))
-	);
 	let tags = $derived(
 		unique($_transitions?.flatMap((t) => t.tags).filter((t) => !t.includes('url:')) ?? [])
+	);
+
+	let transitions = $derived(
+		$_transitions?.filter((t) => (fileIds?.length ? fileIds?.includes(t.file_id) : true))
 	);
 
 	let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []) as unknown as Edge[]);
@@ -119,12 +119,13 @@
 		position="top-right"
 		class="shadow-nondark:bg-chisel-700 border-chisel-100 w-60 rounded-lg border bg-white p-2 shadow"
 	>
-		<FileSelect files={$files} onChange={onFilesChange} />
+		<FileSelect files={$files} onChange={onFilesChange} initial={fileIds} />
 		<MultiSelect
 			items={tags.map((t) => ({ value: t, name: t }))}
 			label="Tags"
 			searchPlaceholder="Select tags..."
 			onChange={onTagChange}
+			initial={tagIds}
 		/>
 	</Panel>
 	<MiniMap class="md-block hidden" />

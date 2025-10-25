@@ -4,12 +4,13 @@
 
 	type Props = {
 		files: File[];
+		initial?: number[];
 		onChange: (ids: number[]) => void;
 	};
 
-	let { onChange, files }: Props = $props();
+	let { onChange, files, initial }: Props = $props();
 
-	let selectedIds: Set<number> = $state(new Set([]));
+	let selectedIds: Set<number> = $state(new Set(initial ?? []));
 
 	function notify() {
 		onChange(Array.from(selectedIds));
