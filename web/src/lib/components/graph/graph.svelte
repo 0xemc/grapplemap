@@ -10,7 +10,7 @@
 		type Edge
 	} from '@xyflow/svelte';
 
-	import { prop, uniqueBy } from 'remeda';
+	import { prop, unique, uniqueBy } from 'remeda';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount } from 'svelte';
 	import { Button, ButtonGroup } from 'flowbite-svelte';
@@ -24,16 +24,21 @@
 
 	import { page } from '$app/state';
 	import { setParam } from '$lib/utils/params';
+	import MultiSelect from '../multi-select.svelte';
 
 	setGraphContext();
 
 	const { fitView } = useSvelteFlow();
 	const edgeTypes = { transition: TransitionEdge };
 	let fileIds = $derived(page.url.searchParams.getAll('file').map(Number));
+	let selected = $derived(page.url.searchParams.getAll('tag'));
 	let files = liveQuery(async () => await db.files.toArray());
 	let _transitions = liveQuery(async () => await db.transitions.toArray());
 	let transitions = $derived(
 		$_transitions?.filter((t) => (fileIds?.length ? fileIds?.includes(t.file_id) : true))
+	);
+	let tags = $derived(
+		unique($_transitions?.flatMap((t) => t.tags).filter((t) => !t.includes('url:')) ?? [])
 	);
 
 	let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []) as unknown as Edge[]);
@@ -61,6 +66,10 @@
 
 	function onFilesChange(ids: number[]) {
 		setParam('file', ids.map(String));
+	}
+
+	function onTagChange(tags: string[]) {
+		setParam('tag', tags);
 	}
 	// // Focus edge from query param when available and data is ready
 	// $effect(() => {
@@ -100,14 +109,23 @@
 	maxZoom={1.2}
 	minZoom={0.4}
 >
-	<Panel position="top-right">
+	<!-- <Panel position="top-right">
 		<ButtonGroup>
 			<Button onclick={() => onLayout('LR')} class="">→ horizontal</Button>
 			<Button onclick={() => onLayout('BT')} class="">↑ vertical</Button>
 		</ButtonGroup>
-	</Panel>
-	<Panel position="top-left" class="shadow-none">
+	</Panel> -->
+	<Panel
+		position="top-right"
+		class="shadow-nondark:bg-chisel-700 border-chisel-100 w-60 rounded-lg border bg-white p-2 shadow"
+	>
 		<FileSelect files={$files} onChange={onFilesChange} />
+		<MultiSelect
+			items={tags.map((t) => ({ value: t, name: t }))}
+			label="Tags"
+			searchPlaceholder="Select tags..."
+			onChange={onTagChange}
+		/>
 	</Panel>
 	<MiniMap class="md-block hidden" />
 	<Controls />

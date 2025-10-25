@@ -36,7 +36,7 @@
 	}
 </script>
 
-<div class="dark:bg-chisel-700 border-chisel-100 w-60 rounded-lg border bg-white p-2 shadow">
+<div>
 	<div class="mb-2 flex items-center justify-between gap-2">
 		<h4 class="pl-1 font-bold">Files</h4>
 		<div>
