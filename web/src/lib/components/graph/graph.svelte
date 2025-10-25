@@ -10,7 +10,7 @@
 		type Edge
 	} from '@xyflow/svelte';
 
-	import { prop, unique, uniqueBy } from 'remeda';
+	import { intersection, prop, unique, uniqueBy } from 'remeda';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount } from 'svelte';
 	import { getLayoutedElements, transitionsToEdges, transitionToNodes } from '../graph/graph.utils';
@@ -38,7 +38,9 @@
 	);
 
 	let transitions = $derived(
-		$_transitions?.filter((t) => (fileIds?.length ? fileIds?.includes(t.file_id) : true))
+		$_transitions
+			?.filter((t) => (fileIds?.length ? fileIds?.includes(t.file_id) : true))
+			.filter((t) => intersection(tagIds, t.tags).length)
 	);
 
 	let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []) as unknown as Edge[]);
