@@ -23,14 +23,15 @@
 	<script>
 		(function () {
 			try {
-				var saved = localStorage.getItem('theme');
-				var pref = saved
-					? saved
-					: window.matchMedia('(prefers-color-scheme: dark)').matches
-						? 'dark'
-						: 'light';
-				if (pref === 'dark') document.documentElement.classList.add('dark');
-				else document.documentElement.classList.remove('dark');
+				// var saved = localStorage.getItem('theme');
+				// var pref = saved
+				// 	? saved
+				// 	: window.matchMedia('(prefers-color-scheme: dark)').matches
+				// 		? 'dark'
+				// 		: 'light';
+				// if (pref === 'dark') document.documentElement.classList.add('dark');
+				// else document.documentElement.classList.remove('dark');
+				document.documentElement.classList.remove('dark');
 			} catch (e) {}
 		})();
 	</script>
@@ -85,7 +86,7 @@
 				<div>
 					<h1 class="m-0 text-lg font-semibold">{activeUrl.replace('/', '')}</h1>
 				</div>
-				<ThemeSwitch />
+				<!-- <ThemeSwitch /> -->
 			</div>
 			{@render children?.()}
 		</div>
