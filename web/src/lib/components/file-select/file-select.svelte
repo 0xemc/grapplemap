@@ -1,50 +1,55 @@
 <script lang="ts">
-	import { db } from '$lib/db';
-	import { liveQuery } from 'dexie';
+	import type { File } from '$lib/db/tables/files';
 	import { Button, Listgroup, ListgroupItem } from 'flowbite-svelte';
 
-	export let files: File[];
+	type Props = {
+		files: File[];
+		onChange: (ids: number[]) => void;
+	};
 
-	// $effect(() => {
-	// 	// Initialize selection to all files when files first load
-	// 	const f = $files as any[];
-	// 	if (!f || f.length === 0) return;
-	// 	if (selectedFileIds.size === 0) {
-	// 		selectedFileIds = new Set(f.map((x) => x.id));
-	// 	}
-	// });
+	let { onChange, files }: Props = $props();
 
-	// function toggleFileSelection(id: number, checked: boolean) {
-	// 	const next = new Set(selectedFileIds);
-	// 	if (checked) next.add(id);
-	// 	else next.delete(id);
-	// 	selectedFileIds = next;
-	// }
+	let selectedIds: Set<number> = new Set([]);
 
-	// function selectAllFiles() {
-	// 	const f = files as any[];
-	// 	if (!f) return;
-	// 	selectedFileIds = new Set(f.map((x) => x.id));
-	// }
+	function notify() {
+		onChange(Array.from(selectedIds));
+	}
 
-	// function clearAllFiles() {
-	// 	selectedFileIds = new Set();
-	// }
+	function toggleFileSelection(id: number, checked: boolean) {
+		const next = new Set(selectedIds);
+		if (checked) next.add(id);
+		else next.delete(id);
+		selectedIds = next;
+		notify();
+	}
+
+	function selectAll() {
+		const f = files as any[] | undefined;
+		if (!f) return;
+		selectedIds = new Set(f.map((x) => x.id));
+		notify();
+	}
+
+	function clearAll() {
+		selectedIds = new Set();
+		notify();
+	}
 </script>
 
 <div class="dark:bg-chisel-700 w-60 rounded bg-white p-2 shadow">
 	<div class="mb-2 flex items-center justify-between gap-2">
-		<Button size="xs">All</Button>
-		<Button size="xs" color="light">None</Button>
+		<Button size="xs" onclick={selectAll}>All</Button>
+		<Button size="xs" color="light" onclick={clearAll}>None</Button>
 	</div>
 	<div class="max-h-64 overflow-auto pr-1">
 		<Listgroup class="space-y-1">
-			{#each $files as f (f.id)}
+			{#each files as f (f.id)}
 				<ListgroupItem class="flex items-center gap-2">
 					<input
 						type="checkbox"
-						checked={selectedFileIds.has(f.id)}
-						onchange={(e: any) => toggleFileSelection(f.id, e.currentTarget.checked)}
+						checked={selectedIds.has(f.id)}
+						onchange={(e) =>
+							toggleFileSelection(f.id, (e.currentTarget as HTMLInputElement).checked)}
 					/>
 					<span class="truncate text-sm">{f.name}</span>
 				</ListgroupItem>

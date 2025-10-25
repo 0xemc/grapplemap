@@ -23,23 +23,28 @@
 	import FileSelect from '../file-select/file-select.svelte';
 
 	import { page } from '$app/state';
+	import { setParam } from '$lib/utils/params';
 
 	setGraphContext();
 
 	const { fitView } = useSvelteFlow();
 	const edgeTypes = { transition: TransitionEdge };
-	const query = page.url.searchParams.get('q');
+	let fileIds = $derived(page.url.searchParams.getAll('file').map(Number));
+	let files = liveQuery(async () => await db.files.toArray());
+	let _transitions = liveQuery(async () => await db.transitions.toArray());
+	let transitions = $derived(
+		$_transitions?.filter((t) => (fileIds?.length ? fileIds?.includes(t.file_id) : true))
+	);
 
-	let transitions = liveQuery(async () => await db.transitions.toArray());
-	let edges: Edge[] = $derived(transitionsToEdges($transitions ?? []) as unknown as Edge[]);
-	let nodes = $derived(uniqueBy(($transitions ?? []).flatMap(transitionToNodes), prop('id')));
+	let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []) as unknown as Edge[]);
+	let nodes = $derived(uniqueBy((transitions ?? []).flatMap(transitionToNodes), prop('id')));
 	let colorMode = $state<ColorMode>(currentTheme());
 
 	onMount(() => observeTheme((t: Theme) => (colorMode = t)));
 
 	/** Layout on initial load */
 	$effect(() => {
-		const t = $transitions; // establishes dependency
+		const t = transitions; // establishes dependency
 		if (!t || t.length === 0) return;
 
 		setTimeout(() => onLayout('BT'), 20); // wait for DOM
@@ -54,6 +59,9 @@
 		fitView();
 	}
 
+	function onFilesChange(ids: number[]) {
+		setParam('file', ids.map(String));
+	}
 	// // Focus edge from query param when available and data is ready
 	// $effect(() => {
 	// 	const id = page.url.searchParams.get('transition');
@@ -99,7 +107,7 @@
 		</ButtonGroup>
 	</Panel>
 	<Panel position="top-left">
-		<FileSelect />
+		<FileSelect files={$files} onChange={onFilesChange} />
 	</Panel>
 	<MiniMap class="md-block hidden" />
 	<Controls />
