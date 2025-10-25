@@ -15,7 +15,7 @@ class Database extends Dexie {
 
     constructor() {
         super('grapplemap');
-        this.version(1).stores({
+        this.version(2).stores({
             files: '++id, parentId, type, name, order, content, createdAt, updatedAt',
             transitions: '++id, tags, title, from, to, steps, file_id'
         });
