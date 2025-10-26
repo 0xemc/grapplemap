@@ -15,10 +15,16 @@ class Database extends Dexie {
 
     constructor() {
         super('grapplemap');
-        this.version(2).stores({
+        this.version(3).stores({
             files: '++id, parentId, type, name, order, content, createdAt, updatedAt',
             transitions: '++id, tags, title, from, to, steps, file_id'
-        });
+        }).upgrade(async (tx) => {
+            const transitions = tx.table('transitions');
+            await transitions.toCollection().modify((row: { tags: string | string[] }) => {
+                const bracketRegex = /[\])]\s*[\[(]/g;
+                if (typeof row.tags === 'string') row.tags = row.tags.split(bracketRegex)
+            })
+        })
         // inside the Database constructor, after .stores(...)
         this.on('populate', async () => {
             const ts = Date.now();
