@@ -45,8 +45,8 @@
 			<Button size="xs" class="h-6 p-2" color="light" onclick={clearAll}>None</Button>
 		</div>
 	</div>
-	<div class="h-[128px] max-h-64 overflow-auto pr-1">
-		<Listgroup class="space-y-1">
+	<div class="h-full overflow-auto rounded-md border border-gray-200 pr-1">
+		<Listgroup class="max-h-[128px] space-y-1 border-none">
 			{#each files as f (f.id)}
 				<ListgroupItem class="flex items-center gap-2">
 					<Checkbox

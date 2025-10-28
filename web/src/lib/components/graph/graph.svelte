@@ -119,7 +119,7 @@
 	</Panel> -->
 	<Panel
 		position="top-right"
-		class="shadow-nondark:bg-chisel-700 border-chisel-100 w-60 rounded-lg border bg-white p-2 shadow"
+		class="shadow-nondark:bg-chisel-700 border-chisel-100 flex w-60 flex-col gap-2 rounded-lg border bg-white p-2 shadow"
 	>
 		<FileSelect files={$files} onChange={onFilesChange} initial={fileIds} />
 		<MultiSelect
