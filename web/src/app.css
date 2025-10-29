@@ -112,6 +112,10 @@ body,
 	cursor: none;
 }
 
+.svelte-flow__node {
+	border: 1px solid var(--color-chisel-200);
+}
+
 button,
 input[type='checkbox'] {
 	cursor: pointer;

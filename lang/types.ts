@@ -2,11 +2,13 @@ export type Transition = {
   tags: string[];
   title: string;
   from: string;
-  fromTag?: string;
+  fromTag?: PositionTag;
   to: string;
-  toTag?: string;
+  toTag?: PositionTag;
   steps: string[];
 };
+
+export type PositionTag = "t" | "b" | "a" | "d"
 
 export type Position = {
   title: string

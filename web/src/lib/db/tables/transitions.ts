@@ -1,3 +1,4 @@
+import type { PositionTag } from "@lang/types";
 import type { EntityTable } from "dexie";
 
 export interface Transition {
@@ -8,8 +9,8 @@ export interface Transition {
     to: string;
     steps: string[];
     file_id: number
-    fromTag?: string;
-    toTag?: string;
+    fromTag?: PositionTag;
+    toTag?: PositionTag;
 };
 
 export class Transitions {

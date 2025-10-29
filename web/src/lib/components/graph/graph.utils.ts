@@ -2,6 +2,7 @@ import { MarkerType, type Edge, type EdgeProps, type InternalNode, type Node } f
 import { groupBy } from "remeda";
 import * as Dagre from '@dagrejs/dagre';
 import type { Transition } from "$lib/db/tables/transitions";
+import type { PositionTag } from "@lang/types";
 
 export function transitionsToEdges(trs: Transition[]): Edge<{ transitions: Transition[] }, 'transition'>[] {
     const groups = groupBy(trs, (t) => `${t.from}__${t.to}`);
@@ -34,18 +35,20 @@ export type GraphNode = {
     data: { label: string }
 };
 
-export function transitionToNodes(tr?: Transition): GraphNode[] {
+export function transitionToNodes(tr?: Transition): (GraphNode & { data: { tag?: PositionTag } })[] {
     return tr
         ? [
             {
                 id: `${tr.from}${tr.fromTag ?? ''}`,
                 position: { x: 0, y: 0 },
-                data: { label: `${tr.from}${tr.fromTag ?? ''}` }
+                type: "position",
+                data: { label: `${tr.from}`, tag: tr.fromTag }
             },
             {
                 id: `${tr.to}${tr.toTag ?? ''}`,
                 position: { x: 0, y: 0 },
-                data: { label: `${tr.to}${tr.toTag ?? ''}` }
+                type: "position",
+                data: { label: `${tr.to}`, tag: tr.toTag }
             }
         ]
         : [];

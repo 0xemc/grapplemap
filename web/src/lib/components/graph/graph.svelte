@@ -24,11 +24,13 @@
 	import { page } from '$app/state';
 	import { setParam } from '$lib/utils/params';
 	import MultiSelect from '../multi-select.svelte';
+	import PositionNode from './position-node.svelte';
 
 	setGraphContext();
 
 	const { fitView } = useSvelteFlow();
 	const edgeTypes = { transition: TransitionEdge };
+	const nodeTypes = { position: PositionNode };
 	let fileIds = $derived(page.url.searchParams.getAll('file').map(Number));
 	let tagIds = $derived(page.url.searchParams.getAll('tag'));
 	let files = liveQuery(async () => await db.files.toArray());
@@ -45,6 +47,7 @@
 
 	let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []) as unknown as Edge[]);
 	let nodes = $derived(uniqueBy((transitions ?? []).flatMap(transitionToNodes), prop('id')));
+
 	let colorMode = $state<ColorMode>(currentTheme());
 
 	onMount(() => observeTheme((t: Theme) => (colorMode = t)));
@@ -104,6 +107,7 @@
 <SvelteFlow
 	bind:nodes
 	bind:edges
+	{nodeTypes}
 	{edgeTypes}
 	{colorMode}
 	connectionLineType={ConnectionLineType.SmoothStep}
