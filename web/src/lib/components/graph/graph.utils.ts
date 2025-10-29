@@ -102,7 +102,7 @@ export function getLayoutedElements(
 ) {
     const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
     // g.setGraph({ rankdir: options.direction, ranksep: 50, nodesep: 100, edgesep: 300 });
-    g.setGraph({ rankdir: options.direction, ranksep: 140, nodesep: 50, edgesep: 300 });
+    g.setGraph({ rankdir: options.direction });
 
     edges.forEach((edge) => {
         const { width: labelWidth } = measureLabel(edge.label ?? ''); // measure your label if you render one
