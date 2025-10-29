@@ -95,6 +95,37 @@ export function measureLabel(text: string): { width: number; height: number } {
     return { width: w + 20, height: 28 };
 }
 
+// add/replace in graph.utils.ts
+function measureText(text: string, font = '14px Inter, system-ui, sans-serif'): number {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+    ctx.font = font;
+    return Math.ceil(ctx.measureText(text).width);
+}
+
+function measureEdgeBox(edge: Edge): { width: number; height: number } {
+    // Content you render in <EdgeLabel> is a column of TransitionRow buttons
+    const transitions = ((edge.data as any)?.transitions ?? []) as Transition[];
+
+    // Tailwind sizes used in UI
+    const containerPad = 48; // p-12 => 48px each side
+    const rowHPad = 8;       // p-2 => 8px each side
+    const rowHeight = 32;    // ~button row height incl. vertical padding
+    const divider = 1;       // divide-y line thickness
+    const iconSpace = 20;    // space for the video icon/right adornments
+
+    const maxRowText = Math.max(0, ...transitions.map(t => measureText(t.title)));
+    const contentWidth = maxRowText + rowHPad * 2 + iconSpace;
+
+    const width = contentWidth + containerPad * 2;
+    const height =
+        containerPad * 2 +
+        transitions.length * rowHeight +
+        Math.max(0, transitions.length - 1) * divider;
+
+    return { width, height };
+}
+
 export function getLayoutedElements(
     nodes: GraphNode[],
     edges: Edge[],
@@ -105,13 +136,13 @@ export function getLayoutedElements(
     g.setGraph({ rankdir: options.direction });
 
     edges.forEach((edge) => {
-        const { width: labelWidth } = measureLabel(edge.label ?? ''); // measure your label if you render one
+        const { width, height } = measureEdgeBox(edge); // measure your label if you render one
 
         g.setEdge(edge.source, edge.target, {
-            // If you have a label string you can pass it too; the box is what reserves space:
-            label: edge.label ?? '',
-            width: labelWidth,
-            height: (edge.data?.transitions?.length ?? 0) * 50, //@todo extract this hard coded 50px value
+            // width: labelWidth,
+            // height: (edge.data?.transitions?.length ?? 0) * 50, //@todo extract this hard coded 50px value
+            width,
+            height,
             labelpos: 'c', // "l" | "r" | "c"
             minlen: edge.minlen ?? 1, // >1 forces extra rank gaps for this edge
             weight: edge.weight ?? 1 // crossing minimization priority
