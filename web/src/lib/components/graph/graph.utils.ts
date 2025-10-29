@@ -59,8 +59,10 @@ export function transitionToNodes(tr?: Transition): (GraphNode & { data: { tag?:
 export function getSelfLoopPath(edge: EdgeProps, node?: InternalNode<Node>) {
     const sy = edge.sourceY
 
+    const box = measureEdgeBox(edge)
+
     // const pad = 20;   // gap from node before first corner
-    const w = 50;     // loop width to the right
+    const w = (box.width / 3);     // loop width to the right
     const h = 40;     // loop height
 
     // first corner just to the right of the node
