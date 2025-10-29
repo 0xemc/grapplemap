@@ -5,8 +5,8 @@ import * as ohm from 'ohm-js';
 import { transition } from "@lang/operations"
 import transitionRecipe from '@lang/recipes/transition.json';
 import { debugParse } from './transitionParser';
-
-type Token = { from: number; to: number; cls: string };
+import type { Token } from '@lang/types';
+import { syntax as tokensOperation } from '@lang/operations';
 
 export type OhmHighlighterOptions = {
   startRule?: string;
@@ -44,54 +44,7 @@ export function ohmHighlighter(options: OhmHighlighterOptions): Extension {
 
     semantics.addOperation<Token[]>(
       'tokens',
-      {
-        _iter(this, ...children) {
-          const tokens: Token[] = [];
-          for (const ch of children) {
-            if (typeof ch?.tokens === 'function') tokens.push(...ch.tokens());
-          }
-          return tokens;
-        },
-        _nonterminal(this, ...children) {
-          const tokens: Token[] = [];
-          for (const ch of children) {
-            if (typeof ch?.tokens === 'function') tokens.push(...ch.tokens());
-          }
-          return tokens;
-        },
-        _terminal(this) {
-          const text: string = this.sourceString;
-          const from: number = this.source.startIdx;
-          const to: number = this.source.endIdx;
-          const tokens: Token[] = [];
-          if (text === '->') tokens.push({ from, to, cls: 'cm-transition-operator' });
-          if (text === '[' || text === ']') tokens.push({ from, to, cls: 'cm-transition-bracket' });
-          if (text === '.') tokens.push({ from, to, cls: 'cm-transition-punct' });
-          return tokens;
-        },
-
-        // Domain-specific rules
-        title(this, _chars) {
-          const s = this.source;
-          return [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-title' }];
-        },
-        tag_content(this, _chars) {
-          const s = this.source;
-          return [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-tag' }];
-        },
-        from(this, _chars) {
-          const s = this.source;
-          return s.startIdx === s.endIdx ? [] : [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-from' }];
-        },
-        to(this, _chars) {
-          const s = this.source;
-          return s.startIdx === s.endIdx ? [] : [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-to' }];
-        },
-        digit(this, _d) {
-          const s = this.source;
-          return [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-number' }];
-        }
-      } as any
+      tokensOperation
     );
 
     const raw = semantics(result).tokens() as any;

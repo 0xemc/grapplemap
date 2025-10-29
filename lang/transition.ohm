@@ -3,21 +3,35 @@ Transition {
   block = skip (transition_block)+ skip
   
   transition_block = skip tags? title nl from_to step* (~"\n" any)* skip
-  title = title_char+
-  from_to = from "->" to nl
-  from = title_char*
-  to = title_char*
-
-  title_char = (letter | digit | " " | "/")
-
-  // Nested steps
-  steps = step (nl step)*
-  step = number "." " "? any_char+ (nl | end)
-  number = digit+
-
+  
+  // Tags
   tags = (tag | " ")+ nl
   tag = ("[" | "(") tag_content ("]" | ")")
   tag_content = (~("]" | ")" | "\n") any)*
+  
+  // Title
+  title = title_char+
+  title_char = (letter | digit | " " | "/" | "[" | "]" | "&" | "_")
+  
+  // Positions
+  from_to = from "->" to nl
+  from = position_char* (from_tag " ")?
+  to = position_char* (to_tag)?
+  
+  position_char = (letter | digit | " " | "/" | "&" | "_" )
+
+  from_tag = bottom_tag | top_tag | attacking_tag | defending_tag
+  to_tag = bottom_tag | top_tag | attacking_tag | defending_tag
+  
+  bottom_tag = "[b]"
+  top_tag = "[t]"
+  attacking_tag = "[a]"
+  defending_tag = "[d]"
+
+  // Steps
+  steps = step (nl step)*
+  step = number "." " "? any_char+ (nl | end)
+  number = digit+
 
   // Utils
   space_or_tab = " " | "\t"
