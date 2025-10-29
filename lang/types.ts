@@ -2,7 +2,9 @@ export type Transition = {
   tags: string[];
   title: string;
   from: string;
+  fromTag?: string;
   to: string;
+  toTag?: string;
   steps: string[];
 };
 

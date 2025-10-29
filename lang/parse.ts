@@ -1,10 +1,9 @@
-import fs from "fs";
 import * as ohm from "ohm-js";
 import { syntax, transition } from "./operations";
 import type { Transition } from "./types";
 
 
-export const parse = (grammar: ohm.Grammar, text: string): { transitions: Transition[] } | undefined => {
+export const parse = (grammar: ohm.Grammar, text: string): { transitions: Transition[], syntax: any } | undefined => {
     const semantics = grammar.createSemantics()
     semantics.addOperation('transitions', transition)
     semantics.addOperation('syntax', syntax)

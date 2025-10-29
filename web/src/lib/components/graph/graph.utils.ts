@@ -7,12 +7,16 @@ export function transitionsToEdges(trs: Transition[]): Edge<{ transitions: Trans
     const groups = groupBy(trs, (t) => `${t.from}__${t.to}`);
 
     return Object.entries(groups).map(([key, items]) => {
-        const [from, to] = key.split('__');
+        // const [from, to] = key.split('__');
+        const { from, to, fromTag = "", toTag = "" } = items[0];
+
+        const fromId = `${from}${fromTag}`
+        const toId = `${to}${toTag}`
 
         return {
-            id: `${from}->${to}`,
-            source: from,
-            target: to,
+            id: `${fromId}->${toId}`,
+            source: fromId,
+            target: toId,
             type: 'transition',
             animated: true,
             markerEnd: {
@@ -34,14 +38,14 @@ export function transitionToNodes(tr?: Transition): GraphNode[] {
     return tr
         ? [
             {
-                id: tr.from,
+                id: `${tr.from}${tr.fromTag ?? ''}`,
                 position: { x: 0, y: 0 },
-                data: { label: tr.from }
+                data: { label: `${tr.from}${tr.fromTag ?? ''}` }
             },
             {
-                id: tr.to,
+                id: `${tr.to}${tr.toTag ?? ''}`,
                 position: { x: 0, y: 0 },
-                data: { label: tr.to }
+                data: { label: `${tr.to}${tr.toTag ?? ''}` }
             }
         ]
         : [];
