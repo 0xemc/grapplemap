@@ -82,12 +82,12 @@
 			</BottomNav>
 		</nav>
 		<div class="flex h-screen w-full flex-col">
-			<div class="app-toolbar">
+			<!-- <div class="app-toolbar">
 				<div>
 					<h1 class="m-0 text-lg font-semibold">{activeUrl.replace('/', '')}</h1>
 				</div>
-				<!-- <ThemeSwitch /> -->
-			</div>
+			<ThemeSwitch /> 
+			</div> -->
 			{@render children?.()}
 		</div>
 	</div>

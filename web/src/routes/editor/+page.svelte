@@ -49,10 +49,10 @@
 	}
 </script>
 
-<div class="box-border flex h-full flex-col gap-3 p-4">
-	<div class="flex gap-3">
+<div class="box-border flex h-full max-h-full flex-col gap-3 p-4">
+	<div class="flex h-full max-h-full gap-3">
 		<FileTree on:select={handleSelect} />
-		<div class="flex min-h-[300px] flex-1 flex-col gap-2">
+		<div class="flex h-full min-h-[300px] flex-1 flex-col gap-2">
 			<div class="flex items-center justify-between gap-2">
 				<div class="text-xs opacity-80">
 					{#if activeFileId !== null}

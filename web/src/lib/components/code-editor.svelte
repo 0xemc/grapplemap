@@ -158,6 +158,6 @@
 </script>
 
 <div
-	class="h-full min-h-[300px] flex-1 rounded border border-zinc-800 dark:border-zinc-700"
+	class="h-full min-h-[300px] flex-1 overflow-auto rounded border border-zinc-800 dark:border-zinc-700"
 	bind:this={host}
 ></div>
