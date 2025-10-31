@@ -25,7 +25,7 @@
 	isOpen={isDemoOpen}
 	closeSidebar={close}
 	params={{ x: -50, duration: 50 }}
-	class="border-chisel-400 z-50 h-full w-auto border-r pt-6 dark:border-zinc-700"
+	class="border-chisel-400 z-50 h-full w-auto border-r pt-1 dark:border-zinc-700"
 	classes={{ nonactive: 'p-2', active: 'p-2' }}
 >
 	<SidebarGroup>
