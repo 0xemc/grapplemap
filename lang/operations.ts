@@ -72,6 +72,42 @@ export const transition = {
   },
 };
 
+export const position = {
+  blocks(_: any, block: any, __: any, ___: any) {
+    return [...block.positions().flat().flat()];
+  },
+  block(_: any, transition: any, __: any) {
+    return transition.positions()
+  },
+  transition_block(_: any, tags: any, title: any, _nl: any, _require_from_to: any, from_to: any, steps: any, __: any, ___: any) {
+    return []
+  },
+  // Args: (skip, position_tags, position_name, _not_from_to, _rest, _skip)
+  position_block(_skip: any, position_tags: any, position_name: any, _not_from_to: any, _rest: any) {
+    // Extract the main position name and any tags (if present)
+    const name = position_name.positions();
+    const tags = position_tags.children.length ? position_tags.positions() : [];
+    // Return normalized { name, tags } object for the position
+    return [{ name, tags }];
+  },
+  position_name(this: any, _: any) {
+    // Return the position name as a trimmed string
+    return this.sourceString.trim();
+  },
+  position_tags(items: any) {
+    return items.transitions().filter((s: string) => s.trim()).map((s: string) => s.trim());
+  },
+  tags(items: any, _nl: any) {
+    return items.transitions().filter((s: string) => s.trim()).map((s: string) => s.trim());
+  },
+  tag(_open: any, content: any, _close: any) {
+    return content.sourceString.trim();
+  },
+  _iter(this: any, ...items: any[]) {
+    return items.map((i) => i.positions());
+  },
+}
+
 export const syntax = {
   _iter(this: OhmNode, ...children: OhmNode[]): Token[] {
     const tokens: Token[] = [];

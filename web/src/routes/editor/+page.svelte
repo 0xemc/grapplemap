@@ -36,8 +36,12 @@
 					.equals(activeFileId as number)
 					.delete();
 
-				const transitions = parse(grammar, content)
-					?.transitions.filter(isNonNullish)
+				const result = parse(grammar, content);
+
+				// const positions = result?.positions.filter(isNonNullish);
+
+				const transitions = result?.transitions
+					.filter(isNonNullish)
 					.map((t) => ({ ...t, file_id: activeFileId as number }));
 				if (transitions?.length) {
 					await db.transitions.bulkPut(transitions);

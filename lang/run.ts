@@ -22,6 +22,6 @@ if (useRecipe) {
 
 const input = fs.readFileSync("./welcome.grpl", "utf-8");
 
-const { transitions } = parse(grammar, input) ?? {}
+const result = parse(grammar, input) ?? {}
 
-console.log(transitions)
+console.log(result)

@@ -11,7 +11,9 @@ export type Transition = {
 export type PositionTag = "t" | "b" | "a" | "d"
 
 export type Position = {
-  title: string
+  title: string,
+  tag?: string,
+  metaTags?: string[]
 }
 
 export type Token = { from: number; to: number; cls: string };
