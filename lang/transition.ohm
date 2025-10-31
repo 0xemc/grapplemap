@@ -1,8 +1,8 @@
 Transition {
   blocks = skip (block skip)* end
-  block = skip (transition_block)+ skip
+  block = skip (transition_block | position_block)+ skip
   
-  transition_block = skip tags? title nl from_to step* (~"\n" any)* skip
+  transition_block = skip tags? title nl &from_to from_to step* (~"\n" any)* skip
   
   // Tags
   tags = (tag | " ")+ nl
@@ -32,6 +32,11 @@ Transition {
   steps = step (nl step)*
   step = number "." " "? any_char+ (nl | end)
   number = digit+
+
+ // Position Blocks
+ position_block = skip position_tags? position_name ~(nl from_to) (~"\n" any)* skip
+ position_name = position_char+
+ position_tags = tags
 
   // Utils
   space_or_tab = " " | "\t"

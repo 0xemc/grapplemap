@@ -7,7 +7,17 @@
 	};
 	let { transition }: Props = $props();
 
+	const beltColorMap: Record<string, string> = {
+		white: '#ffffff',
+		blue: '#3b82f6',
+		purple: '#a855f7',
+		brown: '#a16207',
+		black: '#111827'
+	};
 	const has_video = $derived((transition?.tags ?? []).some((t) => t.includes('url:')));
+	const belt_color = $derived(
+		(transition?.tags ?? []).find((t) => t.includes('belt:'))?.split(':')[1]
+	);
 	let state = getGraphContext();
 </script>
 
@@ -20,7 +30,14 @@
 	<div class="flex w-full justify-between pt-1 opacity-70">
 		<div class="flex items-center">
 			<svg width="6" height="6" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<circle cx="3" cy="3" r="2.5" stroke="currentColor" stroke-width="1" fill="none" />
+				<circle
+					cx="3"
+					cy="3"
+					r="2.5"
+					stroke="currentColor"
+					stroke-width="1"
+					fill={beltColorMap[belt_color ?? 'white']}
+				/>
 			</svg>
 		</div>
 		{#if has_video}

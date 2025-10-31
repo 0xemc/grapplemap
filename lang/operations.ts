@@ -18,13 +18,17 @@ export const transition = {
   _iter(this: any, ...items: any[]) {
     return items.map((i) => i.transitions());
   },
-  transition_block(_: any, tags: any, title: any, _nl: any, from_to: any, steps: any, __: any, ___: any) {
+  transition_block(_: any, tags: any, title: any, _nl: any, _require_from_to: any, from_to: any, steps: any, __: any, ___: any) {
     return {
       tags: tags.transitions().flat(),
       title: title.sourceString.trim(),
       ...from_to.transitions(),
       steps: steps.transitions()
     };
+  },
+
+  position_block(_: any, __: any, ___: any, ____: any, _____: any) {
+    return []
   },
 
   // UPDATED: use structured from/to
