@@ -9,6 +9,12 @@ function pickAllowed(url: URL): string {
 }
 
 export const load = async ({ url, cookies }) => {
+    // Respect `doc` deep-link: let the client handle it and clear it.
+    // Do not overwrite cookies or redirect when `doc` is present.
+    if (url.searchParams.has('doc')) {
+        return {};
+    }
+
     // If URL already has relevant params, save them and continue
     const qs = pickAllowed(url);
     if (qs) {
@@ -25,7 +31,7 @@ export const load = async ({ url, cookies }) => {
     // If no relevant params, try restoring from cookie
     const saved = cookies.get('graphParams');
     if (saved) {
-        throw redirect(302, `/graph?${saved}`);
+        // throw redirect(302, `/graph?${saved}`);
     }
 
     return {};

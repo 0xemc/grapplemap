@@ -186,3 +186,26 @@ export function getLayoutedElements(
         edges
     };
 }
+
+
+export function b64ToUtf8(input: string) {
+    // Normalize: decode percent-encoding if present, fix spaces/URL-safe chars, add padding
+    let s = input.trim();
+    try {
+        // If the param was percent-encoded, decode it first (best-effort)
+        s = decodeURIComponent(s);
+    } catch {
+        // ignore
+    }
+    // application/x-www-form-urlencoded turns '+' into space
+    s = s.replace(/ /g, '+');
+    // URL-safe base64 -> standard
+    s = s.replace(/-/g, '+').replace(/_/g, '/');
+    // pad to multiple of 4
+    const pad = s.length % 4;
+    if (pad) s += '='.repeat(4 - pad);
+
+    const binary = atob(s);
+    const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+    return new TextDecoder('utf-8').decode(bytes);
+}
