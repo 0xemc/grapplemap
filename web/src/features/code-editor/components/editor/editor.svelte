@@ -15,9 +15,12 @@
 	import { matchTransition } from '$lib/utils/transitionParser';
 	import { goto } from '$app/navigation';
 	import { uploadFile } from './editor.utils';
+	import { getCodeEditorContext } from '../../code-editor.svelte.ts';
+	import { db } from '$lib/db';
+	import { isNullish } from 'remeda';
 
 	let { value = '', language = 'transition' } = $props();
-
+	let context = getCodeEditorContext();
 	let host: HTMLDivElement | null = null;
 	let view: EditorView | null = null;
 	const themeCompartment = new Compartment();
@@ -79,31 +82,32 @@
 				grammarLint,
 				EditorView.domEventHandlers({
 					paste: (event, view) => {
-						const cd = event.clipboardData;
-						const files = [
-							...(cd?.files ? Array.from(cd.files) : []),
-							...((cd?.items ? Array.from(cd.items) : [])
-								.map((i) => (i.kind === 'file' ? i.getAsFile() : null))
-								.filter(Boolean) as File[])
-						].filter((f) => f && f.size > 0) as File[];
+						(async () => {
+							const cd = event.clipboardData;
+							const files = [
+								...(cd?.files ? Array.from(cd.files) : []),
+								...((cd?.items ? Array.from(cd.items) : [])
+									.map((i) => (i.kind === 'file' ? i.getAsFile() : null))
+									.filter(Boolean) as File[])
+							].filter((f) => f && f.size > 0) as File[];
 
-						if (!files.length) return false;
+							if (!files.length) return false;
 
-						event.preventDefault();
-						const file = files[0];
-						uploading = true;
+							event.preventDefault();
+							const file = files[0];
+							uploading = true;
+							const { active_file_id } = context;
 
-						uploadFile(file)
-							.then((url) => {
-								const { from, to } = view.state.selection.main;
-								if (!url) throw new Error('upload failed');
-								view.dispatch({ changes: { from, to, insert: url } });
-							})
-							.finally(() => {
-								uploading = false;
-							});
+							if (isNullish(active_file_id))
+								throw new Error('attempt to upload with no active file');
 
-						return true;
+							const active_file = await db.file().getById(active_file_id);
+							const url = await uploadFile(file, active_file?.name ?? '');
+							const { from, to } = view.state.selection.main;
+							if (!url) throw new Error('upload failed');
+							view.dispatch({ changes: { from, to, insert: `[url:${url}]` } });
+							uploading = false;
+						})();
 					},
 					click: (event, view) => {
 						// ctrlKey on Win/Linux, metaKey on macOS
