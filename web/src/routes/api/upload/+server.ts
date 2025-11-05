@@ -24,9 +24,10 @@ export const POST = async ({ request }) => {
     let path = form.get('path')?.toString() ?? '';
     // Remove leading/trailing spaces, leading '/', dots, backslashes, and anything not alphanumeric, underscore, dash, or forward slash
     path = path
-        .replace(/^[/\\.\s]+|[/\\.\s]+$/g, '') // Remove leading/trailing /, \, ., or spaces
-        .replace(/[^a-zA-Z0-9/_-]/g, '')      // Allow only certain chars
-        .replace(/\/{2,}/g, '/');             // Collapse multiple slashes
+        .replace(/\.[^/.]+$/, '')                         // Strip extension if present (from last dot to end)
+        .replace(/^[/\\.\s]+|[/\\.\s]+$/g, '')            // Remove leading/trailing /, \, ., or spaces
+        .replace(/[^a-zA-Z0-9/_-]/g, '')                  // Allow only certain chars
+        .replace(/\/{2,}/g, '/');                         // Collapse multiple slashes
     if (!path || path.length > 128) {
         return new Response('Invalid path', { status: 400 });
     }
