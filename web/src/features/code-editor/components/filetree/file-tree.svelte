@@ -1,41 +1,32 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import { db } from '$lib/db';
 	import File from './file.svelte';
 	import { liveQuery } from 'dexie';
-
-	let activeId: number | null = $state(null);
-
+	import { getCodeEditorContext } from '../../code-editor.svelte.ts';
+	import { isNullish } from 'remeda';
+	let context = getCodeEditorContext();
 	let files = liveQuery(() => db.files.toArray());
-
-	const dispatch = createEventDispatcher<{ select: { id: number } }>();
 
 	async function onAddFile() {
 		const id = await db.file().create('untitled.grpl', '');
 		if (typeof id === 'number') {
-			activeId = id;
-			dispatch('select', { id });
+			context.active_file_id = id;
 		}
-	}
-
-	function onSelect(id: number) {
-		activeId = id;
-		dispatch('select', { id });
 	}
 
 	/** Select the first file if none has been selected */
 	$effect(() => {
-		if ($files?.length > 0 && activeId === null) {
-			activeId = $files[0].id ?? null;
-			dispatch('select', { id: activeId });
+		const { active_file_id } = context;
+		if ($files?.length > 0 && isNullish(active_file_id)) {
+			context.active_file_id = $files[0].id ?? null;
 		}
 	});
 </script>
 
 <div
-	class="min-w-45 z-50 hidden min-h-64 rounded-lg border border-zinc-800 p-6 md:block dark:border-zinc-700"
+	class="min-w-45 z-50 hidden h-64 rounded-lg border border-zinc-800 p-6 md:block dark:border-zinc-700"
 >
-	<div class="mb-2 flex items-center justify-between text-xs opacity-80">
+	<div class="items_center mb-2 flex justify-between text-xs opacity-80">
 		<span class="uppercase tracking-wider opacity-70">Files</span>
 		<button
 			onclick={onAddFile}
@@ -51,8 +42,8 @@
 					<File
 						id={f.id!}
 						name={f.name}
-						active={f.id === activeId}
-						on:select={() => onSelect(f.id!)}
+						active={f.id === context.active_file_id}
+						on:select={() => (context.active_file_id = f.id)}
 					/>
 				</li>
 			{/each}

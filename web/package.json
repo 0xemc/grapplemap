@@ -38,6 +38,7 @@
 		"vite": "^7.1.7"
 	},
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.922.0",
 		"@codemirror/autocomplete": "^6.19.0",
 		"@codemirror/commands": "^6.9.0",
 		"@codemirror/lang-javascript": "^6.2.4",

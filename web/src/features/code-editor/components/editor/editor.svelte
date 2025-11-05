@@ -11,16 +11,18 @@
 	import { javascript } from '@codemirror/lang-javascript';
 	import { ohmHighlighter } from '$lib/utils/highlighter';
 	import { debugParse, traceTransition } from '$lib/utils/transitionParser';
-	// in CodeEditor.svelte
 	import { linter, lintGutter } from '@codemirror/lint';
 	import { matchTransition } from '$lib/utils/transitionParser';
 	import { goto } from '$app/navigation';
+	import { uploadFile } from './editor.utils';
 
 	let { value = '', language = 'transition' } = $props();
 
 	let host: HTMLDivElement | null = null;
 	let view: EditorView | null = null;
 	const themeCompartment = new Compartment();
+
+	let uploading = $state(false);
 
 	function isDark() {
 		return document.documentElement.classList.contains('dark');
@@ -76,6 +78,33 @@
 				lintGutter(),
 				grammarLint,
 				EditorView.domEventHandlers({
+					paste: (event, view) => {
+						const cd = event.clipboardData;
+						const files = [
+							...(cd?.files ? Array.from(cd.files) : []),
+							...((cd?.items ? Array.from(cd.items) : [])
+								.map((i) => (i.kind === 'file' ? i.getAsFile() : null))
+								.filter(Boolean) as File[])
+						].filter((f) => f && f.size > 0) as File[];
+
+						if (!files.length) return false;
+
+						event.preventDefault();
+						const file = files[0];
+						uploading = true;
+
+						uploadFile(file)
+							.then((url) => {
+								const { from, to } = view.state.selection.main;
+								if (!url) throw new Error('upload failed');
+								view.dispatch({ changes: { from, to, insert: url } });
+							})
+							.finally(() => {
+								uploading = false;
+							});
+
+						return true;
+					},
 					click: (event, view) => {
 						// ctrlKey on Win/Linux, metaKey on macOS
 						const isCtrlLike = event.ctrlKey || event.metaKey;
