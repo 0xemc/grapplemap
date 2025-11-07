@@ -2,14 +2,14 @@ import { isNonNullish } from "remeda"
 import { getContext, setContext } from "svelte"
 
 export class GraphState {
-    #selected_transition?: string = $state()
+    #selected_transition?: number = $state()
     #modal = $state(false)
 
     get selected_transition() {
         return this.#selected_transition
     }
 
-    set selected_transition(n: string | undefined) {
+    set selected_transition(n: number | undefined) {
         this.#selected_transition = n
         if (isNonNullish(n)) {
             this.openModal();

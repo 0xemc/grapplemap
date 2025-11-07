@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { Transition } from '@lang/types';
 	import { VideoCameraSolid } from 'flowbite-svelte-icons';
 	import { getGraphContext } from './graph.state.svelte';
+	import type { Transition } from '$lib/db/tables/transitions';
 	type Props = {
 		transition: Transition;
 	};
@@ -23,7 +23,7 @@
 
 <button
 	class="w-full cursor-pointer p-2 text-left hover:bg-gray-100"
-	onclick={() => (state.selected_transition = transition.title)}
+	onclick={() => (state.selected_transition = transition.id)}
 >
 	<span>{transition.title}</span>
 	<!-- icons -->

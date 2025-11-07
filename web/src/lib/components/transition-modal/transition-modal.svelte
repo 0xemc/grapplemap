@@ -11,24 +11,21 @@
 		toVimeoEmbedUrl,
 		toYouTubeEmbedUrl
 	} from './transition-modal.utils';
-	let graph = getGraphContext();
+	let context = getGraphContext();
 
 	// One liveQuery for the whole table
 	let transitions = liveQuery(() => db.transitions.toArray());
 
 	// Purely derived from in-memory data + current selection
-	let transition = $derived(
-		($transitions ?? []).find((t) => t.title === graph.selected_transition)
-	);
-	$effect(() => console.log(transition));
+	let transition = $derived(($transitions ?? []).find((t) => t.id === context.selected_transition));
 
 	let url = $derived(extractUrlFromTags(transition?.tags ?? []));
 </script>
 
 <Modal
 	title={transition?.title ?? 'Transition'}
-	bind:open={graph.modal}
-	onclose={() => graph.closeModal()}
+	bind:open={context.modal}
+	onclose={() => context.closeModal()}
 >
 	{#if transition}
 		<P><b>From</b>: {transition.from}</P>
@@ -77,6 +74,6 @@
 	{/if}
 
 	{#snippet footer()}
-		<Button onclick={() => graph.closeModal()}>Close</Button>
+		<Button onclick={() => context.closeModal()}>Close</Button>
 	{/snippet}
 </Modal>
