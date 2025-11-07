@@ -24,7 +24,7 @@
 </script>
 
 <div
-	class="min-w-45 z-50 hidden h-64 rounded-lg border border-zinc-800 p-6 md:block dark:border-zinc-700"
+	class="min-w-45 z-50 hidden h-fit max-h-full overflow-auto rounded-lg border border-zinc-800 p-6 md:block dark:border-zinc-700"
 >
 	<div class="items_center mb-2 flex justify-between text-xs opacity-80">
 		<span class="uppercase tracking-wider opacity-70">Files</span>
