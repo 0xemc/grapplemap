@@ -31,7 +31,7 @@ export const load = async ({ url, cookies }) => {
     // If no relevant params, try restoring from cookie
     const saved = cookies.get('graphParams');
     if (saved) {
-        // throw redirect(302, `/graph?${saved}`);
+        throw redirect(302, `/graph?${saved}`);
     }
 
     return {};

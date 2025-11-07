@@ -68,32 +68,32 @@
 	});
 
 	/** Load shared plans */
-	onMount(async () => {
-		const docParam = page.url.searchParams.get('doc');
-		if (!docParam) return;
+	// onMount(async () => {
+	// 	const docParam = page.url.searchParams.get('doc');
+	// 	if (!docParam) return;
 
-		const text = b64ToUtf8(docParam);
-		const name = '_shared.grpl';
+	// 	const text = b64ToUtf8(docParam);
+	// 	const name = '_shared.grpl';
 
-		await db.transaction('rw', db.files, db.transitions, async () => {
-			const existing = await db.files.where('name').equals(name).first();
-			let fileId: number;
+	// 	await db.transaction('rw', db.files, db.transitions, async () => {
+	// 		const existing = await db.files.where('name').equals(name).first();
+	// 		let fileId: number;
 
-			if (existing?.id != null) {
-				fileId = existing.id;
-				await db.files.update(fileId, { content: text, updatedAt: Date.now() });
-				await db.transitions.where('file_id').equals(fileId).delete();
-			} else {
-				fileId = await db.file().create(name, text);
-			}
+	// 		if (existing?.id != null) {
+	// 			fileId = existing.id;
+	// 			await db.files.update(fileId, { content: text, updatedAt: Date.now() });
+	// 			await db.transitions.where('file_id').equals(fileId).delete();
+	// 		} else {
+	// 			fileId = await db.file().create(name, text);
+	// 		}
 
-			const result = parse(grammar, text);
-			const transitions = result?.transitions?.map((t) => ({ ...t, file_id: fileId })) ?? [];
-			if (transitions.length) await db.transitions.bulkPut(transitions);
+	// 		const result = parse(grammar, text);
+	// 		const transitions = result?.transitions?.map((t) => ({ ...t, file_id: fileId })) ?? [];
+	// 		if (transitions.length) await db.transitions.bulkPut(transitions);
 
-			updateParams({ file: [String(fileId)], doc: null });
-		});
-	});
+	// 		updateParams({ file: [String(fileId)], doc: null });
+	// 	});
+	// });
 
 	/** Layout on initial load */
 	$effect(() => {
