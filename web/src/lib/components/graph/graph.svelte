@@ -10,7 +10,7 @@
 		type Edge
 	} from '@xyflow/svelte';
 
-	import { intersection, prop, unique, uniqueBy } from 'remeda';
+	import { allPass, filter, intersection, pipe, piped, prop, unique, uniqueBy } from 'remeda';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount } from 'svelte';
 	import {
@@ -33,6 +33,7 @@
 	import { parse } from '@lang/parse';
 	import { grammar } from '$lib/utils/grammar';
 	import PositionNode from './position-node.svelte';
+	import type { Transition } from '$lib/db/tables/transitions';
 
 	setGraphContext();
 
@@ -47,11 +48,11 @@
 		unique($_transitions?.flatMap((t) => t.tags).filter((t) => !t.includes('url:')) ?? [])
 	);
 
-	let transitions = $derived(
-		$_transitions
-			?.filter((t) => (fileIds?.length ? fileIds?.includes(t.file_id) : true))
-			.filter((t) => (tagIds.length ? intersection(tagIds, t.tags).length : true))
-	);
+	const filterByTag = (t: Transition) =>
+		tagIds.length ? !!intersection(tagIds, t.tags).length : true;
+	const filterByFile = (t: Transition) => (fileIds?.length ? fileIds?.includes(t.file_id) : true);
+
+	let transitions = $derived(pipe($_transitions ?? [], filter(filterByFile), filter(filterByTag)));
 
 	let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []) as unknown as Edge[]);
 	let nodes = $derived(uniqueBy((transitions ?? []).flatMap(transitionToNodes), prop('id')));
