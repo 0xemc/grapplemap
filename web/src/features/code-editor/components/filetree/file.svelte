@@ -8,7 +8,7 @@
 	const dispatch = createEventDispatcher<{ select: void }>();
 
 	async function onRename() {
-		const next = prompt('Rename file', name);
+		const next = prompt('Rename file', name.replace('.grpl', ''));
 		if (next == null) return; // cancelled
 		const input = next.trim();
 		if (!input) return; // empty, do nothing

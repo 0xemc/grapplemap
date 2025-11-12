@@ -14,9 +14,7 @@
 		if (!inputName) return; // empty input, do nothing
 		const name = db.file().normalizeName(inputName);
 		const id = await db.file().create(name, '');
-		if (typeof id === 'number') {
-			context.active_file_id = id;
-		}
+		context.active_file_id = id;
 	}
 
 	/** Select the first file if none has been selected */
