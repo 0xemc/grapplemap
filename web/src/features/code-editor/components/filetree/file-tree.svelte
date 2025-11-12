@@ -8,7 +8,11 @@
 	let files = liveQuery(() => db.files.toArray());
 
 	async function onAddFile() {
-		const id = await db.file().create('untitled.grpl', '');
+		const proposed = prompt('New file name', 'untitled.grpl');
+		if (proposed == null) return; // user cancelled
+		const name = proposed.trim();
+		if (!name) return; // empty input, do nothing
+		const id = await db.file().create(name, '');
 		if (typeof id === 'number') {
 			context.active_file_id = id;
 		}
