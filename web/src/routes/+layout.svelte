@@ -7,7 +7,7 @@
 	import { EditOutline, HomeOutline, HomeSolid, ShareNodesOutline } from 'flowbite-svelte-icons';
 	import { page } from '$app/state';
 	import { replaceAll } from '@codemirror/search';
-
+	import { Toaster } from 'svelte-sonner';
 	let { children } = $props();
 
 	let activeUrl = $state(page.url.pathname);
@@ -92,6 +92,7 @@
 		</div>
 	</div>
 </div>
+<Toaster position="top-center" richColors />
 
 <style>
 	.app-shell {

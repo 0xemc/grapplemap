@@ -14,13 +14,10 @@
 	import { linter, lintGutter } from '@codemirror/lint';
 	import { matchTransition } from '$lib/utils/transitionParser';
 	import { goto } from '$app/navigation';
-	import { uploadFile } from './editor.utils';
-	import { getCodeEditorContext } from '../../code-editor.svelte.ts';
-	import { db } from '$lib/db';
-	import { isNullish } from 'remeda';
+	import { uploadFile, sniffFileType, fileToType } from '../../../upload/upload.utils.ts';
+	import { toast } from 'svelte-sonner';
 
 	let { value = '', language = 'transition' } = $props();
-	let context = getCodeEditorContext();
 	let host: HTMLDivElement | null = null;
 	let view: EditorView | null = null;
 	const themeCompartment = new Compartment();
@@ -96,13 +93,19 @@
 							event.preventDefault();
 							const file = files[0];
 							uploading = true;
-							const { active_file_id } = context;
+							let type;
 
-							if (isNullish(active_file_id))
-								throw new Error('attempt to upload with no active file');
+							try {
+								type = await fileToType(file);
+							} catch (e) {
+								toast.error('Unsupported file type', {
+									duration: 2000
+								});
+								throw e;
+							}
 
-							const active_file = await db.file().getById(active_file_id);
-							const url = await uploadFile(file, active_file?.name ?? '');
+							const url = await uploadFile(file, type);
+
 							const { from, to } = view.state.selection.main;
 							if (!url) throw new Error('upload failed');
 							view.dispatch({ changes: { from, to, insert: `[url:${url}]` } });
