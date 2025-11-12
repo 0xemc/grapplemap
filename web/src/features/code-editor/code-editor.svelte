@@ -7,23 +7,21 @@
 	import { grammar } from '$lib/utils/grammar';
 	import { isNonNullish, isNullish } from 'remeda';
 	import { getCodeEditorContext } from './code-editor.svelte.ts';
+	import { liveQuery } from 'dexie';
 
 	let context = getCodeEditorContext();
-	let active_file_name: string | undefined = $state();
 	let isSaving = false;
 	let editorRef: any = null;
 
-	async function handleSelect(e: CustomEvent<{ id: number }>) {}
+	let files = liveQuery(async () => await db.files.toArray());
+	let active_file_name: string | undefined = $state();
 
 	$effect(() => {
-		const { active_file_id } = context;
-		if (!active_file_id) return;
-		db.file()
-			.getById(active_file_id)
-			.then((file) => {
-				active_file_name = file?.name ?? '';
-				editorRef?.setDoc(file?.content ?? '');
-			});
+		let id = context.active_file_id;
+		if (isNullish(id) || !$files) return;
+		const file = $files.find((f) => f.id === id!);
+		active_file_name = file?.name;
+		editorRef?.setDoc(file?.content ?? '');
 	});
 
 	async function onSave() {
@@ -64,7 +62,7 @@
 </script>
 
 <div class="flex h-full max-h-full gap-3">
-	<FileTree on:select={handleSelect} />
+	<FileTree />
 	<div class="flex h-full min-h-[300px] flex-1 flex-col gap-2">
 		<div class="flex items-center justify-between gap-2">
 			<div class="text-xs opacity-80">
