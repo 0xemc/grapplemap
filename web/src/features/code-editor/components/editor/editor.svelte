@@ -119,7 +119,7 @@
 								throw e;
 							}
 
-							const url = await uploadFile(file, type);
+							const { url } = await uploadFile(file, type);
 
 							const { from, to } = view.state.selection.main;
 							if (!url) throw new Error('upload failed');
