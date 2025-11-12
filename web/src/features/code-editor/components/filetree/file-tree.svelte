@@ -12,7 +12,7 @@
 		if (proposed == null) return; // user cancelled
 		const inputName = proposed.trim();
 		if (!inputName) return; // empty input, do nothing
-		const name = /\.[A-Za-z0-9]+$/.test(inputName) ? inputName : `${inputName}.grpl`;
+		const name = db.file().normalizeName(inputName);
 		const id = await db.file().create(name, '');
 		if (typeof id === 'number') {
 			context.active_file_id = id;

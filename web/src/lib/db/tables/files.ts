@@ -28,6 +28,12 @@ export class Files {
         return max + 1;
     }
 
+    normalizeName(name: string) {
+        const trimmed = name.trim();
+        if (!trimmed) return trimmed;
+        return /\.[A-Za-z0-9]+$/.test(trimmed) ? trimmed : `${trimmed}.grpl`;
+    }
+
     async create(name = 'untitled.grpl', content = '') {
         const ts = Date.now();
         return this.#table.add({

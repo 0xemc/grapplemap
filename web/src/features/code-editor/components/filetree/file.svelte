@@ -9,9 +9,12 @@
 
 	async function onRename() {
 		const next = prompt('Rename file', name);
-		if (next && next.trim() && next !== name) {
-			await db.file().rename(id, next.trim());
-		}
+		if (next == null) return; // cancelled
+		const input = next.trim();
+		if (!input) return; // empty, do nothing
+		const finalName = db.file().normalizeName(input);
+		if (finalName === name) return; // no change
+		await db.file().rename(id, finalName);
 	}
 
 	async function onDelete() {
