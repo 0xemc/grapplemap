@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { db } from '$lib/db';
 	import File from './file.svelte';
 	import { liveQuery } from 'dexie';
 	import { getCodeEditorContext } from '../../code-editor.svelte.ts';
 	import { isNullish } from 'remeda';
+	import { getDbContext } from '$lib/db/context.ts';
 	let context = getCodeEditorContext();
+	const db = getDbContext();
 	let files = liveQuery(() => db.files.toArray());
 	let { showOnMobile = false, extraClass = '' } = $props();
 

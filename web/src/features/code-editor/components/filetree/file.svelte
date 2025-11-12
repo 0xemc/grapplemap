@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { db } from '$lib/db';
+	import { getDbContext } from '$lib/db/context';
 	import { createEventDispatcher } from 'svelte';
 	export let id: number;
 	export let name: string;
 	export let active: boolean = false;
-
+	const db = getDbContext();
 	const dispatch = createEventDispatcher<{ select: void }>();
 
 	async function onRename() {

@@ -23,27 +23,29 @@
 	import TransitionModal from '../transition-modal/transition-modal.svelte';
 	import { setGraphContext } from '../graph/graph.state.svelte';
 	import { liveQuery } from 'dexie';
-	import { db } from '$lib/db';
+	import { getDbContext } from '$lib/db/context';
 	import FileSelect from '../file-select/file-select.svelte';
 	import { Button } from 'flowbite-svelte';
 	import { AdjustmentsHorizontalOutline, FilterSolid, MinusOutline } from 'flowbite-svelte-icons';
-	import { page } from '$app/state';
+	import { page } from '$app/stores';
 	import { setParam, updateParams } from '$lib/utils/params';
 	import MultiSelect from '../multi-select.svelte';
 	import { parse } from '@lang/parse';
 	import { grammar } from '$lib/utils/grammar';
 	import PositionNode from './position-node.svelte';
 	import type { Transition } from '$lib/db/tables/transitions';
+	import { getSharedModeContext } from '$lib/share/context';
 
 	setGraphContext();
-
+	const sharedMode = getSharedModeContext();
+	const dbInst = getDbContext();
 	const { fitView } = useSvelteFlow();
 	const edgeTypes = { transition: TransitionEdge };
 	const nodeTypes = { position: PositionNode };
-	let fileIds = $derived(page.url.searchParams.getAll('file').map(Number));
-	let tagIds = $derived(page.url.searchParams.getAll('tag'));
-	let files = liveQuery(async () => await db.files.toArray());
-	let _transitions = liveQuery(async () => await db.transitions.toArray());
+	let fileIds = $derived($page.url.searchParams.getAll('file').map(Number));
+	let tagIds = $derived($page.url.searchParams.getAll('tag'));
+	let files = liveQuery(async () => await dbInst.files.toArray());
+	let _transitions = liveQuery(async () => await dbInst.transitions.toArray());
 	let tags = $derived(
 		unique($_transitions?.flatMap((t) => t.tags).filter((t) => !t.includes('url:')) ?? [])
 	);
@@ -164,6 +166,7 @@
 			<Button onclick={() => onLayout('BT')} class="">↑ vertical</Button>
 		</ButtonGroup>
 	</Panel> -->
+
 	<Panel position="top-right" class="border-0 bg-transparent p-0 shadow-none">
 		<!-- Toggle button visible only when collapsed for current breakpoint -->
 		<Button
@@ -196,8 +199,9 @@
 					<MinusOutline class="h-4 w-4" />
 				</Button>
 			</div>
-
-			<FileSelect files={$files} onChange={onFilesChange} initial={fileIds} />
+			{#if !sharedMode}
+				<FileSelect files={$files} onChange={onFilesChange} initial={fileIds} />
+			{/if}
 			<MultiSelect
 				items={tags.map((t) => ({ value: t, name: t }))}
 				label="Tags"
@@ -207,6 +211,7 @@
 			/>
 		</div>
 	</Panel>
+
 	<MiniMap class="md-block hidden" />
 	<Controls />
 </SvelteFlow>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, Modal, P } from 'flowbite-svelte';
 	import { getGraphContext } from '../graph/graph.state.svelte';
-	import { db } from '$lib/db';
+	import { getDbContext } from '$lib/db/context';
 	import { liveQuery } from 'dexie';
 	import {
 		extractUrlFromTags,
@@ -12,6 +12,7 @@
 		toYouTubeEmbedUrl
 	} from './transition-modal.utils';
 	let context = getGraphContext();
+	const db = getDbContext();
 
 	// One liveQuery for the whole table
 	let transitions = liveQuery(() => db.transitions.toArray());

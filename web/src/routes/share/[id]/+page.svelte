@@ -1,14 +1,20 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { db } from '$lib/db';
+	import { onDestroy, onMount } from 'svelte';
+	import Dexie from 'dexie';
+	import { createTempDatabase, type Database } from '$lib/db';
+	import { setDbContext } from '$lib/db/context';
 	import { parse } from '@lang/parse';
 	import { grammar } from '$lib/utils/grammar';
 	import { isNonNullish } from 'remeda';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { get } from 'svelte/store';
+	import Graph from '$lib/components/graph/graph.svelte';
+	import { SvelteFlowProvider } from '@xyflow/svelte';
+	import { setSharedModeContext } from '$lib/share/context';
 
-	let error: string | null = null;
+	let error: string | null = $state(null);
+	let ready = $state(false);
+	let tempDb: Database | null = null;
 
 	onMount(async () => {
 		try {
@@ -17,43 +23,69 @@
 				error = 'Missing share id';
 				return;
 			}
+			// Create a temporary DB for this share and set it in context
+			tempDb = createTempDatabase(`grapplemap-share-${id}`);
+			setDbContext(tempDb);
+			setSharedModeContext(true);
 			const res = await fetch(`/api/share/${encodeURIComponent(id)}`);
 			if (!res.ok) {
 				throw new Error('Shared file not found');
 			}
 			const text = await res.text();
 			const name = `_shared_${id}.grpl`;
-			let fileId: number = -1;
 
-			await db.transaction('rw', db.files, db.transitions, async () => {
-				const existing = await db.files.where('name').equals(name).first();
+			await tempDb!.transaction('rw', tempDb!.files, tempDb!.transitions, async () => {
+				const existing = await tempDb!.files.where('name').equals(name).first();
 				const now = Date.now();
-				const computedId = existing?.id != null ? existing.id! : await db.file().create(name, text);
+				const computedId =
+					existing?.id != null ? existing.id! : await tempDb!.file().create(name, text);
 				if (existing?.id != null) {
-					await db.files.update(computedId, { content: text, updatedAt: now });
-					await db.transitions.where('file_id').equals(computedId).delete();
+					await tempDb!.files.update(computedId, { content: text, updatedAt: now });
+					await tempDb!.transitions.where('file_id').equals(computedId).delete();
 				}
 
 				const result = parse(grammar, text);
 				const transitions =
 					result?.transitions?.filter(isNonNullish).map((t) => ({ ...t, file_id: computedId })) ??
 					[];
-				if (transitions.length) await db.transitions.bulkPut(transitions);
-				fileId = computedId;
+				if (transitions.length) await tempDb!.transitions.bulkPut(transitions);
 			});
 
-			if (fileId < 0) throw new Error('Failed to load shared file');
-			await goto(`/graph?file=${fileId}`);
+			ready = true;
 		} catch (e: any) {
 			error = e?.message ?? 'Failed to load shared file';
 		}
 	});
+
+	onDestroy(async () => {
+		if (tempDb) {
+			const name = tempDb.name;
+			try {
+				tempDb.close();
+			} finally {
+				try {
+					await Dexie.delete(name);
+				} catch {
+					// ignore cleanup errors
+				}
+			}
+			tempDb = null;
+		}
+	});
 </script>
 
-<div class="flex h-full w-full items-center justify-center">
-	{#if error}
+{#if error}
+	<div class="flex h-full w-full items-center justify-center">
 		<div class="text-sm text-red-600 dark:text-red-400">{error}</div>
-	{:else}
+	</div>
+{:else if !ready}
+	<div class="flex h-full w-full items-center justify-center">
 		<div class="text-sm opacity-70">Loading shared file…</div>
-	{/if}
-</div>
+	</div>
+{:else}
+	<div style:width="100%" style:height="100%">
+		<SvelteFlowProvider>
+			<Graph />
+		</SvelteFlowProvider>
+	</div>
+{/if}

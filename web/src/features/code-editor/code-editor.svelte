@@ -2,7 +2,6 @@
 	import FileTree from './components/filetree/file-tree.svelte';
 	import CodeEditor from './components/editor/editor.svelte';
 	import { Button } from 'flowbite-svelte';
-	import { db } from '$lib/db';
 	import { parse } from '@lang/parse';
 	import { grammar } from '$lib/utils/grammar';
 	import { isNonNullish, isNullish } from 'remeda';
@@ -11,12 +10,13 @@
 	import { toast } from 'svelte-sonner';
 	import { liveQuery } from 'dexie';
 	import { getCodeEditorContext } from './code-editor.svelte.ts';
+	import { getDbContext } from '$lib/db/context.ts';
 
 	let context = getCodeEditorContext();
 	let isSaving = $state(false);
 	let isSharing = $state(false);
 	let editorRef: any = null;
-
+	const db = getDbContext();
 	let files = liveQuery(async () => await db.files.toArray());
 	let active_file_name: string | undefined = $state();
 	let autoSaveTimer: ReturnType<typeof setTimeout> | null = null;

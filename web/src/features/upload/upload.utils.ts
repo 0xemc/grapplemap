@@ -2,8 +2,9 @@ import { toast } from "svelte-sonner";
 import { AUDIO_EXTENSIONS, IMAGE_EXTENSIONS, VIDEO_EXTENSIONS } from "./upload.constants";
 import type { DetectedType, UploadType } from "./upload.types";
 import { fileTypeFromBlob } from "file-type";
+import type { ShareResult } from "./share.utils";
 
-export async function uploadFile(file: File, type: UploadType): Promise<string | null> {
+export async function uploadFile(file: File, type: UploadType): Promise<ShareResult | null> {
     const form = new FormData();
     form.set('file', file);
     form.set('type', type)
@@ -15,8 +16,8 @@ export async function uploadFile(file: File, type: UploadType): Promise<string |
         toast.error(message);
         return null;
     }
-    const data = (await res.json()) as { url?: string };
-    return data.url ?? null;
+    const data = (await res.json()) as ShareResult;
+    return data;
 }
 
 export const fileToType = async (file: File): Promise<UploadType> => {
