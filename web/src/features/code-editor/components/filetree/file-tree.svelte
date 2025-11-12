@@ -6,6 +6,7 @@
 	import { isNullish } from 'remeda';
 	let context = getCodeEditorContext();
 	let files = liveQuery(() => db.files.toArray());
+	let { showOnMobile = false, extraClass = '' } = $props();
 
 	async function onAddFile() {
 		const proposed = prompt('New file name', 'untitled');
@@ -27,7 +28,7 @@
 </script>
 
 <div
-	class="min-w-45 z-50 hidden h-fit max-h-full overflow-auto rounded-lg border border-zinc-800 p-6 md:block dark:border-zinc-700"
+	class={`min-w-45 z-50 ${showOnMobile ? 'block md:hidden' : 'hidden md:block'} h-fit max-h-full overflow-auto rounded-lg border border-zinc-800 p-6 dark:border-zinc-700 ${extraClass}`}
 >
 	<div class="items_center mb-2 flex justify-between text-xs opacity-80">
 		<span class="uppercase tracking-wider opacity-70">Files</span>

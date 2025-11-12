@@ -18,6 +18,7 @@
 	let active_file_name: string | undefined = $state();
 	let autoSaveTimer: ReturnType<typeof setTimeout> | null = null;
 	const AUTO_SAVE_MS = 3000;
+	let fileTreeOpen: boolean = $state(false);
 
 	$effect(() => {
 		let id = context.active_file_id;
@@ -80,6 +81,13 @@
 	<div class="flex h-full min-h-[300px] flex-1 flex-col gap-2">
 		<div class="flex items-center justify-between gap-2">
 			<div class="text-xs opacity-80">
+				<Button
+					size="xs"
+					color="light"
+					onclick={() => (fileTreeOpen = true)}
+					class="mr-2 md:hidden"
+					>Files</Button
+				>
 				{#if context.active_file_id !== null}
 					<span class="opacity-70">File:</span> {active_file_name}
 				{:else}
@@ -100,3 +108,19 @@
 		/>
 	</div>
 </div>
+
+{#if fileTreeOpen}
+	<div class="fixed inset-0 z-50 md:hidden">
+		<div class="absolute inset-0 bg-black/40" on:click={() => (fileTreeOpen = false)} />
+		<div class="absolute left-0 top-0 h-full w-64 bg-white p-3 shadow-xl dark:bg-zinc-900">
+			<Button
+				size="xs"
+				color="light"
+				onclick={() => (fileTreeOpen = false)}
+				class="absolute right-2 top-2 p-1"
+				>Close</Button
+			>
+			<FileTree showOnMobile={true} extraClass="mt-6 w-full h-full max-h-full" />
+		</div>
+	</div>
+{/if}
