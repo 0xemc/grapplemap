@@ -17,12 +17,21 @@
 	import { uploadFile, sniffFileType, fileToType } from '../../../upload/upload.utils.ts';
 	import { toast } from 'svelte-sonner';
 
-	let { value = '', language = 'transition' } = $props();
+	let {
+		value = '',
+		language = 'transition',
+		onDocChanged
+	}: {
+		value?: string;
+		language?: string;
+		onDocChanged?: (e: { content: string }) => void;
+	} = $props();
 	let host: HTMLDivElement | null = null;
 	let view: EditorView | null = null;
 	const themeCompartment = new Compartment();
 
 	let uploading = $state(false);
+	let settingDoc = false;
 
 	function isDark() {
 		return document.documentElement.classList.contains('dark');
@@ -77,6 +86,11 @@
 				EditorView.lineWrapping,
 				lintGutter(),
 				grammarLint,
+				EditorView.updateListener.of((v) => {
+					if (!v.docChanged) return;
+					if (settingDoc) return;
+					onDocChanged?.({ content: v.state.doc.toString() });
+				}),
 				EditorView.domEventHandlers({
 					paste: (event, view) => {
 						(async () => {
@@ -169,7 +183,9 @@
 		if (!view) return;
 		const current = view.state.doc.toString();
 		if (current === text) return;
+		settingDoc = true;
 		view.dispatch({ changes: { from: 0, to: current.length, insert: text } });
+		settingDoc = false;
 	}
 
 	export function getDoc(): string {

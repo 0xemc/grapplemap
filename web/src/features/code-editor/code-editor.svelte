@@ -3,6 +3,7 @@
 	import CodeEditor from './components/editor/editor.svelte';
 	import { Button } from 'flowbite-svelte';
 	import { db } from '$lib/db';
+	import { onDestroy } from 'svelte';
 	import { parse } from '@lang/parse';
 	import { grammar } from '$lib/utils/grammar';
 	import { isNonNullish, isNullish } from 'remeda';
@@ -15,6 +16,8 @@
 
 	let files = liveQuery(async () => await db.files.toArray());
 	let active_file_name: string | undefined = $state();
+	let autoSaveTimer: ReturnType<typeof setTimeout> | null = null;
+	const AUTO_SAVE_MS = 3000;
 
 	$effect(() => {
 		let id = context.active_file_id;
@@ -22,6 +25,17 @@
 		const file = $files.find((f) => f.id === id!);
 		active_file_name = file?.name;
 		editorRef?.setDoc(file?.content ?? '');
+	});
+
+	function scheduleAutoSave(_e?: any) {
+		if (autoSaveTimer) clearTimeout(autoSaveTimer);
+		autoSaveTimer = setTimeout(() => {
+			onSave();
+		}, AUTO_SAVE_MS);
+	}
+
+	onDestroy(() => {
+		if (autoSaveTimer) clearTimeout(autoSaveTimer);
 	});
 
 	async function onSave() {
@@ -78,6 +92,11 @@
 				>Save</Button
 			>
 		</div>
-		<CodeEditor bind:this={editorRef} value={''} language="transition" />
+		<CodeEditor
+			bind:this={editorRef}
+			value={''}
+			language="transition"
+			onDocChanged={scheduleAutoSave}
+		/>
 	</div>
 </div>
