@@ -46,7 +46,8 @@ export const POST = async ({ request }) => {
     const extFromName = file.name?.includes('.') ? '.' + file.name.split('.').pop() : '';
     const extFromType = file.type && file.type.includes('/') ? '.' + file.type.split('/')[1] : '';
     const ext = extFromName || extFromType || '';
-    const key = `${type}/${generateId()}${ext}`;
+    const id = generateId();
+    const key = `${type}/${id}${ext}`;
 
     await s3.send(
         new PutObjectCommand({
@@ -58,5 +59,5 @@ export const POST = async ({ request }) => {
     );
 
     const url = `${R2_PUBLIC_BASE_URL}/${key}`;
-    return json({ url, key });
+    return json({ url, id });
 };

@@ -6,11 +6,11 @@
 	import { parse } from '@lang/parse';
 	import { grammar } from '$lib/utils/grammar';
 	import { isNonNullish, isNullish } from 'remeda';
-	import { getCodeEditorContext } from './code-editor.svelte.ts';
-	import { liveQuery } from 'dexie';
 	import { onDestroy } from 'svelte';
-	import { shareTextContent as uploadFile } from '../upload/share.utils';
+	import { uploadMap } from '../upload/share.utils';
 	import { toast } from 'svelte-sonner';
+	import { liveQuery } from 'dexie';
+	import { getCodeEditorContext } from './code-editor.svelte.ts';
 
 	let context = getCodeEditorContext();
 	let isSaving = $state(false);
@@ -84,14 +84,15 @@
 		isSharing = true;
 		try {
 			const content = editorRef?.getDoc() ?? '';
-			const res = await uploadFile(content);
+			const res = await uploadMap(content);
 			if (!res) {
 				toast.error('Failed to share file');
 				return;
 			}
 			try {
-				await navigator.clipboard.writeText(res.url);
-				toast.success('Share link copied to clipboard', { description: res.url });
+				const link = res.url;
+				await navigator.clipboard.writeText(link);
+				toast.success('Share link copied to clipboard', { description: link });
 			} catch {
 				toast.success('Share link ready', {
 					description: res.url,

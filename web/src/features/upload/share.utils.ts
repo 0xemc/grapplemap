@@ -11,7 +11,7 @@ export type ShareResult = {
  * Shares plain text content by turning it into a File and uploading it.
  * Returns a share id (client-generated) and the public URL from the uploader.
  */
-export async function shareTextContent(
+export async function uploadMap(
 	content: string,
 ): Promise<ShareResult | null> {
 	const id = generateId();
@@ -19,7 +19,7 @@ export async function shareTextContent(
 	const file = new File([content], safeName, { type: 'text/plain' });
 	const url = await uploadFile(file, 'file' satisfies UploadType);
 	if (!url) return null;
-	return { id, url };
+	return { id, url: `/share/${id}` };
 }
 
 
