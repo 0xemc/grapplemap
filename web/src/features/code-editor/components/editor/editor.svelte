@@ -31,7 +31,7 @@
 	const themeCompartment = new Compartment();
 
 	let uploading = $state(false);
-	let settingDoc = false;
+	let settingDoc = $state(false);
 
 	function isDark() {
 		return document.documentElement.classList.contains('dark');
@@ -86,6 +86,7 @@
 				EditorView.lineWrapping,
 				lintGutter(),
 				grammarLint,
+				// Notify parent when the document changes (autosave hook)
 				EditorView.updateListener.of((v) => {
 					if (!v.docChanged) return;
 					if (settingDoc) return;

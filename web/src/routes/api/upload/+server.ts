@@ -9,6 +9,7 @@ import {
 } from '$env/static/private';
 import { isUploadType } from '../../../features/upload/upload.types.js';
 import { fileToType } from '../../../features/upload/upload.utils.js';
+import { generateId } from '$lib/utils/id.js';
 
 const s3 = new S3Client({
     region: 'auto',
@@ -42,9 +43,10 @@ export const POST = async ({ request }) => {
     }
 
     const bytes = await file.arrayBuffer();
+    const extFromName = file.name?.includes('.') ? '.' + file.name.split('.').pop() : '';
     const extFromType = file.type && file.type.includes('/') ? '.' + file.type.split('/')[1] : '';
-    const ext = extFromType || '';
-    const key = `${type}/${(globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2))}${ext}`;
+    const ext = extFromName || extFromType || '';
+    const key = `${type}/${generateId()}${ext}`;
 
     await s3.send(
         new PutObjectCommand({
