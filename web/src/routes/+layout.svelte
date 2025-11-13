@@ -1,21 +1,34 @@
 <script lang="ts">
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
-	import ThemeSwitch from '$lib/components/theme-switch.svelte';
 	import Sidebar from '$lib/components/sidebar.svelte';
 	import { BottomNav, BottomNavItem, Tooltip } from 'flowbite-svelte';
-	import { EditOutline, HomeOutline, HomeSolid, ShareNodesOutline } from 'flowbite-svelte-icons';
+	import { EditOutline, HomeOutline, ShareNodesOutline } from 'flowbite-svelte-icons';
 	import { page } from '$app/state';
-	import { replaceAll } from '@codemirror/search';
 	import { Toaster } from 'svelte-sonner';
-	let { children } = $props();
+	import posthog from 'posthog-js';
+	import { browser } from '$app/environment';
+	import { PUBLIC_POSTHOG_KEY } from '$env/static/public';
 
+	let { children } = $props();
 	let activeUrl = $state(page.url.pathname);
 	let iconClass =
 		'h-5 w-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white';
+
 	$effect(() => {
 		activeUrl = page.url.pathname;
 	});
+
+	export const load = async () => {
+		if (browser) {
+			posthog.init(PUBLIC_POSTHOG_KEY, {
+				api_host: 'https://us.i.posthog.com',
+				defaults: '2025-05-24',
+				person_profiles: 'always' // or 'always' to create profiles for anonymous users as well
+			});
+		}
+		return;
+	};
 </script>
 
 <svelte:head>
