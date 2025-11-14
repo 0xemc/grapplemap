@@ -14,13 +14,14 @@
 	const spanClass = 'flex-1 whitespace-nowrap';
 	const { isOpen, close } = uiHelpers();
 	let isDemoOpen = $state(false);
+	import logo from '$lib/assets/logo.svg';
 	$effect(() => {
 		isDemoOpen = isOpen;
 		activeUrl = page.url.pathname;
 	});
 	const site = {
 		href: '/',
-		img: '/logo.svg'
+		img: logo
 	};
 </script>
 
@@ -30,7 +31,7 @@
 	isOpen={isDemoOpen}
 	closeSidebar={close}
 	params={{ x: -50, duration: 50 }}
-	class="border-chisel-200 z-50 h-full w-auto border-r pt-1 dark:border-zinc-700"
+	class="border-chisel-200 z-50 h-full w-auto border-r bg-white pt-1 dark:border-zinc-700"
 	classes={{ nonactive: 'p-2', active: 'p-2' }}
 >
 	<SidebarBrand {site} class="ml-auto mr-auto w-8 p-0" />
