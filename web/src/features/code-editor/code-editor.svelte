@@ -148,15 +148,16 @@
 
 {#if fileTreeOpen}
 	<div class="fixed inset-0 z-50 md:hidden">
-		<div class="absolute inset-0 bg-black/40" on:click={() => (fileTreeOpen = false)} />
-		<div class="absolute left-0 top-0 h-full w-64 bg-white p-3 shadow-xl dark:bg-zinc-900">
+		<div
+			class="absolute left-0 top-0 flex h-full w-64 flex-col gap-2 bg-white p-3 shadow-xl dark:bg-zinc-900"
+		>
 			<Button
 				size="xs"
 				color="light"
-				onclick={() => (fileTreeOpen = false)}
-				class="absolute right-2 top-2 p-1">Close</Button
+				class="ml-auto w-fit text-xs"
+				onclick={() => (fileTreeOpen = false)}>Close</Button
 			>
-			<FileTree showOnMobile={true} extraClass="mt-6 w-full h-full max-h-full" />
+			<FileTree showOnMobile={true} extraClass=" w-full h-full max-h-full" />
 		</div>
 	</div>
 {/if}

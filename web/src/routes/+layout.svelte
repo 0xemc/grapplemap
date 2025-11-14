@@ -57,29 +57,29 @@
 
 		<!-- Mobile Nav -->
 		<nav class="md:hidden">
-			<a href="/" class="border-chisel-100 absolute left-2 top-2 z-10 rounded border bg-white">
+			<!-- <a href="/" class="border-chisel-100 absolute left-2 top-2 z-10 rounded border bg-white">
 				<img src={logo} alt="logo" class=" h-10 w-10 p-2" />
-			</a>
+			</a> -->
 			<BottomNav
 				position="absolute"
 				navType="application"
-				class="z-[99] w-fit"
-				classes={{ inner: 'grid-cols-3' }}
+				class="z-[99] h-14 w-fit rounded-xl  "
+				classes={{ inner: 'grid-cols-2 h-full' }}
 			>
-				<BottomNavItem
+				<!-- <BottomNavItem
 					btnName="Home"
 					appBtnPosition="left"
 					href="/"
 					class={`${activeUrl === '/' ? 'bg-chisel-50' : ''}`}
 				>
 					<HomeOutline class={iconClass} />
-				</BottomNavItem>
+				</BottomNavItem> -->
 				<Tooltip arrow={false}>Home</Tooltip>
 				<BottomNavItem
 					btnName="Graph"
 					appBtnPosition="middle"
 					href="/graph"
-					class={`${activeUrl === '/graph' ? 'bg-chisel-50' : ''}`}
+					class={`${activeUrl === '/graph' ? 'bg-chisel-50' : ''} rounded-l-xl`}
 				>
 					<ShareNodesOutline class={iconClass} />
 				</BottomNavItem>
@@ -88,7 +88,7 @@
 					btnName="Editor"
 					appBtnPosition="right"
 					href="/editor"
-					class={`${activeUrl === '/editor' ? 'bg-chisel-50' : ''}`}
+					class={`${activeUrl === '/editor' ? 'bg-chisel-50' : ''} rounded-r-xl`}
 				>
 					<EditOutline class={iconClass} />
 				</BottomNavItem>

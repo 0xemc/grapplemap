@@ -23,17 +23,14 @@
 	let url = $derived(extractUrlFromTags(transition?.tags ?? []));
 </script>
 
-<Modal
-	title={transition?.title ?? 'Transition'}
-	bind:open={context.modal}
-	onclose={() => context.closeModal()}
->
+<!-- title={transition?.title ?? 'Transition'} -->
+<Modal bind:open={context.modal} class="max-w-11/12" onclose={() => context.closeModal()}>
 	{#if transition}
-		<P><b>From</b>: {transition.from}</P>
-		<P><b>To</b>: {transition.to}</P>
-		{#if transition.tags}
+		<!-- <P><b>From</b>: {transition.from}</P> -->
+		<!-- <P><b>To</b>: {transition.to}</P> -->
+		<!-- {#if transition.tags}
 			<P><b>Tags</b>: {transition.tags.filter((t) => !t.includes('url:'))}</P>
-		{/if}
+		{/if} -->
 		{#if url}
 			{#if isYouTube(url)}
 				<div class="w-full" style="aspect-ratio: 16/9;">
@@ -62,6 +59,7 @@
 				<video class="w-full" style="max-height: 60vh;" src={url} controls></video>
 			{/if}
 		{/if}
+
 		{#if transition.steps?.length}
 			<P><b>Steps</b>:</P>
 			<ol class="list-inside list-decimal pl-6">
@@ -78,3 +76,6 @@
 		<Button onclick={() => context.closeModal()}>Close</Button>
 	{/snippet}
 </Modal>
+
+<style>
+</style>
