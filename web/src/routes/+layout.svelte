@@ -1,12 +1,12 @@
 <script lang="ts">
 	import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
 	import Sidebar from '$lib/components/sidebar.svelte';
 	import { BottomNav, BottomNavItem, Tooltip } from 'flowbite-svelte';
 	import { EditOutline, HomeOutline, ShareNodesOutline } from 'flowbite-svelte-icons';
 	import { page } from '$app/state';
 	import { Toaster } from 'svelte-sonner';
-	import logo from '$lib/assets/logo.svg';
+	import logoSvg from '$lib/assets/logo.svg';
+	import logoPng from '$lib/assets/logo.png';
 
 	let { children } = $props();
 	let activeUrl = $state(page.url.pathname);
@@ -19,7 +19,11 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" type="image/svg+xml" href={logoSvg} />
+	<link rel="icon" type="image/png" sizes="32x32" href={logoPng} />
+	<link rel="apple-touch-icon" href={logoPng} />
+	<link rel="mask-icon" href={logoSvg} color="#FF813F" />
+	<link rel="shortcut icon" href="/favicon.ico" />
 	<script>
 		(function () {
 			try {
