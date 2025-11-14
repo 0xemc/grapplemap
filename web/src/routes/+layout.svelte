@@ -6,6 +6,7 @@
 	import { EditOutline, HomeOutline, ShareNodesOutline } from 'flowbite-svelte-icons';
 	import { page } from '$app/state';
 	import { Toaster } from 'svelte-sonner';
+	import logo from '$lib/assets/logo.svg';
 
 	let { children } = $props();
 	let activeUrl = $state(page.url.pathname);
@@ -40,7 +41,6 @@
 		src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
 		data-id="grapplemap"
 		data-description="Support me on Buy me a coffee!"
-		data-message="Support the project here 🙏"
 		data-color="#FF813F"
 		data-position="Right"
 		data-x_margin="18"
@@ -57,6 +57,9 @@
 
 		<!-- Mobile Nav -->
 		<nav class="md:hidden">
+			<a href="/" class="border-chisel-100 absolute left-2 top-2 z-10 rounded border bg-white">
+				<img src={logo} alt="logo" class=" h-10 w-10 p-2" />
+			</a>
 			<BottomNav
 				position="absolute"
 				navType="application"

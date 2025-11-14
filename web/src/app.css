@@ -120,3 +120,20 @@ button,
 input[type='checkbox'] {
 	cursor: pointer;
 }
+
+@media (max-width: 640px) {
+	#bmc-wbtn {
+		width: 40px !important;
+		height: 40px !important;
+	}
+
+	#bmc-wbtn img {
+		padding: 6px !important;
+	}
+
+	/* If size still won’t change (iframe/shadow), scale the whole widget */
+	/* #bmc-wbtn {
+		transform: scale(0.7);
+		transform-origin: bottom right;
+	} */
+}

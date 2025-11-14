@@ -5,7 +5,8 @@
 		SidebarGroup,
 		SidebarItem,
 		SidebarButton,
-		uiHelpers
+		uiHelpers,
+		SidebarBrand
 	} from 'flowbite-svelte';
 	import { EditOutline, HomeOutline, ShareNodesOutline } from 'flowbite-svelte-icons';
 	import { page } from '$app/state';
@@ -17,6 +18,10 @@
 		isDemoOpen = isOpen;
 		activeUrl = page.url.pathname;
 	});
+	const site = {
+		href: '/',
+		img: '/logo.svg'
+	};
 </script>
 
 <Sidebar
@@ -25,17 +30,18 @@
 	isOpen={isDemoOpen}
 	closeSidebar={close}
 	params={{ x: -50, duration: 50 }}
-	class="border-chisel-400 z-50 h-full w-auto border-r pt-1 dark:border-zinc-700"
+	class="border-chisel-200 z-50 h-full w-auto border-r pt-1 dark:border-zinc-700"
 	classes={{ nonactive: 'p-2', active: 'p-2' }}
 >
+	<SidebarBrand {site} class="ml-auto mr-auto w-8 p-0" />
 	<SidebarGroup>
-		<SidebarItem href="/" {spanClass}>
+		<!-- <SidebarItem href="/" {spanClass}>
 			{#snippet icon()}
 				<HomeOutline
 					class="h-5 w-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
 				/>
 			{/snippet}
-		</SidebarItem>
+		</SidebarItem> -->
 		<SidebarItem href="/graph" {spanClass}>
 			{#snippet icon()}
 				<ShareNodesOutline
