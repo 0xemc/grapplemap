@@ -34,6 +34,18 @@
 			} catch (e) {}
 		})();
 	</script>
+	<script
+		data-name="BMC-Widget"
+		data-cfasync="false"
+		src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+		data-id="grapplemap"
+		data-description="Support me on Buy me a coffee!"
+		data-message="Support the project here 🙏"
+		data-color="#FF813F"
+		data-position="Right"
+		data-x_margin="18"
+		data-y_margin="18"
+	></script>
 </svelte:head>
 
 <div class="app-shell dark:bg-chisel-900 bg-white text-zinc-900 dark:text-zinc-100">
