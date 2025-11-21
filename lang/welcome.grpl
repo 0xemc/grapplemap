@@ -28,7 +28,7 @@ Closed Guard [t] -> Half Guard [t]
 6. Step over
 
 // Position Metadata
-[img:https://someimg.com/img.jpg][icon:https://someicon.com/icon.png]
+[img:https://someimg.com/img.jpg]
 Closed Guard
 
 // Add your own transitions below and then view them in the Graph by clicking the icon in the sidebar
