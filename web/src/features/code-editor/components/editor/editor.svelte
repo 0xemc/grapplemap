@@ -16,6 +16,7 @@
 	import { goto } from '$app/navigation';
 	import { uploadFile, sniffFileType, fileToType } from '../../../upload/upload.utils.ts';
 	import { toast } from 'svelte-sonner';
+	import { grammarLint, toggleLineComments } from './editor.utils.ts';
 
 	let {
 		value = '',
@@ -41,24 +42,6 @@
 		return isDark() ? oneDark : [];
 	}
 
-	const grammarLint = linter(async (view) => {
-		const text = view.state.doc.toString();
-		const m = await matchTransition(text);
-		if (!m.failed()) return [];
-
-		const interval = m.getInterval?.();
-		const from = interval?.startIdx ?? 0;
-		const to = Math.min(from + 1, view.state.doc.length);
-		return [
-			{
-				from,
-				to,
-				severity: 'error',
-				message: m.message ?? 'Syntax error'
-			}
-		];
-	});
-
 	onMount(() => {
 		if (!host) return;
 
@@ -73,7 +56,8 @@
 					...historyKeymap,
 					...searchKeymap,
 					...completionKeymap,
-					...lintKeymap
+					...lintKeymap,
+					{ key: 'Mod-/', run: toggleLineComments }
 				]),
 				history(),
 				syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
