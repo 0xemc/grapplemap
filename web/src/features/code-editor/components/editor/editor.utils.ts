@@ -1,3 +1,5 @@
+import { matchTransition } from "$lib/utils/transitionParser";
+import { linter } from "@codemirror/lint";
 import type { EditorView } from "@codemirror/view";
 
 export function toggleLineComments(view: EditorView): boolean {
@@ -43,3 +45,23 @@ export function toggleLineComments(view: EditorView): boolean {
     view.dispatch({ changes });
     return true;
 }
+
+
+
+export const grammarLint = linter(async (view) => {
+    const text = view.state.doc.toString();
+    const m = await matchTransition(text);
+    if (!m.failed()) return [];
+
+    const interval = m.getInterval?.();
+    const from = interval?.startIdx ?? 0;
+    const to = Math.min(from + 1, view.state.doc.length);
+    return [
+        {
+            from,
+            to,
+            severity: 'error',
+            message: m.message ?? 'Syntax error'
+        }
+    ];
+});
