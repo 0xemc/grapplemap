@@ -20,8 +20,9 @@ Transition {
   
   position_char = (letter | digit | " " | "/" | "&" | "_" )
 
-  from_tag = bottom_tag | top_tag | attacking_tag | defending_tag
-  to_tag = bottom_tag | top_tag | attacking_tag | defending_tag
+  from_tag = modifier
+  to_tag = modifier
+  modifier = bottom_tag | top_tag | attacking_tag | defending_tag
   
   bottom_tag = "[b]"
   top_tag = "[t]"
@@ -35,7 +36,9 @@ Transition {
 
  // Position Blocks
  position_block = skip position_tags? position_name ~(nl from_to) (~"\n" any)* skip
- position_name = position_char+
+ position_name = position_title (position_modifier)?
+ position_title = position_char+
+ position_modifier = bottom_tag | top_tag | attacking_tag | defending_tag
  position_tags = tags
 
   // Utils

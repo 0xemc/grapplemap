@@ -85,15 +85,27 @@ export const position = {
   // Args: (skip, position_tags, position_name, _not_from_to, _rest, _skip)
   position_block(_skip: any, position_tags: any, position_name: any, _not_from_to: any, _rest: any) {
     // Extract the main position name and any tags (if present)
-    const name = position_name.positions();
-    const tags = position_tags.children.length ? position_tags.positions() : [];
+    const { title, modifier } = position_name.positions();
+    const tags = position_tags.children.length ? position_tags.positions().flat() : [];
     // Return normalized { name, tags } object for the position
-    return [{ name, tags }];
+    return [{ name: title, modifier, tags }];
   },
-  position_name(this: any, _: any) {
+  position_name(position_title: any, position_modifier: any) {
     // Return the position name as a trimmed string
-    return this.sourceString.trim();
+    const title = position_title.positions()
+    const modifier = position_modifier.children[0]?.positions()
+    return { title, modifier }
   },
+  position_title(title: any) {
+    return title.sourceString.trim();
+  },
+  position_modifier(modifier: any) {
+    return modifier.positions();
+  },
+  bottom_tag(_: any) { return 'b'; },
+  top_tag(_: any) { return 't'; },
+  attacking_tag(_: any) { return 'a'; },
+  defending_tag(_: any) { return 'd'; },
   position_tags(items: any) {
     return items.transitions().filter((s: string) => s.trim()).map((s: string) => s.trim());
   },

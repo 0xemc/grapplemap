@@ -29,6 +29,10 @@ Closed Guard [t] -> Half Guard [t]
 
 // Position Metadata
 [img:https://someimg.com/img.jpg]
-Closed Guard
+Closed Guard [t]
 
+[icon:https://someimg.com/icon.png]
+Closed Guard [t]
+
+Closed Guard
 // Add your own transitions below and then view them in the Graph by clicking the icon in the sidebar
