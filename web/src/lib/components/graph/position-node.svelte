@@ -27,7 +27,7 @@
 </script>
 
 <Handle type="target" position={Position.Bottom} />
-<div class="flex">
+<div class="flex h-14">
 	{#if img}
 		<img class="h-14 w-16 rounded-l object-cover object-center" src={img} alt={label + ' image'} />
 	{/if}
@@ -39,9 +39,9 @@
 				border
 				color={tagColor[modifier]}>{tagText[modifier]}</Badge
 			>
-			<div class="h-2"></div>
+			<div class="h-4"></div>
 		{/if}
-		<div class="h-full text-xs">{label}</div>
+		<div class="h-full items-center text-center text-xs">{label}</div>
 	</div>
 </div>
 <Handle type="source" position={Position.Top} />

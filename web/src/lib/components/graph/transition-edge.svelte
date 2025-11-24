@@ -25,7 +25,7 @@
 	let labelY = $derived(pathData[2]);
 	const { markerStart, markerEnd } = props;
 
-	const transitions = $derived(((props.data as any)?.transitions as Transition[]) ?? []);
+	const transitions = $derived((props.data as any)?.transitions ?? []);
 </script>
 
 <BaseEdge {path} {markerEnd} {markerStart} />
