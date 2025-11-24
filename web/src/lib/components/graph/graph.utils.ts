@@ -36,12 +36,18 @@ export type GraphNode = {
     data: { label: string }
 };
 
-export function positionToNode(position: DBPosition): (GraphNode & { data: { tag?: PositionModifier } }) {
+export type PositionNodeData = {
+    label: string;
+    modifier?: PositionModifier;
+    tags?: string[];
+};
+
+export function positionToNode(position: DBPosition): (GraphNode & { data: PositionNodeData }) {
     return {
         id: `${position.title}${position.modifier ?? ''}`,
         position: { x: 0, y: 0 },
         type: "position",
-        data: { label: `${position.title}`, tag: position.modifier }
+        data: { label: `${position.title}`, modifier: position.modifier, tags: position.tags }
     }
 }
 

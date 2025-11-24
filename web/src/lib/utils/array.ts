@@ -14,7 +14,7 @@ import { filter, isNonNullish, mergeDeep, pipe, reduce, values } from "remeda";
 //     return values(grouped);
 // }
 
-export const mergeByKey = <V, T extends Record<string, V>>(fn: (el: T) => string, arr: T[]): T[] =>
+export const mergeByKey = <V, T extends Record<string, V>>(arr: T[], fn: (el: T) => string): T[] =>
     pipe(
         arr,
         reduce((acc: Record<string, T>, x: T) => {

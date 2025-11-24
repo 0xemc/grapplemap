@@ -35,7 +35,6 @@
 	import { getSharedModeContext } from '$lib/share/context';
 	import { compact, mergeByKey } from '$lib/utils/array';
 	import type { DBPosition } from '$lib/db/tables/positions';
-	import { cursorSyntaxLeft } from '@codemirror/commands';
 
 	setGraphContext();
 	const sharedMode = getSharedModeContext();
@@ -68,20 +67,20 @@
 			$_positions ?? [],
 			filter(filterByFile),
 			filter((p) => transition_positions.includes(p.title + p.modifier)),
-			(arr) => mergeByKey(({ title, modifier }) => title + modifier, arr)
+			(arr) => mergeByKey(arr, ({ title, modifier }) => title + modifier)
 		)
 	);
 
-	let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []) as unknown as Edge[]);
-	let nodes = $derived(uniqueBy((transitions ?? []).flatMap(transitionToNodes), prop('id')));
+	// let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []) as unknown as Edge[]);
+	// let nodes = $derived(uniqueBy((transitions ?? []).flatMap(transitionToNodes), prop('id')));
 	$effect(() => {
 		console.log('positions', positions);
 		console.log('nodes', nodes);
 		console.log(positions?.map(positionToNode));
 	});
 
-	// let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []));
-	// let nodes = $derived(positions?.map(positionToNode));
+	let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []));
+	let nodes = $derived(positions?.map(positionToNode));
 
 	let colorMode = $state<ColorMode>(currentTheme());
 
