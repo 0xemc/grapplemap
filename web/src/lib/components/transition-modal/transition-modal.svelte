@@ -21,6 +21,15 @@
 	let transition = $derived(($transitions ?? []).find((t) => t.id === context.selected_transition));
 
 	let url = $derived(extractUrlFromTags(transition?.tags ?? []));
+
+	let mediaLoading = $state(false);
+	let lastUrl: string | null = null;
+	$effect(() => {
+		if (url !== lastUrl) {
+			lastUrl = url ?? null;
+			mediaLoading = !!url;
+		}
+	});
 </script>
 
 <svelte:head>
@@ -64,32 +73,78 @@
 			{/if} -->
 			{#if url}
 				{#if isYouTube(url)}
-					<div class="w-full" style="aspect-ratio: 16/9;">
-						<iframe
-							class="h-full w-full rounded-t-lg"
-							src={toYouTubeEmbedUrl(url)}
-							loading="eager"
-							title="YouTube video player"
-							frameborder="0"
-							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-							allowfullscreen
-						></iframe>
-					</div>
+					{#key url}
+						<div class="relative w-full" style="aspect-ratio: 16/9;">
+							<iframe
+								class="h-full w-full rounded-t-lg"
+								class:opacity-0={mediaLoading}
+								class:pointer-events-none={mediaLoading}
+								src={toYouTubeEmbedUrl(url)}
+								loading="eager"
+								title="YouTube video player"
+								frameborder="0"
+								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+								allowfullscreen
+								onload={() => (mediaLoading = false)}
+							></iframe>
+							{#if mediaLoading}
+								<div class="absolute inset-0 grid place-items-center rounded-t-lg bg-white">
+									<div
+										class="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500"
+										aria-label="Loading"
+									></div>
+								</div>
+							{/if}
+						</div>
+					{/key}
 				{:else if isVimeo(url)}
-					<div class="w-full" style="aspect-ratio: 16/9;">
-						<iframe
-							class="h-full w-full rounded-t-lg"
-							src={toVimeoEmbedUrl(url)}
-							loading="eager"
-							title="Vimeo video player"
-							frameborder="0"
-							allow="autoplay; fullscreen; picture-in-picture"
-							allowfullscreen
-						></iframe>
-					</div>
+					{#key url}
+						<div class="relative w-full" style="aspect-ratio: 16/9;">
+							<iframe
+								class="h-full w-full rounded-t-lg"
+								class:opacity-0={mediaLoading}
+								class:pointer-events-none={mediaLoading}
+								src={toVimeoEmbedUrl(url)}
+								loading="eager"
+								title="Vimeo video player"
+								frameborder="0"
+								allow="autoplay; fullscreen; picture-in-picture"
+								allowfullscreen
+								onload={() => (mediaLoading = false)}
+							></iframe>
+							{#if mediaLoading}
+								<div class="absolute inset-0 grid place-items-center rounded-t-lg bg-white">
+									<div
+										class="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500"
+										aria-label="Loading"
+									></div>
+								</div>
+							{/if}
+						</div>
+					{/key}
 				{:else if isDirectVideo(url)}
 					<!-- svelte-ignore a11y_media_has_caption -->
-					<video class="w-full rounded-t-lg" style="max-height: 60vh;" src={url} controls></video>
+					{#key url}
+						<div class="relative w-full">
+							<video
+								class="w-full rounded-t-lg"
+								class:opacity-0={mediaLoading}
+								class:pointer-events-none={mediaLoading}
+								style="max-height: 60vh;"
+								src={url}
+								controls
+								onloadeddata={() => (mediaLoading = false)}
+							></video>
+							{#if mediaLoading}
+								<div class="absolute inset-0 grid place-items-center rounded-t-lg bg-white">
+									<div
+										class="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500"
+										aria-label="Loading"
+									></div>
+								</div>
+							{/if}
+						</div>
+					{/key}
 				{/if}
 			{/if}
 		{/if}
