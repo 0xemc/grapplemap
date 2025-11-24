@@ -10,7 +10,7 @@
 		type Edge
 	} from '@xyflow/svelte';
 
-	import { filter, intersection, pipe, prop, unique, uniqueBy } from 'remeda';
+	import { filter, intersection, pipe, prop, unique, uniqueBy, purry } from 'remeda';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount } from 'svelte';
 	import {
@@ -33,8 +33,9 @@
 	import PositionNode from './position-node.svelte';
 	import type { DBTransition } from '$lib/db/tables/transitions';
 	import { getSharedModeContext } from '$lib/share/context';
-	import { compact } from '$lib/utils/array';
+	import { compact, mergeByKey } from '$lib/utils/array';
 	import type { DBPosition } from '$lib/db/tables/positions';
+	import { cursorSyntaxLeft } from '@codemirror/commands';
 
 	setGraphContext();
 	const sharedMode = getSharedModeContext();
@@ -66,7 +67,8 @@
 		pipe(
 			$_positions ?? [],
 			filter(filterByFile),
-			filter((p) => transition_positions.includes(p.title + p.modifier))
+			filter((p) => transition_positions.includes(p.title + p.modifier)),
+			(arr) => mergeByKey(({ title, modifier }) => title + modifier, arr)
 		)
 	);
 
