@@ -117,6 +117,10 @@ body,
 	padding: 0 !important;
 }
 
+.svelte-flow__pane {
+	cursor: initial !important;
+}
+
 button,
 input[type='checkbox'] {
 	cursor: pointer;
