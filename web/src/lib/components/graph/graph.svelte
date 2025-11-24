@@ -73,14 +73,15 @@
 
 	// let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []) as unknown as Edge[]);
 	// let nodes = $derived(uniqueBy((transitions ?? []).flatMap(transitionToNodes), prop('id')));
-	$effect(() => {
-		console.log('positions', positions);
-		console.log('nodes', nodes);
-		console.log(positions?.map(positionToNode));
-	});
 
 	let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []));
 	let nodes = $derived(positions?.map(positionToNode));
+
+	// $effect(() => {
+	// 	console.log('positions', positions);
+	// 	console.log('nodes', nodes);
+	// 	console.log(positions?.map(positionToNode));
+	// });
 
 	let colorMode = $state<ColorMode>(currentTheme());
 

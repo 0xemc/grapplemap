@@ -7,8 +7,7 @@
 		data: PositionNodeData;
 	};
 	let { id, data }: NodeProps & Props = $props();
-	const { modifier, label, tags } = data;
-	const tagColor: Record<string, BadgeProps['color']> = {
+	const tagColor: Record<PositionModifier, BadgeProps['color']> = {
 		a: 'red',
 		d: 'blue',
 		b: 'green',
@@ -22,8 +21,9 @@
 		t: 'top'
 	};
 
-	const img = tags?.find((t) => t.includes('img:'))?.split('img:')[1];
-	const icon = tags?.find((t) => t.includes('icon:'))?.split('icon:')[1];
+	let { label, modifier, tags } = $derived(data);
+	const img = $derived(tags?.find((t) => t.includes('img:'))?.split('img:')[1]);
+	const icon = $derived(tags?.find((t) => t.includes('icon:'))?.split('icon:')[1]);
 </script>
 
 <Handle type="target" position={Position.Bottom} />
