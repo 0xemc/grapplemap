@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { VideoCameraSolid } from 'flowbite-svelte-icons';
 	import { getGraphContext } from './graph.state.svelte';
-	import type { Transition } from '$lib/db/tables/transitions';
+	import type { DBTransition } from '$lib/db/tables/transitions';
 	type Props = {
-		transition: Transition;
+		transition: DBTransition;
 	};
 	let { transition }: Props = $props();
 

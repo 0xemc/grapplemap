@@ -1,15 +1,16 @@
 import type { EntityTable } from "dexie";
+import type { Position } from '@lang/types'
 
-export type Position = {
+export type DBPosition = Position & {
     id: number
-    title: string
+    file_id: number;
 }
 
 
 export class Positions {
-    #table!: EntityTable<Position, 'id'>;
+    table!: EntityTable<DBPosition, 'id'>;
 
-    constructor(table: EntityTable<Position, 'id'>) {
-        this.#table = table
+    constructor(table: EntityTable<DBPosition, 'id'>) {
+        this.table = table
     }
 }

@@ -4,13 +4,14 @@
 	import { Button } from 'flowbite-svelte';
 	import { parse } from '@lang/parse';
 	import { grammar } from '$lib/utils/grammar';
-	import { isNonNullish, isNullish } from 'remeda';
+	import { isNonNullish, isNullish, filter } from 'remeda';
 	import { onDestroy } from 'svelte';
 	import { uploadMap } from '../upload/share.utils';
 	import { toast } from 'svelte-sonner';
 	import { liveQuery } from 'dexie';
 	import { getCodeEditorContext } from './code-editor.svelte.ts';
 	import { getDbContext } from '$lib/db/context.ts';
+	import { mergeByKey } from '$lib/utils/array.ts';
 
 	let context = getCodeEditorContext();
 	let isSaving = $state(false);
@@ -53,24 +54,58 @@
 			 * Delete all transactions for the file before upserting new updates
 			 * @todo extract this
 			 * */
-			await db.transaction('rw', db.files, db.transitions, async () => {
+			await db.transaction('rw', db.files, db.transitions, db.positions, async () => {
 				const { active_file_id } = context;
 
 				if (isNullish(active_file_id)) throw new Error('Attempt to save a file with none selected');
 
 				await db.files.update(active_file_id, { content, updatedAt: Date.now() });
 				await db.transitions.where('file_id').equals(active_file_id).delete();
+				await db.positions.where('file_id').equals(active_file_id).delete();
 
 				const result = parse(grammar, content);
 
-				// const positions = result?.positions.filter(isNonNullish);
-
+				// Transitions
 				const transitions = result?.transitions
 					.filter(isNonNullish)
 					.map((t) => ({ ...t, file_id: active_file_id }));
 
 				if (transitions?.length) {
 					await db.transitions.bulkPut(transitions);
+				}
+
+				// Positions
+				// All positions defined specifically
+				const defined_positions = filter(result?.positions ?? [], isNonNullish).map((p) => ({
+					...p,
+					file_id: active_file_id
+				}));
+				// All positions defined or referenced by transitions
+				const transition_positions = (transitions ?? [])?.flatMap(
+					({ to, toTag, from, fromTag }) => [
+						{
+							title: to,
+							modifier: toTag,
+							tags: [],
+							file_id: active_file_id
+						},
+						{
+							title: from,
+							modifier: fromTag,
+							tags: [],
+							file_id: active_file_id
+						}
+					]
+				);
+
+				// Merge detected positions key'd by title + modifier
+				const positions = mergeByKey(
+					[...defined_positions, ...transition_positions],
+					({ title, modifier }) => title + modifier
+				);
+
+				if (positions?.length) {
+					await db.positions.bulkPut(positions);
 				}
 			});
 		} finally {

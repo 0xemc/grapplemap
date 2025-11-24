@@ -1,10 +1,11 @@
 import { MarkerType, type Edge, type EdgeProps, type InternalNode, type Node } from "@xyflow/svelte";
 import { groupBy } from "remeda";
 import * as Dagre from '@dagrejs/dagre';
-import type { Transition } from "$lib/db/tables/transitions";
-import type { PositionTag } from "@lang/types";
+import type { DBTransition } from "$lib/db/tables/transitions";
+import type { PositionModifier } from "@lang/types";
+import type { DBPosition } from "$lib/db/tables/positions";
 
-export function transitionsToEdges(trs: Transition[]): Edge<{ transitions: Transition[] }, 'transition'>[] {
+export function transitionsToEdges(trs: DBTransition[]): Edge<{ transitions: DBTransition[] }, 'transition'>[] {
     const groups = groupBy(trs, (t) => `${t.from}__${t.to}`);
 
     return Object.entries(groups).map(([key, items]) => {
@@ -35,7 +36,16 @@ export type GraphNode = {
     data: { label: string }
 };
 
-export function transitionToNodes(tr?: Transition): (GraphNode & { data: { tag?: PositionTag } })[] {
+export function positionToNode(position: DBPosition): (GraphNode & { data: { tag?: PositionModifier } }) {
+    return {
+        id: `${position.title}${position.modifier ?? ''}`,
+        position: { x: 0, y: 0 },
+        type: "position",
+        data: { label: `${position.title}`, tag: position.modifier }
+    }
+}
+
+export function transitionToNodes(tr?: DBTransition): (GraphNode & { data: { tag?: PositionModifier } })[] {
     return tr
         ? [
             {
@@ -114,7 +124,7 @@ function measureText(text: string, font = '14px Inter, system-ui, sans-serif'): 
 
 function measureEdgeBox(edge: Edge): { width: number; height: number } {
     // Content you render in <EdgeLabel> is a column of TransitionRow buttons
-    const transitions = ((edge.data as any)?.transitions ?? []) as Transition[];
+    const transitions = ((edge.data as any)?.transitions ?? []) as DBTransition[];
 
     // Tailwind sizes used in UI
     const containerPad = 48; // p-12 => 48px each side

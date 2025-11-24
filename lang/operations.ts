@@ -88,7 +88,7 @@ export const position = {
     const { title, modifier } = position_name.positions();
     const tags = position_tags.children.length ? position_tags.positions().flat() : [];
     // Return normalized { name, tags } object for the position
-    return [{ name: title, modifier, tags }];
+    return [{ title, modifier, tags }];
   },
   position_name(position_title: any, position_modifier: any) {
     // Return the position name as a trimmed string

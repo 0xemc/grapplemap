@@ -10,12 +10,12 @@
 		type Edge
 	} from '@xyflow/svelte';
 
-	import { allPass, filter, intersection, pipe, piped, prop, unique, uniqueBy } from 'remeda';
+	import { filter, intersection, pipe, prop, unique, uniqueBy } from 'remeda';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount } from 'svelte';
 	import {
-		b64ToUtf8,
 		getLayoutedElements,
+		positionToNode,
 		transitionsToEdges,
 		transitionToNodes
 	} from '../graph/graph.utils';
@@ -26,15 +26,15 @@
 	import { getDbContext } from '$lib/db/context';
 	import FileSelect from '../file-select/file-select.svelte';
 	import { Button } from 'flowbite-svelte';
-	import { AdjustmentsHorizontalOutline, FilterSolid, MinusOutline } from 'flowbite-svelte-icons';
+	import { AdjustmentsHorizontalOutline, MinusOutline } from 'flowbite-svelte-icons';
 	import { page } from '$app/stores';
-	import { setParam, updateParams } from '$lib/utils/params';
+	import { setParam } from '$lib/utils/params';
 	import MultiSelect from '../multi-select.svelte';
-	import { parse } from '@lang/parse';
-	import { grammar } from '$lib/utils/grammar';
 	import PositionNode from './position-node.svelte';
-	import type { Transition } from '$lib/db/tables/transitions';
+	import type { DBTransition } from '$lib/db/tables/transitions';
 	import { getSharedModeContext } from '$lib/share/context';
+	import { compact } from '$lib/utils/array';
+	import type { DBPosition } from '$lib/db/tables/positions';
 
 	setGraphContext();
 	const sharedMode = getSharedModeContext();
@@ -46,18 +46,40 @@
 	let tagIds = $derived($page.url.searchParams.getAll('tag'));
 	let files = liveQuery(async () => await dbInst.files.toArray());
 	let _transitions = liveQuery(async () => await dbInst.transitions.toArray());
-	let tags = $derived(
-		unique($_transitions?.flatMap((t) => t.tags).filter((t) => !t.includes('url:')) ?? [])
+	let _positions = liveQuery(async () => await dbInst.positions.toArray());
+
+	let transition_tags = $derived(
+		unique($_transitions?.flatMap((t) => t.tags).filter((t) => !t?.includes('url:')) ?? [])
 	);
 
-	const filterByTag = (t: Transition) =>
-		tagIds.length ? !!intersection(tagIds, t.tags).length : true;
-	const filterByFile = (t: Transition) => (fileIds?.length ? fileIds?.includes(t.file_id) : true);
+	const filterByTag = (t: DBTransition) =>
+		tagIds.length && t.tags ? !!intersection(tagIds, t.tags ?? []).length : true;
+
+	const filterByFile = (t: DBTransition | DBPosition) =>
+		fileIds?.length ? fileIds?.includes(t.file_id) : true;
 
 	let transitions = $derived(pipe($_transitions ?? [], filter(filterByFile), filter(filterByTag)));
+	let transition_positions = $derived(
+		transitions.flatMap(({ from, fromTag, to, toTag }) => [from + fromTag, to + toTag])
+	);
+	let positions = $derived(
+		pipe(
+			$_positions ?? [],
+			filter(filterByFile),
+			filter((p) => transition_positions.includes(p.title + p.modifier))
+		)
+	);
 
 	let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []) as unknown as Edge[]);
 	let nodes = $derived(uniqueBy((transitions ?? []).flatMap(transitionToNodes), prop('id')));
+	$effect(() => {
+		console.log('positions', positions);
+		console.log('nodes', nodes);
+		console.log(positions?.map(positionToNode));
+	});
+
+	// let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []));
+	// let nodes = $derived(positions?.map(positionToNode));
 
 	let colorMode = $state<ColorMode>(currentTheme());
 
@@ -175,7 +197,7 @@
 				<FileSelect files={$files} onChange={onFilesChange} initial={fileIds} />
 			{/if}
 			<MultiSelect
-				items={tags.map((t) => ({ value: t, name: t }))}
+				items={compact(transition_tags).map((t) => ({ value: t, name: t }))}
 				label="Tags"
 				searchPlaceholder="Select tags..."
 				onChange={onTagChange}

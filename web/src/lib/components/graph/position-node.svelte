@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PositionTag } from '@lang/types';
+	import type { PositionModifier } from '@lang/types';
 	import { Handle, Position, type NodeProps } from '@xyflow/svelte';
 	import { Badge, type BadgeProps } from 'flowbite-svelte';
 	let { id, data }: NodeProps = $props();

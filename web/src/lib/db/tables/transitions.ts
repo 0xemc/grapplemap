@@ -1,22 +1,15 @@
-import type { PositionTag } from "@lang/types";
 import type { EntityTable } from "dexie";
+import type { Transition } from '@lang/types'
 
-export interface Transition {
+export type DBTransition = Transition & {
     id: number;
-    tags: string[];
-    title: string;
-    from: string;
-    to: string;
-    steps: string[];
-    file_id: number
-    fromTag?: PositionTag;
-    toTag?: PositionTag;
+    file_id: number;
 };
 
 export class Transitions {
-    table!: EntityTable<Transition, 'id'>;
+    table!: EntityTable<DBTransition, 'id'>;
 
-    constructor(table: EntityTable<Transition, 'id'>) {
+    constructor(table: EntityTable<DBTransition, 'id'>) {
         this.table = table
     }
 
