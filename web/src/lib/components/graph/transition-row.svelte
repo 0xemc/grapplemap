@@ -2,6 +2,7 @@
 	import { VideoCameraSolid } from 'flowbite-svelte-icons';
 	import { getGraphContext } from './graph.state.svelte';
 	import type { DBTransition } from '$lib/db/tables/transitions';
+	import { ArrowUpRightDownLeftOutline } from 'flowbite-svelte-icons';
 	type Props = {
 		transition: DBTransition;
 	};
@@ -22,10 +23,15 @@
 </script>
 
 <button
-	class="w-full cursor-pointer p-2 text-left hover:bg-gray-100"
+	class="relative w-full cursor-pointer p-2 text-left hover:bg-gray-100"
 	onclick={() => (state.selected_transition = transition.id)}
 >
-	<span>{transition.title}</span>
+	<div class="flex">
+		<span>{transition.title}</span>
+		<div class="h-4 w-5"></div>
+	</div>
+	<ArrowUpRightDownLeftOutline class="absolute right-1 top-1 inline w-3 text-gray-600" />
+
 	<!-- icons -->
 	<div class="flex w-full justify-between pt-1 opacity-70">
 		<div class="flex items-center">

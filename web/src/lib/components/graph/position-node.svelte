@@ -29,7 +29,7 @@
 <Handle type="target" position={Position.Bottom} />
 <div class="flex">
 	{#if img}
-		<img class="max-w-14 rounded-l object-cover object-center" src={img} alt={label + ' image'} />
+		<img class="h-14 w-16 rounded-l object-cover object-center" src={img} alt={label + ' image'} />
 	{/if}
 	<div class="flex h-full flex-col gap-1 border-none p-[10px]">
 		{#if modifier}
