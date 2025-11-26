@@ -25,12 +25,7 @@ const s3 = new S3Client({
 
 
 export const POST = async ({ request }) => {
-    // Authorization: Bearer <token>
-    const auth = request.headers.get('authorization') || '';
-    const expected = env.UPLOAD_MASTER_TOKEN || '';
-    if (!auth || !expected || auth !== `Bearer ${expected}`) {
-        return new Response('Unauthorized', { status: 401 });
-    }
+
     const form = await request.formData();
     const file = form.get('file');
     const type = form.get('type');
@@ -47,6 +42,22 @@ export const POST = async ({ request }) => {
 
     if (await fileToType(file) !== type) {
         return new Response('Invalid file type')
+    }
+
+    // Check for authentication if uploading an image or video
+    if (type === "clip" || type === "image") {
+        // Authorization: Bearer <token>
+        const auth = request.headers.get('authorization') || '';
+        const expected = env.UPLOAD_MASTER_TOKEN || '';
+        if (!auth || !expected || auth !== `Bearer ${expected}`) {
+            return new Response('Unauthorized', { status: 401 });
+        }
+    }
+
+    // Limit file size to 5MB
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+    if (file.size > MAX_FILE_SIZE) {
+        return new Response('File too large. Max size is 5MB.', { status: 413 });
     }
 
     const bytes = await file.arrayBuffer();
