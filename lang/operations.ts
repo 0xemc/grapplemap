@@ -151,6 +151,11 @@ export const syntax = {
     const s = this.source;
     return [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-title' }];
   },
+  // Position blocks
+  position_name(this: OhmNode, _title: OhmNode, _maybeModifier: OhmNode): Token[] {
+    const s = this.source;
+    return [{ from: s.startIdx, to: s.endIdx, cls: 'cm-position-name' }];
+  },
   tag_content(this: OhmNode, _chars: OhmNode): Token[] {
     const s = this.source;
     return [{ from: s.startIdx, to: s.endIdx, cls: 'cm-transition-tag' }];
