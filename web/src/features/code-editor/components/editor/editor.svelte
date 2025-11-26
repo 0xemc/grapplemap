@@ -103,10 +103,17 @@
 								throw e;
 							}
 
-							const { url } = await uploadFile(file, type);
-
+							const result = await uploadFile(file, type);
+							if (!result) {
+								uploading = false;
+								return false;
+							}
+							const { url } = result;
 							const { from, to } = view.state.selection.main;
-							if (!url) throw new Error('upload failed');
+							if (!url) {
+								uploading = false;
+								return false;
+							}
 							view.dispatch({ changes: { from, to, insert: `[url:${url}]` } });
 							uploading = false;
 						})();

@@ -7,6 +7,7 @@ import {
     R2_BUCKET,
     R2_PUBLIC_BASE_URL
 } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { isUploadType } from '../../../features/upload/upload.types.js';
 import { fileToType } from '../../../features/upload/upload.utils.js';
 import { generateId } from '$lib/utils/id.js';
@@ -24,6 +25,12 @@ const s3 = new S3Client({
 
 
 export const POST = async ({ request }) => {
+    // Authorization: Bearer <token>
+    const auth = request.headers.get('authorization') || '';
+    const expected = env.UPLOAD_MASTER_TOKEN || '';
+    if (!auth || !expected || auth !== `Bearer ${expected}`) {
+        return new Response('Unauthorized', { status: 401 });
+    }
     const form = await request.formData();
     const file = form.get('file');
     const type = form.get('type');

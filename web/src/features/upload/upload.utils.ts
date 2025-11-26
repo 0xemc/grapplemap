@@ -5,10 +5,19 @@ import { fileTypeFromBlob } from "file-type";
 import type { ShareResult } from "./share.utils";
 
 export async function uploadFile(file: File, type: UploadType): Promise<ShareResult | null> {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('upload_token') : null;
+    if (!token) {
+        toast.error('Uploads require a personal token. Visit /auth/set-token first.');
+        return null;
+    }
     const form = new FormData();
     form.set('file', file);
     form.set('type', type)
-    const res = await fetch('/api/upload', { method: 'POST', body: form });
+    const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: form,
+        headers: { Authorization: `Bearer ${token}` }
+    });
     if (!res.ok) {
         // Read error body as JSON or text and toast it
         let message = 'Upload failed';
