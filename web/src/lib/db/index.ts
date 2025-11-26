@@ -63,25 +63,22 @@ export class Database extends Dexie {
                     updatedAt: ts
                 });
 
-                const beginnersId = await this.files.add({
-                    name: 'no-gi-beginners.grpl',
-                    parentId: null,
-                    content: beginnersFile,
-                    order: 1,
-                    createdAt: ts,
-                    updatedAt: ts
-                });
 
                 // 2) Parse and seed transitions so the graph renders immediately
-                const welcomeTransitions = parse(grammar, welcomeFile)?.transitions.filter(isNonNullish)
+                const welcome = parse(grammar, welcomeFile)
+                const welcome_transitions = welcome?.transitions.filter(isNonNullish)
                     .map((t) => ({ ...t, file_id: fileId })) ?? [];
-                const beginnersTransitions = parse(grammar, beginnersFile)?.transitions.filter(isNonNullish)
-                    .map((t) => ({ ...t, file_id: beginnersId })) ?? [];
+                const welcome_positions = welcome?.positions.filter(isNonNullish)
+                    .map((t) => ({ ...t, file_id: fileId })) ?? [];
 
-                const transitions = [...welcomeTransitions, ...beginnersTransitions]
 
+                const transitions = [...welcome_transitions]
                 if (transitions?.length) {
                     await this.transitions.bulkPut(transitions);
+                }
+                const positions = [...welcome_positions];
+                if (positions.length) {
+                    await this.positions.bulkPut(positions)
                 }
             });
         }
