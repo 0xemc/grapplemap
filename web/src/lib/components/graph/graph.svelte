@@ -142,8 +142,6 @@
 	// 		}
 	// 	}
 	// });
-
-	onMount(() => {});
 </script>
 
 <SvelteFlow

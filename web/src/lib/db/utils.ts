@@ -5,6 +5,7 @@ import { filter, isNonNullish } from "remeda";
 import { db } from ".";
 import type { DBTransition } from "./tables/transitions";
 import type { DBPosition } from "./tables/positions";
+import type { EntityTable } from "dexie";
 
 export async function parseFile(file_id: number, content: string) {
     const result = parse(grammar, content);
@@ -48,19 +49,29 @@ export async function parseFile(file_id: number, content: string) {
 }
 
 
-export async function updateTransitionsPositions(file_id: number, transitions: DBTransition[], positions: DBPosition[]) {
-    if (!transitions.length || !positions.length) {
-        console.warn('Attempt to update db with an empty file')
-        return
+export async function updateTransitionsPositions(
+    file_id: number,
+    transitions: DBTransition[],
+    positions: DBPosition[],
+    tables: {
+        transitions: EntityTable<DBTransition, "id">
+        positions: EntityTable<DBPosition, "id">
+    } = { transitions: db.transitions, positions: db.positions }
+) {
+    if (!transitions.length && !positions.length) {
+        // nothing to write; still clear out old rows
+        await tables.transitions.where('file_id').equals(file_id).delete();
+        await tables.positions.where('file_id').equals(file_id).delete();
+        return;
     }
 
-    //Clear existing entries
-    await db.transitions.where('file_id').equals(file_id).delete();
-    await db.positions.where('file_id').equals(file_id).delete();
+    await tables.transitions.where('file_id').equals(file_id).delete();
+    await tables.positions.where('file_id').equals(file_id).delete();
 
-    if (transitions?.length) await db.transitions.bulkPut(transitions);
-    if (positions?.length) await db.positions.bulkPut(positions);
+    if (transitions?.length) await tables.transitions.bulkPut(transitions);
+    if (positions?.length) await tables.positions.bulkPut(positions);
 }
+
 
 export async function sweep() {
     const files = await db.files.toArray();

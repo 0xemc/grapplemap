@@ -7,6 +7,7 @@ import beginnersFile from '@lang/no-gi-beginners.grpl?raw';
 import { parse } from '@lang/parse';
 import { grammar } from '$lib/utils/grammar';
 import { isNonNullish } from 'remeda';
+import { parseFile, updateTransitionsPositions } from './utils';
 
 export class Database extends Dexie {
     files!: EntityTable<File, 'id'>;
@@ -25,6 +26,27 @@ export class Database extends Dexie {
                 const bracketRegex = /[\])]\s*[\[(]/g;
                 if (typeof row.tags === 'string') row.tags = row.tags.split(bracketRegex)
             })
+        })
+        // Reparses existing files to handle Position parsing
+        this.version(5).upgrade(async (tx) => {
+            try {
+                const files = await tx.table('files').toArray();
+                const transitionsTable = await tx.table<DBTransition, "id">('transitions');
+                const positionsTable = await tx.table<DBPosition, "id">('positions');
+                const tables = { transitions: transitionsTable, positions: positionsTable };
+
+                for (const { id, content } of files) {
+                    if (!content) continue;
+                    const { transitions, positions } = await parseFile(id, content);
+
+                    //@todo fix this ts error
+                    await updateTransitionsPositions(id, transitions, positions, tables);
+                }
+                console.error("V5 Db Upgrade Success")
+            } catch {
+                console.error("V5 Db Upgrade Failed")
+            }
+
         })
         if (seedDefaults) {
             // inside the Database constructor, after .stores(...)
