@@ -50,6 +50,7 @@
 			{#each files as f (f.id)}
 				<ListgroupItem class="flex items-center gap-2">
 					<Checkbox
+						disabled={selectedIds.size === 1 && selectedIds.has(f.id)}
 						checked={selectedIds.has(f.id)}
 						onchange={(e) =>
 							toggleFileSelection(f.id, (e.currentTarget as HTMLInputElement).checked)}
