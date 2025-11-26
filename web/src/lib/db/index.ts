@@ -37,7 +37,7 @@ export class Database extends Dexie {
 
                 for (const { id, content } of files) {
                     if (!content) continue;
-                    const { transitions, positions } = await parseFile(id, content);
+                    const { transitions, positions } = parseFile(id, content);
 
                     //@todo fix this ts error
                     await updateTransitionsPositions(id, transitions, positions, tables);
@@ -65,7 +65,7 @@ export class Database extends Dexie {
 
 
                 // 2) Parse and seed transitions so the graph renders immediately
-                const welcome = parse(grammar, welcomeFile)
+                const welcome = parseFile(fileId, welcomeFile)
                 const welcome_transitions = welcome?.transitions.filter(isNonNullish)
                     .map((t) => ({ ...t, file_id: fileId })) ?? [];
                 const welcome_positions = welcome?.positions.filter(isNonNullish)
@@ -80,6 +80,7 @@ export class Database extends Dexie {
                 if (positions.length) {
                     await this.positions.bulkPut(positions)
                 }
+
             });
         }
     }

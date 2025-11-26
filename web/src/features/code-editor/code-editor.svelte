@@ -61,7 +61,7 @@
 				if (isNullish(active_file_id)) throw new Error('Attempt to save a file with none selected');
 
 				await db.files.update(active_file_id, { content, updatedAt: Date.now() });
-				const { transitions, positions } = await parseFile(active_file_id, content);
+				const { transitions, positions } = parseFile(active_file_id, content);
 				await updateTransitionsPositions(active_file_id, transitions, positions);
 			});
 		} finally {

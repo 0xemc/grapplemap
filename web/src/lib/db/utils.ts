@@ -7,7 +7,7 @@ import type { DBTransition } from "./tables/transitions";
 import type { DBPosition } from "./tables/positions";
 import type { EntityTable } from "dexie";
 
-export async function parseFile(file_id: number, content: string) {
+export function parseFile(file_id: number, content: string) {
     const result = parse(grammar, content);
 
     // Transitions
@@ -77,7 +77,7 @@ export async function sweep() {
     const files = await db.files.toArray();
     const promises = files.map(async ({ id, content }) => {
         if (content) {
-            const { transitions, positions } = await parseFile(id, content)
+            const { transitions, positions } = parseFile(id, content)
             await updateTransitionsPositions(id, transitions, positions)
         }
     })
