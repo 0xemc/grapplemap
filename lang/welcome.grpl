@@ -23,7 +23,7 @@
 // [b],[t],[a],[d] -- Allows you to specify top, bottom, attacking or defending for any position and adds a badge to that position in the graph. This allows differentiating between different configurations of the same position (bottom vs top mount, attacking russian-tie vs defending for example)
 //
 // --- Positions ---
-// Position blocks can also be defined seperately to add information about a position, so far only img tags are supported.
+// Position blocks can also be defined seperately to add information about a position. Currently only img tags are supported.
 //
 //   [img:...] -- Adds a small image from the url to a position block in the graph as some sort of visual reference.
 //
@@ -80,7 +80,7 @@ Mount [t] -> Mount [t]
 [belt:purple][url:https://youtube.com/shorts/oYDe-hrazL8]
 Rear Naked Choke
 Back Control [a] -> Back Control [a]
-1. Thumb and knuckle to jawline
+1. Thumb knuckle to jawline
 2. Walk the wrist, lift & grab the shoulder
 3. Head to head
 4. Grab own shoulder 
