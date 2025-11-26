@@ -11,6 +11,7 @@
 	import Graph from '$lib/components/graph/graph.svelte';
 	import { SvelteFlowProvider } from '@xyflow/svelte';
 	import { setSharedModeContext } from '$lib/share/context';
+	import { parseFile } from '$lib/db/utils';
 
 	let error: string | null = $state(null);
 	let ready = $state(false);
@@ -34,22 +35,35 @@
 			const text = await res.text();
 			const name = `_shared_${id}.grpl`;
 
-			await tempDb!.transaction('rw', tempDb!.files, tempDb!.transitions, async () => {
-				const existing = await tempDb!.files.where('name').equals(name).first();
-				const now = Date.now();
-				const computedId =
-					existing?.id != null ? existing.id! : await tempDb!.file().create(name, text);
-				if (existing?.id != null) {
-					await tempDb!.files.update(computedId, { content: text, updatedAt: now });
-					await tempDb!.transitions.where('file_id').equals(computedId).delete();
-				}
+			await tempDb!.transaction(
+				'rw',
+				tempDb!.files,
+				tempDb!.transitions,
+				tempDb.positions,
+				async () => {
+					const existing = await tempDb!.files.where('name').equals(name).first();
+					const now = Date.now();
+					const computedId =
+						existing?.id != null ? existing.id! : await tempDb!.file().create(name, text);
+					if (existing?.id != null) {
+						await tempDb!.files.update(computedId, { content: text, updatedAt: now });
+						await tempDb!.transitions.where('file_id').equals(computedId).delete();
+						await tempDb!.positions.where('file_id').equals(computedId).delete();
+					}
 
-				const result = parse(grammar, text);
-				const transitions =
-					result?.transitions?.filter(isNonNullish).map((t) => ({ ...t, file_id: computedId })) ??
-					[];
-				if (transitions.length) await tempDb!.transitions.bulkPut(transitions);
-			});
+					const result = parseFile(computedId, text);
+
+					const transitions =
+						result?.transitions?.filter(isNonNullish).map((t) => ({ ...t, file_id: computedId })) ??
+						[];
+					if (transitions.length) await tempDb!.transitions.bulkPut(transitions);
+
+					const positions =
+						result?.positions?.filter(isNonNullish).map((t) => ({ ...t, file_id: computedId })) ??
+						[];
+					if (positions.length) await tempDb!.positions.bulkPut(positions);
+				}
+			);
 
 			ready = true;
 		} catch (e: any) {
