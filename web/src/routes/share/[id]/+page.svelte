@@ -12,6 +12,7 @@
 	import { SvelteFlowProvider } from '@xyflow/svelte';
 	import { setSharedModeContext } from '$lib/share/context';
 	import { parseFile } from '$lib/db/utils';
+	import IntroPane from '@features/intro-pane/intro-pane.svelte';
 
 	let error: string | null = $state(null);
 	let ready = $state(false);
@@ -101,5 +102,6 @@
 		<SvelteFlowProvider>
 			<Graph />
 		</SvelteFlowProvider>
+		<IntroPane />
 	</div>
 {/if}
