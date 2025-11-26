@@ -1,38 +1,74 @@
 // Welcome to GrappleLang
 // This file introduces the language used by the app to generate your game as a graph.
 // Lines starting with // are comments and are ignored by the parser.
-//
-// Each transition block has this shape:
+
+// Each transition block has the following shape:
 //   [optional tags]
 //   Title
 //   From Position -> To Position
 //   1. Step one
 //   2. Step two
+
+// Once you've defined a transition, it's connections, steps and any videos or images can be 
+// viewed at grapplemap.com/graph.
+
+// Features:
+// --- Tags ---
+// Blocks can include any tag you like to enable filtering, however there are some predefined tags with specific
+// behaviours:
 //
+// [belt:blue|purple|brown|black] -- Defines the highest belt color that you've ever hit this move on. This will //                                     show an indicator of the belt on the move in the graph. Defaults to white
+//
+// [url: ...] -- Will embed a video from the url of the move in the modal for the transition
+//
+// [b],[t],[a],[d] -- Allows you to specify top, bottom, attacking or defending for any position and adds a badge //                    to that position in the graph. This allows differentiating between different configurations
+//                    of the same position (bottom vs top mount, attacking russian-tie vs defending for example)
+//
+// --- Positions ---
+// Position blocks can also be defined seperately to add information about a position, so far only img tags are
+// supported.
+//   [img:...] -- Adds a small image from the url to a position block in the graph as some sort of visual
+//                reference.
+//
+// --- Sharing ---
+// Files can be shared by clicking the "share" button above. This will generate a url for this specific map that // you can send to others to view your map
+
 // Tips:
 // - Syntax highlighting will only show when there are no errors in the editor
-// - Use [] or () to add tags on a single line (e.g. [url:URL] (gi) [level:beginner]).
+// - [] or () can be used to add tags e.g. [url:URL] (gi) [level:beginner].
 // - Keep comments outside the block lines (not between tags/title/from->to/steps).
-// - Allowed step text chars: letters, digits, underscore, space, -, ,, &, ', /, :
-// - Blank lines between transitions are fine.
+// - Some characters are not permitted in block names or steps.
+// - Blank lines between blocks are necessary.
+// - If you ctrl/cmd click a position name it will take you to the graph for that position
+// - Files are auto saved after changes
 
 // Examples
-[passing][belt:blue][url:https://www.youtube.com/watch?v=eHMBWw4iZRQ&list=PL5kA-Cs1gYP9qUhms6dphz6GGSQ2yCJQp]
-Kneeling elbow escape
-Closed Guard [t] -> Half Guard [t]
-1. Hands to hips
-2. Elbows in
-3. Knee to the middle
-4. Other knee to the side
-5. Hips back
-6. Step over
+[belt:blue]
+Hip Bump Sweep
+Closed Guard [b] -> Mount [t]
+
+[belt:blue]
+Back Take
+Closed Guard [b] -> Back Control [a]
+
+Armbar
+Mount [t] -> Mount [t]
+
+[belt:purple]
+Rear Naked Choke
+Back Control [a] -> Back Control [a]
+
 
 // Position Metadata
-[img:https://someimg.com/img.jpg]
-Closed Guard [t]
+[img:https://www.grapplearts.com/wp-content/uploads/2012/03/closed-OH-head-grip.jpg]
+Closed Guard [b]
 
-[icon:https://someimg.com/icon.png]
-Closed Guard [t]
+[img:https://vhx.imgix.net/jjxf/assets/c74610d3-50ef-411b-8258-800ccc961b46-2afdf842.jpg?auto=format%2Ccompress&fit=crop&h=360&w=640]
+Back Control [a]
 
-Closed Guard
-// Add your own transitions below and then view them in the Graph by clicking the icon in the sidebar
+[img:https://i.ytimg.com/vi/_l4hnSP6sZ4/maxresdefault.jpg]
+Mount [t]
+
+
+
+// Add your own transitions & positions below and then view them in the Graph by clicking the icon in the sidebar
