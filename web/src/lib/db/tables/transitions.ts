@@ -2,7 +2,8 @@ import type { EntityTable } from "dexie";
 import type { Transition } from '@lang/types'
 
 export type DBTransition = Transition & {
-    id: number;
+    // If id is undefined then it has not been initialised (fetched) by the db
+    id?: number;
     file_id: number;
 };
 

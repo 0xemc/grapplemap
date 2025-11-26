@@ -35,6 +35,7 @@
 	import { getSharedModeContext } from '$lib/share/context';
 	import { compact, mergeByKey } from '$lib/utils/array';
 	import type { DBPosition } from '$lib/db/tables/positions';
+	import { sweep } from '$lib/db/utils';
 
 	setGraphContext();
 	const sharedMode = getSharedModeContext();
@@ -62,6 +63,7 @@
 	let transition_positions = $derived(
 		transitions.flatMap(({ from, fromTag, to, toTag }) => [from + fromTag, to + toTag])
 	);
+
 	let positions = $derived(
 		pipe(
 			$_positions ?? [],
@@ -71,17 +73,8 @@
 		)
 	);
 
-	// let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []) as unknown as Edge[]);
-	// let nodes = $derived(uniqueBy((transitions ?? []).flatMap(transitionToNodes), prop('id')));
-
 	let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []));
 	let nodes = $derived(positions?.map(positionToNode));
-
-	// $effect(() => {
-	// 	console.log('positions', positions);
-	// 	console.log('nodes', nodes);
-	// 	console.log(positions?.map(positionToNode));
-	// });
 
 	let colorMode = $state<ColorMode>(currentTheme());
 
@@ -91,6 +84,12 @@
 
 	onMount(() => {
 		observeTheme((t: Theme) => (colorMode = t));
+	});
+
+	$effect(() => {
+		console.log('positions', positions);
+		console.log('nodes', nodes);
+		console.log(positions?.map(positionToNode));
 	});
 
 	/** Layout on initial load */
@@ -143,6 +142,8 @@
 	// 		}
 	// 	}
 	// });
+
+	onMount(() => {});
 </script>
 
 <SvelteFlow
