@@ -4,7 +4,7 @@ const ALLOWED = new Set(['file', 'tag']); // adjust to your needs
 
 function pickAllowed(url: URL): string {
     const p = new URLSearchParams();
-    for (const [k, v] of url.searchParams) if (ALLOWED.has(k)) p.set(k, v);
+    for (const [k, v] of url.searchParams) if (ALLOWED.has(k)) p.append(k, v);
     return p.toString();
 }
 
