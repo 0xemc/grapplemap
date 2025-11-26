@@ -20,6 +20,13 @@
 		(transition?.tags ?? []).find((t) => t.includes('belt:'))?.split(':')[1]
 	);
 	let state = getGraphContext();
+
+	const beltOrder = Object.keys(beltColorMap);
+	function beltsUpTo(color?: string) {
+		const idx = color ? beltOrder.indexOf(color) : 0;
+		const end = idx >= 0 ? idx : 0;
+		return beltOrder.slice(0, end + 1);
+	}
 </script>
 
 <button
@@ -33,18 +40,27 @@
 	<ArrowUpRightDownLeftOutline class="absolute right-1 top-1 inline w-3 text-gray-600" />
 
 	<!-- icons -->
-	<div class="flex w-full justify-between pt-1 opacity-70">
-		<div class="flex items-center">
-			<svg width="6" height="6" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<circle
-					cx="3"
-					cy="3"
-					r="2.5"
-					stroke="currentColor"
-					stroke-width="1"
-					fill={beltColorMap[belt_color ?? 'white']}
-				/>
-			</svg>
+	<div class="flex w-full justify-between pt-1 opacity-90">
+		<div class="flex items-center gap-1">
+			{#each beltsUpTo(belt_color) as belt, i}
+				<svg
+					width="6"
+					height="6"
+					viewBox="0 0 6 6"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+					class={i === 0 ? '' : 'ml-0.5'}
+				>
+					<circle
+						cx="3"
+						cy="3"
+						r="2.5"
+						stroke="currentColor"
+						stroke-width="1"
+						fill={beltColorMap[belt]}
+					/>
+				</svg>
+			{/each}
 		</div>
 		{#if has_video}
 			<VideoCameraSolid class="h-2 w-2" color="var(--color-secondary-600)" />
