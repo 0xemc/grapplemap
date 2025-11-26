@@ -14,21 +14,18 @@
 
 // Features:
 // --- Tags ---
-// Blocks can include any tag you like to enable filtering, however there are some predefined tags with specific
-// behaviours:
+// Blocks can include any tag you like to enable filtering, however there are some predefined tags with specific behaviours:
 //
-// [belt:blue|purple|brown|black] -- Defines the highest belt color that you've ever hit this move on. This will //                                     show an indicator of the belt on the move in the graph. Defaults to white
+// [belt:blue|purple|brown|black] -- Defines the highest belt color that you've ever hit this move on. This will show an indicator of the belt on the move in the graph. Defaults to white
 //
 // [url: ...] -- Will embed a video from the url of the move in the modal for the transition
 //
-// [b],[t],[a],[d] -- Allows you to specify top, bottom, attacking or defending for any position and adds a badge //                    to that position in the graph. This allows differentiating between different configurations
-//                    of the same position (bottom vs top mount, attacking russian-tie vs defending for example)
+// [b],[t],[a],[d] -- Allows you to specify top, bottom, attacking or defending for any position and adds a badge to that position in the graph. This allows differentiating between different configurations of the same position (bottom vs top mount, attacking russian-tie vs defending for example)
 //
 // --- Positions ---
-// Position blocks can also be defined seperately to add information about a position, so far only img tags are
-// supported.
-//   [img:...] -- Adds a small image from the url to a position block in the graph as some sort of visual
-//                reference.
+// Position blocks can also be defined seperately to add information about a position, so far only img tags are supported.
+//
+//   [img:...] -- Adds a small image from the url to a position block in the graph as some sort of visual reference.
 //
 // --- Sharing ---
 // Files can be shared by clicking the "share" button above. This will generate a url for this specific map that // you can send to others to view your map
@@ -43,20 +40,51 @@
 // - Files are auto saved after changes
 
 // Examples
-[belt:blue]
+[belt:blue][url:https://youtu.be/fQDbxaK3ix8?t=33]
 Hip Bump Sweep
 Closed Guard [b] -> Mount [t]
+1. Open the guard
+2. Sit up and post
+3. Grab the tricep
+4. Hips forward and turn
 
-[belt:blue]
+[belt:blue][url:https://youtu.be/aGNHoMZiP1k]
 Back Take
 Closed Guard [b] -> Back Control [a]
+1. Wrist and elbow
+2. Hips up
+3. Drag across the centerline
+4. Knees to chest
+5. Grab the far armpit
+6. Build to an elbow
+7. Knee to the mat
+8. Far side underhook
+9. Insert hooks
 
+[url:https://youtu.be/GshEzcqlUbY?t=187]
 Armbar
 Mount [t] -> Mount [t]
+1. Crossface
+2. Finger walk the elbow out and up
+3. Trap the elbow with the head
+4. Both arms under the head
+5. Slide knee to elbow
+6. Circle to S Mount
+7. Switch arms & lean to the hips
+8. Leg over the face
+9. Switch arms and elbow to Wrist
+10. Hand to elbow to hip
+11. Pull wrist to chest & fallback
+12. Thumb to ceiling, pinch the knees, hips up
 
-[belt:purple]
+[belt:purple][url:https://youtube.com/shorts/oYDe-hrazL8]
 Rear Naked Choke
 Back Control [a] -> Back Control [a]
+1. Thumb and knuckle to jawline
+2. Walk the wrist, lift & grab the shoulder
+3. Head to head
+4. Grab own shoulder 
+5. Row the elbow back
 
 
 // Position Metadata
