@@ -1,20 +1,52 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	type Step = {
+	type CornerPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+	type CssLength = string | number;
+	type Coordinates = {
+		top?: CssLength;
+		right?: CssLength;
+		bottom?: CssLength;
+		left?: CssLength;
+	};
+	export type InfoStep = {
 		title: string;
 		body: string;
+		position?: CornerPosition;
+		coordinates?: Coordinates;
 	};
-	export let steps: Step[];
-
 	const STORAGE_KEY = 'grapplemap:intro:dismissed';
+	const {
+		steps,
+		position = 'top-left',
+		coordinates,
+		storageKey = STORAGE_KEY
+	} = $props<{
+		steps: InfoStep[];
+		position?: CornerPosition;
+		coordinates?: Coordinates;
+		storageKey?: string;
+	}>();
 
-	export let position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+	const positionClasses = {
+		'top-left': 'left-4 top-4 md:left-24 md:top-12',
+		'top-right': 'right-4 top-4 md:right-24 md:top-12',
+		'bottom-left': 'left-4 bottom-4 md:left-24 md:bottom-12',
+		'bottom-right': 'right-4 bottom-4 md:right-24 md:bottom-12'
+	} as const;
 
-	export let storageKey: string = STORAGE_KEY; // allow override per-surface if needed
-
-	let open = false;
-	let stepIndex = 0;
+	let open = $state(false);
+	let stepIndex = $state(0);
+	const currentStep = $derived(steps?.[stepIndex]);
+	const effectiveCoordinates = $derived(currentStep?.coordinates ?? coordinates);
+	const effectivePosition = $derived((currentStep?.position ?? position) as CornerPosition);
+	const coordStyle = $derived(
+		effectiveCoordinates &&
+			Object.entries(effectiveCoordinates)
+				.filter(([, v]) => v !== undefined)
+				.map(([k, v]) => `${k}: ${typeof v === 'number' ? `${v}px` : v}`)
+				.join('; ')
+	);
 
 	function markDismissed() {
 		try {
@@ -51,7 +83,8 @@
 	<div class="pointer-events-none fixed inset-0 z-40">
 		<!-- Panel -->
 		<div
-			class="pointer-events-auto fixed left-4 top-4 w-[min(380px,calc(100vw-1.5rem))] rounded-xl border border-slate-200 bg-white/95 p-4 shadow-xl backdrop-blur md:left-24 md:top-12 dark:border-slate-700 dark:bg-slate-900/95"
+			class={`pointer-events-auto fixed ${effectiveCoordinates ? '' : positionClasses[effectivePosition]} w-[min(380px,calc(100vw-1.5rem))] rounded-xl border border-slate-200 bg-white/95 p-4 shadow-xl backdrop-blur dark:border-slate-700 dark:bg-slate-900/95`}
+			style={coordStyle}
 			role="dialog"
 			aria-labelledby="intro-title"
 		>
@@ -64,7 +97,7 @@
 				<button
 					class="-mr-1 ml-auto rounded-md p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
 					aria-label="Dismiss"
-					on:click={markDismissed}
+					onclick={markDismissed}
 				>
 					<!-- X icon -->
 					<svg
@@ -91,7 +124,7 @@
 			<div class="mt-4 flex items-center justify-between">
 				<button
 					class="rounded-md px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800"
-					on:click={prev}
+					onclick={prev}
 					disabled={stepIndex === 0}
 				>
 					Back
@@ -102,12 +135,12 @@
 							class="h-1.5 w-1.5 rounded-full {i === stepIndex
 								? 'bg-primary-500'
 								: 'bg-slate-300 dark:bg-slate-600'}"
-						/>
+						></div>
 					{/each}
 				</div>
 				<button
 					class="bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400 rounded-md px-3 py-1.5 text-sm font-semibold text-white focus:outline-none focus:ring"
-					on:click={next}
+					onclick={next}
 				>
 					{stepIndex < steps.length - 1 ? 'Next' : 'Got it'}
 				</button>

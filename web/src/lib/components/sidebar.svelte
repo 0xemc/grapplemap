@@ -1,13 +1,5 @@
 <script lang="ts">
-	import {
-		CloseButton,
-		Sidebar,
-		SidebarGroup,
-		SidebarItem,
-		SidebarButton,
-		uiHelpers,
-		SidebarBrand
-	} from 'flowbite-svelte';
+	import { Sidebar, SidebarGroup, SidebarItem, uiHelpers, SidebarBrand } from 'flowbite-svelte';
 	import { EditOutline, HomeOutline, ShareNodesOutline } from 'flowbite-svelte-icons';
 	import { page } from '$app/state';
 	let activeUrl = $state(page.url.pathname);
@@ -31,7 +23,7 @@
 	isOpen={isDemoOpen}
 	closeSidebar={close}
 	params={{ x: -50, duration: 50 }}
-	class="border-chisel-200 z-50 h-full w-auto border-r bg-white pt-1 dark:border-zinc-700"
+	class="border-chisel-200 z-40 h-full w-auto border-r bg-white pt-1 dark:border-zinc-700"
 	classes={{ nonactive: 'p-2', active: 'p-2' }}
 >
 	<SidebarBrand {site} class="ml-auto mr-auto w-8 p-0" />
