@@ -2,7 +2,7 @@
 	import type { PositionModifier } from '@lang/types';
 	import { Handle, Position, type NodeProps } from '@xyflow/svelte';
 	import { Badge, type BadgeProps } from 'flowbite-svelte';
-	import type { PositionNodeData } from './graph.utils';
+	import type { PositionNodeData } from '../graph.utils';
 	type Props = {
 		data: PositionNodeData;
 	};

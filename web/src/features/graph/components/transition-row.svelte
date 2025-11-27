@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { VideoCameraSolid } from 'flowbite-svelte-icons';
-	import { getGraphContext } from './graph.state.svelte';
+	import { getGraphContext } from '../graph.state.svelte';
 	import type { DBTransition } from '$lib/db/tables/transitions';
 	import { ArrowUpRightDownLeftOutline } from 'flowbite-svelte-icons';
 	type Props = {

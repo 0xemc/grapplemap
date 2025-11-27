@@ -6,8 +6,7 @@
 		useSvelteFlow,
 		type EdgeProps
 	} from '@xyflow/svelte';
-	import { getSelfLoopPath } from './graph.utils';
-	import type { Transition } from '@lang/types';
+	import { getSelfLoopPath } from '../graph.utils';
 	import TransitionRow from './transition-row.svelte';
 	let props: EdgeProps = $props();
 

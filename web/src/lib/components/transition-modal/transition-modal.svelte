@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button, P } from 'flowbite-svelte';
-	import { getGraphContext } from '../graph/graph.state.svelte';
+	import { getGraphContext } from '../../../features/graph/graph.state.svelte';
 	import { getDbContext } from '$lib/db/context';
 	import { liveQuery } from 'dexie';
 	import {
@@ -66,11 +66,6 @@
 	<!-- Panel -->
 	<div class="border-chisel-200 relative mx-4 w-full max-w-5xl rounded-lg bg-white">
 		{#if transition}
-			<!-- <P><b>From</b>: {transition.from}</P> -->
-			<!-- <P><b>To</b>: {transition.to}</P> -->
-			<!-- {#if transition.tags}
-				<P><b>Tags</b>: {transition.tags.filter((t) => !t.includes('url:'))}</P>
-			{/if} -->
 			{#if url}
 				{#if isYouTube(url)}
 					{#key url}

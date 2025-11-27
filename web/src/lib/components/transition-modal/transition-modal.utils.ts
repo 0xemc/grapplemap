@@ -49,7 +49,9 @@ export function toVimeoEmbedUrl(url: string): string {
         // vimeo.com/{id}
         const id = u.pathname.replace(/^\//, '').split('/')[0];
         if (id) return `https://player.vimeo.com/video/${id}`;
-    } catch { }
+    } catch {
+        return ""
+    }
     return url;
 }
 

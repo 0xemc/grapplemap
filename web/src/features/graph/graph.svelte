@@ -18,24 +18,25 @@
 		positionToNode,
 		transitionsToEdges,
 		transitionToNodes
-	} from '../graph/graph.utils';
-	import TransitionEdge from '../graph/transition-edge.svelte';
-	import TransitionModal from '../transition-modal/transition-modal.svelte';
-	import { setGraphContext } from '../graph/graph.state.svelte';
+	} from './graph.utils';
+	import TransitionEdge from './components/transition-edge.svelte';
+	import TransitionModal from '../../lib/components/transition-modal/transition-modal.svelte';
+	import { setGraphContext } from './graph.state.svelte';
 	import { liveQuery } from 'dexie';
 	import { getDbContext } from '$lib/db/context';
-	import FileSelect from '../file-select/file-select.svelte';
+	import FileSelect from '../../lib/components/file-select/file-select.svelte';
 	import { Button } from 'flowbite-svelte';
 	import { AdjustmentsHorizontalOutline, MinusOutline } from 'flowbite-svelte-icons';
 	import { page } from '$app/stores';
 	import { setParam } from '$lib/utils/params';
-	import MultiSelect from '../multi-select.svelte';
-	import PositionNode from './position-node.svelte';
+	import MultiSelect from '../../lib/components/multi-select.svelte';
+	import PositionNode from './components/position-node.svelte';
 	import type { DBTransition } from '$lib/db/tables/transitions';
 	import { getSharedModeContext } from '$lib/share/context';
 	import { compact, mergeByKey } from '$lib/utils/array';
 	import type { DBPosition } from '$lib/db/tables/positions';
 	import { sweep } from '$lib/db/utils';
+	import IntroPane from './components/intro-pane.svelte';
 
 	setGraphContext();
 	const sharedMode = getSharedModeContext();
@@ -212,3 +213,4 @@
 </SvelteFlow>
 
 <TransitionModal />
+<IntroPane />

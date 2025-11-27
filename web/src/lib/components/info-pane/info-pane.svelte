@@ -5,23 +5,11 @@
 		title: string;
 		body: string;
 	};
+	export let steps: Step[];
 
 	const STORAGE_KEY = 'grapplemap:intro:dismissed';
 
-	let steps: Step[] = [
-		{
-			title: 'Welcome to GrappleMap',
-			body: 'You can use this graph to visualize and understand positions and transitions in Jiu Jitsu & Grappling.'
-		},
-		{
-			title: 'Positions',
-			body: 'Positions (e.g Closed Guard, Mount) are represented as nodes. <br/>Drag them around to re-arrange the graph.'
-		},
-		{
-			title: 'Transitions',
-			body: 'Moves are the connections between nodes. <br/>These can be sweeps, takedowns or submissions. Click one to see more detail and/or a video of the move.'
-		}
-	];
+	export let position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
 	export let storageKey: string = STORAGE_KEY; // allow override per-surface if needed
 

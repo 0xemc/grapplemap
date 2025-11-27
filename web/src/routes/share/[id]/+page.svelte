@@ -3,16 +3,14 @@
 	import Dexie from 'dexie';
 	import { createTempDatabase, type Database } from '$lib/db';
 	import { setDbContext } from '$lib/db/context';
-	import { parse } from '@lang/parse';
-	import { grammar } from '$lib/utils/grammar';
 	import { isNonNullish } from 'remeda';
 	import { page } from '$app/stores';
 	import { get } from 'svelte/store';
-	import Graph from '$lib/components/graph/graph.svelte';
+	import Graph from '@features/graph/graph.svelte';
 	import { SvelteFlowProvider } from '@xyflow/svelte';
 	import { setSharedModeContext } from '$lib/share/context';
 	import { parseFile } from '$lib/db/utils';
-	import IntroPane from '@features/intro-pane/intro-pane.svelte';
+	import InfoPane from '$lib/components/info-pane/info-pane.svelte';
 
 	let error: string | null = $state(null);
 	let ready = $state(false);
@@ -102,6 +100,5 @@
 		<SvelteFlowProvider>
 			<Graph />
 		</SvelteFlowProvider>
-		<IntroPane />
 	</div>
 {/if}
