@@ -67,7 +67,7 @@
 			<BottomNav
 				position="absolute"
 				navType="application"
-				class="z-[99] h-14 w-fit rounded-xl  "
+				class="z-40 h-14 w-fit rounded-xl"
 				classes={{ inner: 'grid-cols-2 h-full' }}
 			>
 				<!-- <BottomNavItem
