@@ -145,14 +145,27 @@
 		{/if}
 		<div class="flex flex-col p-4">
 			{#if transition}
-				<h2 class="text-lg font-bold">{transition?.title ?? 'Transition'}</h2>
+				<h2 class="pb-3 text-lg font-bold">{transition?.title ?? 'Transition'}</h2>
 			{/if}
 			{#if transition?.steps?.length}
-				<ol class="list-inside list-decimal pl-6">
-					{#each transition.steps as step}
-						<li>{step}</li>
-					{/each}
-				</ol>
+				{#each Array.from({ length: Math.ceil(transition.steps.length / 3) }) as _, groupIndex}
+					<div class="flex w-fit items-center" class:mt-3={groupIndex !== 0}>
+						<div class="left-2 bg-white pl-1 text-xs font-bold">
+							{String.fromCharCode(65 + groupIndex)}
+						</div>
+						<div class="flex pl-4">
+							<div class="w-2 rounded-l-md border-b-2 border-l-2 border-t-2 border-gray-300"></div>
+							<ol
+								class="flex-1 -translate-x-2 list-inside list-decimal py-1"
+								start={groupIndex * 3 + 1}
+							>
+								{#each transition.steps.slice(groupIndex * 3, groupIndex * 3 + 3) as step}
+									<li class="ml-1 pl-3">{step}</li>
+								{/each}
+							</ol>
+						</div>
+					</div>
+				{/each}
 			{/if}
 
 			{#if !transition}
