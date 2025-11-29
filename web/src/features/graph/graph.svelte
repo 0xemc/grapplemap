@@ -296,7 +296,7 @@
 	<Controls />
 	<!-- Background band overlays -->
 	{#if rawOrderKey !== 'none'}
-		<BandOverlays {nodes} orderKey={rawOrderKey} />
+		<BandOverlays {nodes} {edges} orderKey={rawOrderKey} />
 	{/if}
 </SvelteFlow>
 

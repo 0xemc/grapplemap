@@ -238,7 +238,7 @@ export function layoutByBands(
     options: { direction: 'LR' | 'BT'; gap?: number },
     bandOfEdge?: (e: Edge) => string | undefined
 ): { nodes: GraphNode[]; edges: Edge[] } {
-    const gap = options.gap ?? 80;
+    const gap = options.gap ?? 200;
 
     // Group nodes by band
     const bandToNodes = new Map<string, GraphNode[]>();
