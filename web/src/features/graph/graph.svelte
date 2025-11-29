@@ -13,12 +13,23 @@
 	import { filter, intersection, pipe, prop, unique, uniqueBy, purry } from 'remeda';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
 	import { onMount } from 'svelte';
+	import { getLayoutedElements, type GraphNode } from './graph.utils';
+	import { parseNodeKeySpec, parseEdgeGroupSpec, makeBandKeyFn, sortBands } from './graph.config';
+	import { layoutWithOrdering } from './graph.layout';
 	import {
-		getLayoutedElements,
-		positionToNode,
-		transitionsToEdges,
-		transitionToNodes
-	} from './graph.utils';
+		buildEdgesFromTransitions,
+		buildNodesFromPositions,
+		buildNodesFromTransitions,
+		type GroupKeySpec,
+		numericPart,
+		fileIdP,
+		fileIdT,
+		posTag,
+		trTag,
+		positionId,
+		layoutByBands,
+		findTag
+	} from './graph.grouping';
 	import TransitionEdge from './components/transition-edge.svelte';
 	import TransitionModal from '../../lib/components/transition-modal/transition-modal.svelte';
 	import { setGraphContext } from './graph.state.svelte';
@@ -74,8 +85,37 @@
 		)
 	);
 
-	let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []));
-	let nodes = $derived(positions?.map(positionToNode));
+	// ---------------- Grouping/Ordering configuration (URL params) ----------------
+	const rawGroupNodes = $derived($page.url.searchParams.get('groupNodes') ?? 'position');
+	const rawGroupEdges = $derived($page.url.searchParams.get('groupEdges') ?? '');
+	const rawOrderKey = $derived($page.url.searchParams.get('orderKey') ?? 'none');
+	const rawOrderType = $derived(
+		($page.url.searchParams.get('orderType') as 'num' | 'lex') ?? 'lex'
+	);
+	const rawOrderDir = $derived(($page.url.searchParams.get('orderDir') as 'asc' | 'desc') ?? 'asc');
+
+	// moved to graph.config.ts
+
+	const nodeKeySpec = $derived(parseNodeKeySpec(rawGroupNodes));
+	const edgeGroupSpec = $derived(parseEdgeGroupSpec(rawGroupEdges));
+
+	// When nodeKeySpec includes any tag accessor, derive nodes from transitions to preserve tags
+	const nodeSpecIncludesTag = $derived(
+		rawGroupNodes.split(',').some((p) => p.trim().startsWith('tag:'))
+	);
+	const orderIsTag = $derived(rawOrderKey.startsWith('tag:'));
+	const useTransitionsForNodes = $derived(
+		nodeSpecIncludesTag || rawGroupNodes !== 'position' || orderIsTag
+	);
+
+	let nodes: GraphNode[] = $derived(
+		useTransitionsForNodes
+			? buildNodesFromTransitions(transitions ?? [], nodeKeySpec)
+			: buildNodesFromPositions(positions ?? [], nodeKeySpec)
+	);
+	let edges: Edge[] = $derived(
+		buildEdgesFromTransitions(transitions ?? [], nodeKeySpec, edgeGroupSpec)
+	);
 
 	let colorMode = $state<ColorMode>(currentTheme());
 
@@ -90,7 +130,6 @@
 	$effect(() => {
 		console.log('positions', positions);
 		console.log('nodes', nodes);
-		console.log(positions?.map(positionToNode));
 	});
 
 	/** Layout on initial load */
@@ -98,16 +137,62 @@
 		const t = transitions; // establishes dependency
 		if (!t || t.length === 0) return;
 
-		setTimeout(() => onLayout('BT'), 20); // wait for DOM
+		setTimeout(() => onLayout('BT', true), 20); // wait for DOM
 	});
 
-	function onLayout(direction: 'LR' | 'BT') {
+	// Re-layout when grouping/ordering params change (avoid fitView so user interactions aren't reset)
+	$effect(() => {
+		// establish deps only on params
+		const _gn = rawGroupNodes;
+		const _ge = rawGroupEdges;
+		const _ok = rawOrderKey;
+		const _ot = rawOrderType;
+		const _od = rawOrderDir;
+		setTimeout(() => onLayout('BT', false), 16);
+	});
+
+	function onLayout(direction: 'LR' | 'BT', doFit: boolean = false) {
+		// Band ordering (optional)
+		const orderKey = rawOrderKey;
+		const orderType = rawOrderType;
+		const orderDir = rawOrderDir;
+
+		// Build a band key accessor for nodes if requested
+		if (orderKey && orderKey !== 'none') {
+			const bandKeyFn = makeBandKeyFn(orderKey);
+			const seenBands = Array.from(new Set(nodes.map((n) => bandKeyFn(n)))) as string[];
+			const sortedBands = sortBands(seenBands, orderType, orderDir);
+
+			// If there are 0 or 1 bands, use the default layout for performance
+			if (sortedBands.length <= 1) {
+				const layoutedSingle = getLayoutedElements(nodes, edges, { direction });
+				nodes = [...layoutedSingle.nodes];
+				edges = [...layoutedSingle.edges];
+				if (doFit) fitView();
+				return;
+			}
+
+			const layouted = layoutWithOrdering(
+				nodes,
+				edges,
+				{ orderKey, orderType, orderDir, direction },
+				bandKeyFn,
+				sortedBands
+			);
+
+			nodes = [...layouted.nodes];
+			edges = [...layouted.edges];
+			if (doFit) fitView();
+			return;
+		}
+
+		// Default layout
 		const layouted = getLayoutedElements(nodes, edges, { direction });
 
 		nodes = [...layouted.nodes];
 		edges = [...layouted.edges];
 
-		fitView();
+		if (doFit) fitView();
 	}
 
 	function onFilesChange(ids: number[]) {
@@ -164,48 +249,26 @@
 	</Panel> -->
 
 	<Panel position="top-right" class="border-0 bg-transparent p-0 shadow-none">
-		<!-- Toggle button visible only when collapsed for current breakpoint -->
-		<Button
-			size="sm"
-			color="light"
-			onclick={() => {
-				filtersOpen = true;
-				desktopFiltersOpen = true;
-			}}
-			class={`${filtersOpen ? 'hidden' : 'inline-flex'} ${desktopFiltersOpen ? 'md:hidden' : 'md:inline-flex'} border-chisel-100 rounded border bg-white p-2 shadow`}
-		>
-			<AdjustmentsHorizontalOutline class="h-6 w-6 shrink-0" />
-		</Button>
-
-		<!-- Content box: visible on mobile when filtersOpen, on desktop when desktopFiltersOpen -->
-		<div
-			class={`${filtersOpen ? 'flex' : 'hidden'} ${desktopFiltersOpen ? 'md:flex' : 'md:hidden'} shadow-nondark:bg-chisel-700 border-chisel-100 w-60 flex-col gap-2 rounded-lg border bg-white p-2 shadow`}
-		>
-			<div class="flex items-center justify-between">
-				<span class="text-xs font-semibold">Filters</span>
-				<Button
-					size="xs"
-					color="light"
-					onclick={() => {
-						filtersOpen = false;
-						desktopFiltersOpen = false;
-					}}
-					class="p-1"
-				>
-					<MinusOutline class="h-4 w-4" />
-				</Button>
-			</div>
-			{#if !sharedMode}
-				<FileSelect files={$files} onChange={onFilesChange} initial={fileIds} />
-			{/if}
-			<MultiSelect
-				items={compact(transition_tags).map((t) => ({ value: t, name: t }))}
-				label="Tags"
-				searchPlaceholder="Select tags..."
-				onChange={onTagChange}
-				initial={tagIds}
+		<!-- Filters Panel -->
+		<!-- Using extracted component -->
+		<!-- static import for best type checking -->
+		{#await import('./components/filters-panel.svelte') then Mod}
+			<Mod.default
+				sharedMode={!!sharedMode}
+				files={$files}
+				{fileIds}
+				transitionTags={(transition_tags ?? []).filter((t) => typeof t === 'string') as string[]}
+				tagIds={(tagIds ?? []).filter((t) => typeof t === 'string') as string[]}
+				{onFilesChange}
+				{onTagChange}
+				{rawGroupNodes}
+				{rawGroupEdges}
+				{rawOrderKey}
+				{rawOrderType}
+				{rawOrderDir}
+				{setParam}
 			/>
-		</div>
+		{/await}
 	</Panel>
 
 	<MiniMap class="md-block hidden" />

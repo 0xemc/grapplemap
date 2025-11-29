@@ -31,9 +31,15 @@ export function transitionsToEdges(trs: DBTransition[]): Edge<{ transitions: DBT
     });
 }
 export type GraphNode = {
-    id: string,
-    position: { x: number, y: number },
-    data: { label: string }
+    id: string;
+    position: { x: number; y: number };
+    type?: string;
+    data: {
+        label: string;
+        modifier?: PositionModifier;
+        tags?: string[];
+    };
+    measured?: { width?: number; height?: number };
 };
 
 export type PositionNodeData = {
