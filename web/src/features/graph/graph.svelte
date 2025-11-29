@@ -31,6 +31,7 @@
 		findTag
 	} from './graph.grouping';
 	import TransitionEdge from './components/transition-edge.svelte';
+	import BandOverlays from './components/band-overlays.svelte';
 	import TransitionModal from '../../lib/components/transition-modal/transition-modal.svelte';
 	import { setGraphContext } from './graph.state.svelte';
 	import { liveQuery } from 'dexie';
@@ -180,6 +181,26 @@
 				sortedBands
 			);
 
+			// Build band label nodes based on laid out nodes
+			const bandExtents = new Map<
+				string,
+				{ minX: number; maxX: number; minY: number; maxY: number }
+			>();
+			for (const n of layouted.nodes) {
+				const b = bandKeyFn(n as any);
+				if (!b) continue;
+				const e = bandExtents.get(b) ?? {
+					minX: Number.POSITIVE_INFINITY,
+					maxX: Number.NEGATIVE_INFINITY,
+					minY: Number.POSITIVE_INFINITY,
+					maxY: Number.NEGATIVE_INFINITY
+				};
+				e.minX = Math.min(e.minX, n.position.x);
+				e.maxX = Math.max(e.maxX, n.position.x + ((n as any).measured?.width ?? 120));
+				e.minY = Math.min(e.minY, n.position.y);
+				e.maxY = Math.max(e.maxY, n.position.y + ((n as any).measured?.height ?? 60));
+				bandExtents.set(b, e);
+			}
 			nodes = [...layouted.nodes];
 			edges = [...layouted.edges];
 			if (doFit) fitView();
@@ -273,6 +294,10 @@
 
 	<MiniMap class="md-block hidden" />
 	<Controls />
+	<!-- Background band overlays -->
+	{#if rawOrderKey !== 'none'}
+		<BandOverlays {nodes} orderKey={rawOrderKey} />
+	{/if}
 </SvelteFlow>
 
 <TransitionModal />

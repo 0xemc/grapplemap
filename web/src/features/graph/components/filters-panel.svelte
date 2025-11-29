@@ -75,7 +75,7 @@
 			</Button>
 		</div>
 		{#if !sharedMode}
-			<FileSelect files={files} onChange={onFilesChange} initial={fileIds} />
+			<FileSelect {files} onChange={onFilesChange} initial={fileIds} />
 		{/if}
 		<MultiSelect
 			items={compact(transitionTags).map((t) => ({ value: t, name: t }))}
@@ -117,8 +117,7 @@
 			</select>
 		</div>
 		<div class="flex flex-col gap-1">
-			<label for="orderKeySelect" class="text-[10px] font-semibold text-gray-600"
-				>Order bands</label
+			<label for="orderKeySelect" class="text-[10px] font-semibold text-gray-600">Order bands</label
 			>
 			<select
 				id="orderKeySelect"
@@ -150,5 +149,3 @@
 		</div>
 	</div>
 </div>
-
-
