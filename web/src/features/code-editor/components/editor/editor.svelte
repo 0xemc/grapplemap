@@ -1,21 +1,20 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { EditorView, keymap, highlightActiveLine } from '@codemirror/view';
-	import { EditorState, Compartment } from '@codemirror/state';
-	import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
-	import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
-	import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
-	import { autocompletion, completionKeymap } from '@codemirror/autocomplete';
-	import { lintKeymap } from '@codemirror/lint';
-	import { oneDark } from '@codemirror/theme-one-dark';
-	import { javascript } from '@codemirror/lang-javascript';
+	import { goto } from '$app/navigation';
 	import { ohmHighlighter } from '$lib/utils/highlighter';
 	import { debugParse, traceTransition } from '$lib/utils/transitionParser';
-	import { linter, lintGutter } from '@codemirror/lint';
-	import { matchTransition } from '$lib/utils/transitionParser';
-	import { goto } from '$app/navigation';
-	import { uploadFile, sniffFileType, fileToType } from '../../../upload/upload.utils.ts';
+	import { autocompletion, completionKeymap } from '@codemirror/autocomplete';
+	import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
+	import { javascript } from '@codemirror/lang-javascript';
+	import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
+	import { lintGutter, lintKeymap } from '@codemirror/lint';
+	import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
+	import { Compartment, EditorState } from '@codemirror/state';
+	import { oneDark } from '@codemirror/theme-one-dark';
+	import { EditorView, highlightActiveLine, keymap } from '@codemirror/view';
+	import type { UploadType } from '@features/upload/upload.types.ts';
+	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import { fileToType, uploadFile } from '../../../upload/upload.utils.ts';
 	import { grammarLint, toggleLineComments } from './editor.utils.ts';
 
 	let {
@@ -114,7 +113,13 @@
 								uploading = false;
 								return false;
 							}
-							view.dispatch({ changes: { from, to, insert: `[url:${url}]` } });
+
+							const TYPE_TO_KEY: Record<UploadType, string> = {
+								clip: 'url',
+								image: 'img',
+								file: ''
+							};
+							view.dispatch({ changes: { from, to, insert: `[${TYPE_TO_KEY[type]}:${url}]` } });
 							uploading = false;
 						})();
 					},
