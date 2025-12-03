@@ -45,7 +45,7 @@
 			>
 			<div class="h-4"></div>
 		{/if}
-		<div class="h-full items-center text-center text-xs">{label}</div>
+		<div class="flex h-full items-center text-xs">{label}</div>
 	</div>
 </div>
 <Handle type="source" position={Position.Top} />
