@@ -1,7 +1,7 @@
-import type { Edge } from '@xyflow/svelte';
-import { MarkerType } from '@xyflow/svelte';
 import type { DBPosition } from '$lib/db/tables/positions';
 import type { DBTransition } from '$lib/db/tables/transitions';
+import type { Edge } from '@xyflow/svelte';
+import { MarkerType } from '@xyflow/svelte';
 import { getLayoutedElements, type GraphNode } from './graph.utils';
 
 export type KeyAccessor<T> = (item: T) => string | number | undefined;
@@ -118,7 +118,8 @@ export function buildNodesFromPositions(
 
 export function buildNodesFromTransitions(
     trs: DBTransition[],
-    posKeySpec: GroupKeySpec<DBPosition>
+    posKeySpec: GroupKeySpec<DBPosition>,
+    posTagMap?: Map<string, string[]>
 ): Array<GraphNode & { type: 'position'; data: { label: string; modifier?: DBPosition['modifier']; tags?: string[] } }> {
     const keyFrom = sideKey('from', posKeySpec);
     const keyTo = sideKey('to', posKeySpec);
@@ -132,7 +133,13 @@ export function buildNodesFromTransitions(
     > =
         [];
 
+    const mergeTags = (a?: string[], b?: string[]) =>
+        Array.from(new Set([...(a ?? []), ...(b ?? [])]));
+
     for (const t of trs) {
+        const fromPosId = `${t.from}${t.fromTag ?? ''}`;
+        const toPosId = `${t.to}${t.toTag ?? ''}`;
+
         const fId = safeToString(keyFrom(t));
         if (!seen.has(fId)) {
             seen.add(fId);
@@ -140,7 +147,11 @@ export function buildNodesFromTransitions(
                 id: fId,
                 position: { x: 0, y: 0 },
                 type: 'position',
-                data: { label: t.from, modifier: t.fromTag, tags: t.tags }
+                data: {
+                    label: t.from,
+                    modifier: t.fromTag,
+                    tags: mergeTags(posTagMap?.get(fromPosId), t.tags)
+                }
             });
         }
 
@@ -151,7 +162,11 @@ export function buildNodesFromTransitions(
                 id: toIdStr,
                 position: { x: 0, y: 0 },
                 type: 'position',
-                data: { label: t.to, modifier: t.toTag, tags: t.tags }
+                data: {
+                    label: t.to,
+                    modifier: t.toTag,
+                    tags: mergeTags(posTagMap?.get(toPosId), t.tags)
+                }
             });
         }
     }

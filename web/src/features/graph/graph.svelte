@@ -3,52 +3,38 @@
 		ConnectionLineType,
 		Controls,
 		MiniMap,
+		Panel,
 		SvelteFlow,
 		useSvelteFlow,
-		Panel,
 		type ColorMode,
 		type Edge
 	} from '@xyflow/svelte';
 
-	import { filter, intersection, pipe, prop, unique, uniqueBy, purry } from 'remeda';
+	import { page } from '$app/stores';
+	import { getDbContext } from '$lib/db/context';
+	import type { DBPosition } from '$lib/db/tables/positions';
+	import type { DBTransition } from '$lib/db/tables/transitions';
+	import { getSharedModeContext } from '$lib/share/context';
+	import { mergeByKey } from '$lib/utils/array';
+	import { setParam } from '$lib/utils/params';
 	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
+	import { liveQuery } from 'dexie';
+	import { filter, intersection, pipe, unique } from 'remeda';
 	import { onMount } from 'svelte';
-	import { getLayoutedElements, type GraphNode } from './graph.utils';
-	import { parseNodeKeySpec, parseEdgeGroupSpec, makeBandKeyFn, sortBands } from './graph.config';
-	import { layoutWithOrdering } from './graph.layout';
+	import TransitionModal from '../../lib/components/transition-modal/transition-modal.svelte';
+	import BandOverlays from './components/band-overlays.svelte';
+	import IntroPane from './components/intro-pane.svelte';
+	import PositionNode from './components/position-node.svelte';
+	import TransitionEdge from './components/transition-edge.svelte';
+	import { makeBandKeyFn, parseEdgeGroupSpec, parseNodeKeySpec, sortBands } from './graph.config';
 	import {
 		buildEdgesFromTransitions,
 		buildNodesFromPositions,
-		buildNodesFromTransitions,
-		type GroupKeySpec,
-		numericPart,
-		fileIdP,
-		fileIdT,
-		posTag,
-		trTag,
-		positionId,
-		layoutByBands,
-		findTag
+		buildNodesFromTransitions
 	} from './graph.grouping';
-	import TransitionEdge from './components/transition-edge.svelte';
-	import BandOverlays from './components/band-overlays.svelte';
-	import TransitionModal from '../../lib/components/transition-modal/transition-modal.svelte';
+	import { layoutWithOrdering } from './graph.layout';
 	import { setGraphContext } from './graph.state.svelte';
-	import { liveQuery } from 'dexie';
-	import { getDbContext } from '$lib/db/context';
-	import FileSelect from '../../lib/components/file-select/file-select.svelte';
-	import { Button } from 'flowbite-svelte';
-	import { AdjustmentsHorizontalOutline, MinusOutline } from 'flowbite-svelte-icons';
-	import { page } from '$app/stores';
-	import { setParam } from '$lib/utils/params';
-	import MultiSelect from '../../lib/components/multi-select.svelte';
-	import PositionNode from './components/position-node.svelte';
-	import type { DBTransition } from '$lib/db/tables/transitions';
-	import { getSharedModeContext } from '$lib/share/context';
-	import { compact, mergeByKey } from '$lib/utils/array';
-	import type { DBPosition } from '$lib/db/tables/positions';
-	import { sweep } from '$lib/db/utils';
-	import IntroPane from './components/intro-pane.svelte';
+	import { getLayoutedElements, type GraphNode } from './graph.utils';
 
 	setGraphContext();
 	const sharedMode = getSharedModeContext();
@@ -109,9 +95,13 @@
 		nodeSpecIncludesTag || rawGroupNodes !== 'position' || orderIsTag
 	);
 
+	const posTagMap = $derived(
+		new Map((positions ?? []).map((p) => [`${p.title}${p.modifier ?? ''}`, p.tags ?? []]))
+	);
+
 	let nodes: GraphNode[] = $derived(
 		useTransitionsForNodes
-			? buildNodesFromTransitions(transitions ?? [], nodeKeySpec)
+			? buildNodesFromTransitions(transitions ?? [], nodeKeySpec, posTagMap)
 			: buildNodesFromPositions(positions ?? [], nodeKeySpec)
 	);
 	let edges: Edge[] = $derived(
