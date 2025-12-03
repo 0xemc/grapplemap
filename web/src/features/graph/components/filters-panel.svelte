@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { Button } from 'flowbite-svelte';
-	import { AdjustmentsHorizontalOutline, MinusOutline } from 'flowbite-svelte-icons';
 	import FileSelect from '$lib/components/file-select/file-select.svelte';
 	import MultiSelect from '$lib/components/multi-select.svelte';
-	import { compact } from '$lib/utils/array';
 	import type { File } from '$lib/db/tables/files';
+	import { compact } from '$lib/utils/array';
+	import { Button } from 'flowbite-svelte';
+	import { AdjustmentsHorizontalOutline, MinusOutline } from 'flowbite-svelte-icons';
 
 	type Props = {
 		sharedMode: boolean;
@@ -14,11 +14,7 @@
 		tagIds: string[];
 		onFilesChange: (ids: number[]) => void;
 		onTagChange: (tags: string[]) => void;
-		rawGroupNodes: string;
-		rawGroupEdges: string;
-		rawOrderKey: string;
-		rawOrderType: 'num' | 'lex';
-		rawOrderDir: 'asc' | 'desc';
+		groupTag: string;
 		setParam: (key: string, value: string | string[] | null) => void;
 	};
 
@@ -30,16 +26,36 @@
 		tagIds,
 		onFilesChange,
 		onTagChange,
-		rawGroupNodes,
-		rawGroupEdges,
-		rawOrderKey,
-		rawOrderType,
-		rawOrderDir,
+		groupTag,
 		setParam
 	}: Props = $props();
 
 	let filtersOpen = $state<boolean>(false);
 	let desktopFiltersOpen = $state<boolean>(true);
+
+	// Derive unique tag names (the part before ':' or first space)
+	const groupableTagNames = $derived(
+		Array.from(
+			new Set(
+				(transitionTags ?? [])
+					.filter((t) => typeof t === 'string')
+					.map((t) => {
+						const s = String(t);
+						const colon = s.indexOf(':');
+						const space = s.indexOf(' ');
+						const idx =
+							colon === -1 && space === -1
+								? -1
+								: colon === -1
+									? space
+									: space === -1
+										? colon
+										: Math.min(colon, space);
+						return idx === -1 ? s : s.slice(0, idx);
+					})
+			)
+		).sort((a, b) => a.localeCompare(b))
+	);
 </script>
 
 <div class="border-0 bg-transparent p-0 shadow-none">
@@ -84,68 +100,24 @@
 			onChange={onTagChange}
 			initial={tagIds}
 		/>
+		<!-- Grouping: single select for tag name -->
 		<div class="flex flex-col gap-2">
-			<label for="groupNodesSelect" class="text-[10px] font-semibold text-gray-600"
-				>Group nodes</label
+			<label for="groupTagSelect" class="text-[10px] font-semibold text-gray-600"
+				>Group by tag</label
 			>
 			<select
-				id="groupNodesSelect"
+				id="groupTagSelect"
 				class="border-chisel-100 rounded border px-2 py-1 text-xs"
-				onchange={(e) => setParam('groupNodes', (e.target as HTMLSelectElement).value)}
+				onchange={(e) => {
+					const val = (e.target as HTMLSelectElement).value;
+					setParam('groupTag', val === '' ? null : val);
+				}}
 			>
-				<option value="position" selected={rawGroupNodes === 'position'}>Position</option>
-				<option value="position,tag:week" selected={rawGroupNodes === 'position,tag:week'}>
-					Position + Tag:week
-				</option>
-				<option value="position,file" selected={rawGroupNodes === 'position,file'}>
-					Position + File
-				</option>
+				<option value="" selected={!groupTag}>None</option>
+				{#each groupableTagNames as tn}
+					<option value={tn} selected={groupTag === tn}>{tn}</option>
+				{/each}
 			</select>
-		</div>
-		<div class="flex flex-col gap-2">
-			<label for="groupEdgesSelect" class="text-[10px] font-semibold text-gray-600"
-				>Group edges</label
-			>
-			<select
-				id="groupEdgesSelect"
-				class="border-chisel-100 rounded border px-2 py-1 text-xs"
-				onchange={(e) => setParam('groupEdges', (e.target as HTMLSelectElement).value)}
-			>
-				<option value="" selected={rawGroupEdges === ''}>None</option>
-				<option value="tag:week" selected={rawGroupEdges === 'tag:week'}>Tag:week</option>
-				<option value="file" selected={rawGroupEdges === 'file'}>File</option>
-			</select>
-		</div>
-		<div class="flex flex-col gap-1">
-			<label for="orderKeySelect" class="text-[10px] font-semibold text-gray-600">Order bands</label
-			>
-			<select
-				id="orderKeySelect"
-				class="border-chisel-100 rounded border px-2 py-1 text-xs"
-				onchange={(e) => setParam('orderKey', (e.target as HTMLSelectElement).value)}
-			>
-				<option value="none" selected={rawOrderKey === 'none'}>None</option>
-				<option value="tag:week" selected={rawOrderKey === 'tag:week'}>Tag:week</option>
-				<option value="label" selected={rawOrderKey === 'label'}>Label</option>
-			</select>
-			<div class="flex gap-2">
-				<select
-					id="orderTypeSelect"
-					class="border-chisel-100 rounded border px-2 py-1 text-xs"
-					onchange={(e) => setParam('orderType', (e.target as HTMLSelectElement).value)}
-				>
-					<option value="lex" selected={rawOrderType === 'lex'}>Lex</option>
-					<option value="num" selected={rawOrderType === 'num'}>Numeric</option>
-				</select>
-				<select
-					id="orderDirSelect"
-					class="border-chisel-100 rounded border px-2 py-1 text-xs"
-					onchange={(e) => setParam('orderDir', (e.target as HTMLSelectElement).value)}
-				>
-					<option value="asc" selected={rawOrderDir === 'asc'}>Asc</option>
-					<option value="desc" selected={rawOrderDir === 'desc'}>Desc</option>
-				</select>
-			</div>
 		</div>
 	</div>
 </div>

@@ -63,40 +63,40 @@
 		transitions.flatMap(({ from, fromTag, to, toTag }) => [from + fromTag, to + toTag])
 	);
 
-	let positions = $derived(
-		pipe(
-			$_positions ?? [],
-			filter(filterByFile),
-			filter((p) => transition_positions.includes(p.title + p.modifier)),
-			(arr) => mergeByKey(arr, ({ title, modifier }) => title + modifier)
+	// ---------------- Simplified grouping/ordering: single group-by tag ----------------
+	const groupTag = $derived($page.url.searchParams.get('groupTag') ?? '');
+	const orderKey = $derived(groupTag ? `tag:${groupTag}` : 'none');
+	const orderType = 'lex' as const;
+	const orderDir = 'asc' as const;
+
+	// Base positions filtered only by file, merged by position id
+	let positions_by_file = $derived(
+		pipe($_positions ?? [], filter(filterByFile), (arr) =>
+			mergeByKey(arr, ({ title, modifier }) => title + modifier)
 		)
 	);
-
-	// ---------------- Grouping/Ordering configuration (URL params) ----------------
-	const rawGroupNodes = $derived($page.url.searchParams.get('groupNodes') ?? 'position');
-	const rawGroupEdges = $derived($page.url.searchParams.get('groupEdges') ?? '');
-	const rawOrderKey = $derived($page.url.searchParams.get('orderKey') ?? 'none');
-	const rawOrderType = $derived(
-		($page.url.searchParams.get('orderType') as 'num' | 'lex') ?? 'lex'
+	// Collate positions with transitions ONLY when not grouping by a tag
+	let positions = $derived(
+		!groupTag
+			? pipe(
+					positions_by_file ?? [],
+					filter((p) => transition_positions.includes(p.title + p.modifier))
+				)
+			: (positions_by_file ?? [])
 	);
-	const rawOrderDir = $derived(($page.url.searchParams.get('orderDir') as 'asc' | 'desc') ?? 'asc');
 
 	// moved to graph.config.ts
 
-	const nodeKeySpec = $derived(parseNodeKeySpec(rawGroupNodes));
-	const edgeGroupSpec = $derived(parseEdgeGroupSpec(rawGroupEdges));
-
-	// When nodeKeySpec includes any tag accessor, derive nodes from transitions to preserve tags
-	const nodeSpecIncludesTag = $derived(
-		rawGroupNodes.split(',').some((p) => p.trim().startsWith('tag:'))
-	);
-	const orderIsTag = $derived(rawOrderKey.startsWith('tag:'));
-	const useTransitionsForNodes = $derived(
-		nodeSpecIncludesTag || rawGroupNodes !== 'position' || orderIsTag
+	const nodeKeySpec = $derived(
+		parseNodeKeySpec(groupTag ? `position,tag:${groupTag}` : 'position')
 	);
 
+	// When grouping by a tag, derive nodes from transitions to preserve tag info
+	const useTransitionsForNodes = $derived(!!groupTag);
+
+	// Use all file-filtered positions for metadata so nodes built from transitions can pick up tags
 	const posTagMap = $derived(
-		new Map((positions ?? []).map((p) => [`${p.title}${p.modifier ?? ''}`, p.tags ?? []]))
+		new Map((positions_by_file ?? []).map((p) => [`${p.title}${p.modifier ?? ''}`, p.tags ?? []]))
 	);
 
 	let nodes: GraphNode[] = $derived(
@@ -105,7 +105,11 @@
 			: buildNodesFromPositions(positions ?? [], nodeKeySpec)
 	);
 	let edges: Edge[] = $derived(
-		buildEdgesFromTransitions(transitions ?? [], nodeKeySpec, edgeGroupSpec)
+		buildEdgesFromTransitions(
+			transitions ?? [],
+			nodeKeySpec,
+			groupTag ? parseEdgeGroupSpec(`tag:${groupTag}`) : []
+		)
 	);
 
 	let colorMode = $state<ColorMode>(currentTheme());
@@ -133,26 +137,26 @@
 
 	// Re-layout when grouping/ordering params change (avoid fitView so user interactions aren't reset)
 	$effect(() => {
-		// establish deps only on params
-		const _gn = rawGroupNodes;
-		const _ge = rawGroupEdges;
-		const _ok = rawOrderKey;
-		const _ot = rawOrderType;
-		const _od = rawOrderDir;
+		// establish deps only on simplified params
+		const _gt = groupTag;
+		const _ok = orderKey;
 		setTimeout(() => onLayout('BT', false), 16);
 	});
 
 	function onLayout(direction: 'LR' | 'BT', doFit: boolean = false) {
 		// Band ordering (optional)
-		const orderKey = rawOrderKey;
-		const orderType = rawOrderType;
-		const orderDir = rawOrderDir;
+		const _orderKey = orderKey;
+		const _orderType = orderType;
+		const _orderDir = orderDir;
 
 		// Build a band key accessor for nodes if requested
-		if (orderKey && orderKey !== 'none') {
-			const bandKeyFn = makeBandKeyFn(orderKey);
+		if (_orderKey && _orderKey !== 'none') {
+			const bandKeyFn = makeBandKeyFn(_orderKey);
 			const seenBands = Array.from(new Set(nodes.map((n) => bandKeyFn(n)))) as string[];
-			const sortedBands = sortBands(seenBands, orderType, orderDir);
+			// Default to numeric ordering if band labels contain digits
+			const hasDigits = seenBands.some((b) => /\d/.test(String(b)));
+			const usedOrderType = hasDigits ? 'num' : _orderType;
+			const sortedBands = sortBands(seenBands, usedOrderType, _orderDir);
 
 			// If there are 0 or 1 bands, use the default layout for performance
 			if (sortedBands.length <= 1) {
@@ -166,7 +170,7 @@
 			const layouted = layoutWithOrdering(
 				nodes,
 				edges,
-				{ orderKey, orderType, orderDir, direction },
+				{ orderKey: _orderKey, orderType: usedOrderType, orderDir: _orderDir, direction },
 				bandKeyFn,
 				sortedBands
 			);
@@ -272,11 +276,7 @@
 				tagIds={(tagIds ?? []).filter((t) => typeof t === 'string') as string[]}
 				{onFilesChange}
 				{onTagChange}
-				{rawGroupNodes}
-				{rawGroupEdges}
-				{rawOrderKey}
-				{rawOrderType}
-				{rawOrderDir}
+				{groupTag}
 				{setParam}
 			/>
 		{/await}
@@ -285,8 +285,8 @@
 	<MiniMap class="md-block hidden" />
 	<Controls />
 	<!-- Background band overlays -->
-	{#if rawOrderKey !== 'none'}
-		<BandOverlays {nodes} {edges} orderKey={rawOrderKey} />
+	{#if groupTag}
+		<BandOverlays {nodes} {edges} orderKey={`tag:${groupTag}`} />
 	{/if}
 </SvelteFlow>
 
