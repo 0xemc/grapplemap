@@ -4,7 +4,7 @@
 	import type { DBPosition } from '$lib/db/tables/positions';
 	import type { DBTransition } from '$lib/db/tables/transitions';
 	import { mergeByKey } from '$lib/utils/array';
-	import { currentTheme, observeTheme, type Theme } from '$lib/utils/theme';
+	import { currentTheme } from '$lib/utils/theme';
 	import {
 		ConnectionLineType,
 		Controls,
@@ -16,7 +16,6 @@
 	} from '@xyflow/svelte';
 	import { liveQuery } from 'dexie';
 	import { filter, intersection, pipe } from 'remeda';
-	import { onMount } from 'svelte';
 	import TransitionModal from '../../lib/components/transition-modal/transition-modal.svelte';
 	import FilterPanel from './components/filter-panel.svelte';
 	import IntroPane from './components/intro-pane.svelte';
@@ -60,10 +59,6 @@
 	let nodes = $derived(positions?.map(positionToNode));
 
 	let colorMode = $state<ColorMode>(currentTheme());
-
-	onMount(() => {
-		observeTheme((t: Theme) => (colorMode = t));
-	});
 
 	$effect(() => {
 		console.log('positions', positions);
