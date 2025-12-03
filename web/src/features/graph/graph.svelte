@@ -253,7 +253,7 @@
 	{colorMode}
 	connectionLineType={ConnectionLineType.SmoothStep}
 	defaultEdgeOptions={{ type: 'smoothstep', animated: true }}
-	maxZoom={1.2}
+	maxZoom={1.8}
 	minZoom={0.4}
 >
 	<!-- <Panel position="top-right">
