@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import FileSelect from '$lib/components/file-select/file-select.svelte';
 	import MultiSelect from '$lib/components/multi-select.svelte';
-	import { db } from '$lib/db';
+	import { getDbContext } from '$lib/db/context';
 	import { getSharedModeContext } from '$lib/share/context';
 	import { compact } from '$lib/utils/array';
 	import { setParam } from '$lib/utils/params';
@@ -13,6 +13,7 @@
 	import { unique } from 'remeda';
 
 	const sharedMode = getSharedModeContext();
+	const db = getDbContext();
 
 	let fileIds = $derived(page.url.searchParams.getAll('file').map(Number));
 	let tagIds = $derived(page.url.searchParams.getAll('tag'));

@@ -1,6 +1,7 @@
 import { getContext, setContext } from 'svelte';
-import type { Database } from './index';
-import { db as defaultDb } from './index';
+import { Database } from './index';
+
+const db = new Database()
 
 const KEY: unique symbol = Symbol('db-context');
 
@@ -11,9 +12,9 @@ export function setDbContext(instance: Database) {
 export function getDbContext(): Database {
     try {
         const inst = getContext<Database>(KEY);
-        return inst ?? defaultDb;
+        return inst ?? db;
     } catch {
-        return defaultDb;
+        return db;
     }
 }
 

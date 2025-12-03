@@ -1,16 +1,14 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
-	import Dexie from 'dexie';
+	import { page } from '$app/state';
 	import { createTempDatabase, type Database } from '$lib/db';
 	import { setDbContext } from '$lib/db/context';
-	import { isNonNullish } from 'remeda';
-	import { page } from '$app/stores';
-	import { get } from 'svelte/store';
+	import { parseFile } from '$lib/db/utils';
+	import { setSharedModeContext } from '$lib/share/context';
 	import Graph from '@features/graph/graph.svelte';
 	import { SvelteFlowProvider } from '@xyflow/svelte';
-	import { setSharedModeContext } from '$lib/share/context';
-	import { parseFile } from '$lib/db/utils';
-	import InfoPane from '$lib/components/info-pane/info-pane.svelte';
+	import Dexie from 'dexie';
+	import { isNonNullish } from 'remeda';
+	import { onDestroy, onMount } from 'svelte';
 
 	let error: string | null = $state(null);
 	let ready = $state(false);
@@ -18,7 +16,7 @@
 
 	onMount(async () => {
 		try {
-			const id = get(page).params.id;
+			const id = page.params.id;
 			if (!id) {
 				error = 'Missing share id';
 				return;

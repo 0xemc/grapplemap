@@ -1,12 +1,9 @@
-import Dexie, { type EntityTable } from 'dexie';
-import { Files, type File } from './tables/files';
-import { Transitions, type DBTransition } from './tables/transitions';
-import { Positions, type DBPosition } from './tables/positions';
 import welcomeFile from '@lang/welcome.grpl?raw';
-import beginnersFile from '@lang/no-gi-beginners.grpl?raw';
-import { parse } from '@lang/parse';
-import { grammar } from '$lib/utils/grammar';
+import Dexie, { type EntityTable } from 'dexie';
 import { isNonNullish } from 'remeda';
+import { Files, type File } from './tables/files';
+import { Positions, type DBPosition } from './tables/positions';
+import { Transitions, type DBTransition } from './tables/transitions';
 import { parseFile, updateTransitionsPositions } from './utils';
 
 export class Database extends Dexie {
@@ -98,7 +95,6 @@ export class Database extends Dexie {
     }
 }
 
-export const db = new Database()
 export function createTempDatabase(name: string) {
     return new Database(name, false);
 }

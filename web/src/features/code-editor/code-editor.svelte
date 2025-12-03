@@ -1,18 +1,15 @@
 <script lang="ts">
-	import FileTree from './components/filetree/file-tree.svelte';
-	import CodeEditor from './components/editor/editor.svelte';
-	import { Button } from 'flowbite-svelte';
-	import { parse } from '@lang/parse';
-	import { grammar } from '$lib/utils/grammar';
-	import { isNonNullish, isNullish, filter } from 'remeda';
-	import { onDestroy } from 'svelte';
-	import { uploadMap } from '../upload/share.utils';
-	import { toast } from 'svelte-sonner';
-	import { liveQuery } from 'dexie';
-	import { getCodeEditorContext } from './code-editor.svelte.ts';
 	import { getDbContext } from '$lib/db/context.ts';
-	import { mergeByKey } from '$lib/utils/array.ts';
 	import { parseFile, updateTransitionsPositions } from '$lib/db/utils.ts';
+	import { liveQuery } from 'dexie';
+	import { Button } from 'flowbite-svelte';
+	import { isNullish } from 'remeda';
+	import { onDestroy } from 'svelte';
+	import { toast } from 'svelte-sonner';
+	import { uploadMap } from '../upload/share.utils';
+	import { getCodeEditorContext } from './code-editor.svelte.ts';
+	import CodeEditor from './components/editor/editor.svelte';
+	import FileTree from './components/filetree/file-tree.svelte';
 
 	let context = getCodeEditorContext();
 	let isSaving = $state(false);
@@ -62,7 +59,7 @@
 
 				await db.files.update(active_file_id, { content, updatedAt: Date.now() });
 				const { transitions, positions } = parseFile(active_file_id, content);
-				await updateTransitionsPositions(active_file_id, transitions, positions);
+				await updateTransitionsPositions(active_file_id, transitions, positions, db.tables);
 			});
 		} finally {
 			isSaving = false;

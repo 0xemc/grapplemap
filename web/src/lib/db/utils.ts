@@ -1,11 +1,10 @@
 import { mergeByKey } from "$lib/utils/array";
 import { grammar } from "$lib/utils/grammar";
 import { parse } from "@lang/parse";
-import { filter, isNonNullish } from "remeda";
-import { db } from ".";
-import type { DBTransition } from "./tables/transitions";
-import type { DBPosition } from "./tables/positions";
 import type { EntityTable } from "dexie";
+import { filter, isNonNullish } from "remeda";
+import type { DBPosition } from "./tables/positions";
+import type { DBTransition } from "./tables/transitions";
 
 export function parseFile(file_id: number, content: string) {
     const result = parse(grammar, content);
@@ -56,7 +55,7 @@ export async function updateTransitionsPositions(
     tables: {
         transitions: EntityTable<DBTransition, "id">
         positions: EntityTable<DBPosition, "id">
-    } = { transitions: db.transitions, positions: db.positions }
+    }
 ) {
     if (!transitions.length && !positions.length) {
         // nothing to write; still clear out old rows
@@ -72,15 +71,3 @@ export async function updateTransitionsPositions(
     if (positions?.length) await tables.positions.bulkPut(positions);
 }
 
-
-export async function sweep() {
-    const files = await db.files.toArray();
-    const promises = files.map(async ({ id, content }) => {
-        if (content) {
-            const { transitions, positions } = parseFile(id, content)
-            await updateTransitionsPositions(id, transitions, positions)
-        }
-    })
-
-    return await Promise.all(promises);
-}

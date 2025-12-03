@@ -4,14 +4,12 @@
 	import type { DBPosition } from '$lib/db/tables/positions';
 	import type { DBTransition } from '$lib/db/tables/transitions';
 	import { mergeByKey } from '$lib/utils/array';
-	import { currentTheme } from '$lib/utils/theme';
 	import {
 		ConnectionLineType,
 		Controls,
 		MiniMap,
 		SvelteFlow,
 		useSvelteFlow,
-		type ColorMode,
 		type Edge
 	} from '@xyflow/svelte';
 	import { liveQuery } from 'dexie';
@@ -26,14 +24,14 @@
 
 	setGraphContext();
 
-	const dbInst = getDbContext();
+	const db = getDbContext();
 	const { fitView } = useSvelteFlow();
 	const edgeTypes = { transition: TransitionEdge };
 	const nodeTypes = { position: PositionNode };
 	let fileIds = $derived(page.url.searchParams.getAll('file').map(Number));
 	let tagIds = $derived(page.url.searchParams.getAll('tag'));
-	let _transitions = liveQuery(async () => await dbInst.transitions.toArray());
-	let _positions = liveQuery(async () => await dbInst.positions.toArray());
+	let _transitions = liveQuery(async () => await db.transitions.toArray());
+	let _positions = liveQuery(async () => await db.positions.toArray());
 
 	const filterByTag = (t: DBTransition) =>
 		tagIds.length && t.tags ? !!intersection(tagIds, t.tags ?? []).length : true;
@@ -58,14 +56,6 @@
 	let edges: Edge[] = $derived(transitionsToEdges(transitions ?? []));
 	let nodes = $derived(positions?.map(positionToNode));
 
-	let colorMode = $state<ColorMode>(currentTheme());
-
-	$effect(() => {
-		console.log('positions', positions);
-		console.log('nodes', nodes);
-		console.log(positions?.map(positionToNode));
-	});
-
 	/** Layout on initial load */
 	$effect(() => {
 		const t = transitions; // establishes dependency
@@ -89,7 +79,6 @@
 	bind:edges
 	{nodeTypes}
 	{edgeTypes}
-	{colorMode}
 	connectionLineType={ConnectionLineType.SmoothStep}
 	defaultEdgeOptions={{ type: 'smoothstep', animated: true }}
 	maxZoom={1.2}
