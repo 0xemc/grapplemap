@@ -84,7 +84,6 @@
 		class={`${filtersOpen ? 'flex' : 'hidden'} ${desktopFiltersOpen ? 'md:flex' : 'md:hidden'} shadow-nondark:bg-chisel-700 border-chisel-100 w-60 flex-col gap-2 rounded-lg border bg-white p-2 shadow`}
 	>
 		<div class="flex items-center justify-between">
-			<span class="text-xs font-semibold">Filters</span>
 			<Button
 				size="xs"
 				color="light"

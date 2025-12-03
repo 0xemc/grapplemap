@@ -52,15 +52,23 @@
 			 * Delete all transactions for the file before upserting new updates
 			 * @todo extract this
 			 * */
-			await db.transaction('rw', db.files, db.transitions, db.positions, async () => {
-				const { active_file_id } = context;
+			await db.transaction(
+				'rw',
+				db.files,
+				db.transitions,
+				db.positions,
+				async ({ positions: db_positions, transitions: db_transitions }) => {
+					const { active_file_id } = context;
 
-				if (isNullish(active_file_id)) throw new Error('Attempt to save a file with none selected');
+					if (isNullish(active_file_id))
+						throw new Error('Attempt to save a file with none selected');
 
-				await db.files.update(active_file_id, { content, updatedAt: Date.now() });
-				const { transitions, positions } = parseFile(active_file_id, content);
-				await updateTransitionsPositions(active_file_id, transitions, positions, db.tables);
-			});
+					await db.files.update(active_file_id, { content, updatedAt: Date.now() });
+					const { transitions, positions } = parseFile(active_file_id, content);
+					const tables = { transitions: db_transitions, positions: db_positions };
+					await updateTransitionsPositions(active_file_id, transitions, positions, tables);
+				}
+			);
 		} finally {
 			isSaving = false;
 		}
