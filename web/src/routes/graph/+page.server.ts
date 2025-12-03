@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 
-const ALLOWED = new Set(['file', 'tag']); // adjust to your needs
+const ALLOWED = new Set(['file', 'tag', 'groupTag']); // adjust to your needs
 
 function pickAllowed(url: URL): string {
     const p = new URLSearchParams();
