@@ -1,9 +1,9 @@
+import type { DBPosition } from "$lib/db/tables/positions";
+import type { DBTransition } from "$lib/db/tables/transitions";
+import * as Dagre from '@dagrejs/dagre';
+import type { PositionModifier } from "@lang/types";
 import { MarkerType, type Edge, type EdgeProps, type InternalNode, type Node } from "@xyflow/svelte";
 import { groupBy } from "remeda";
-import * as Dagre from '@dagrejs/dagre';
-import type { DBTransition } from "$lib/db/tables/transitions";
-import type { PositionModifier } from "@lang/types";
-import type { DBPosition } from "$lib/db/tables/positions";
 
 export function transitionsToEdges(trs: DBTransition[]): Edge<{ transitions: DBTransition[] }, 'transition'>[] {
     const groups = groupBy(trs, (t) => `${t.from}__${t.to}`);

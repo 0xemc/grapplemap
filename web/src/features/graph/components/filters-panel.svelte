@@ -3,7 +3,7 @@
 	import MultiSelect from '$lib/components/multi-select.svelte';
 	import type { File } from '$lib/db/tables/files';
 	import { compact } from '$lib/utils/array';
-	import { Button } from 'flowbite-svelte';
+	import { Button, Select } from 'flowbite-svelte';
 	import { AdjustmentsHorizontalOutline, MinusOutline } from 'flowbite-svelte-icons';
 
 	type Props = {
@@ -56,6 +56,11 @@
 			)
 		).sort((a, b) => a.localeCompare(b))
 	);
+	const groupTagItems = $derived([
+		{ value: '', name: 'None' },
+		...groupableTagNames.map((t) => ({ value: t, name: t }))
+	]);
+	// No local binding to avoid loops; update URL only on user change via onchange
 </script>
 
 <div class="border-0 bg-transparent p-0 shadow-none">
@@ -91,7 +96,7 @@
 			</Button>
 		</div>
 		{#if !sharedMode}
-			<FileSelect {files} onChange={onFilesChange} initial={fileIds} />
+			<FileSelect files={files ?? []} onChange={onFilesChange} initial={fileIds} />
 		{/if}
 		<MultiSelect
 			items={compact(transitionTags).map((t) => ({ value: t, name: t }))}
@@ -102,22 +107,19 @@
 		/>
 		<!-- Grouping: single select for tag name -->
 		<div class="flex flex-col gap-2">
-			<label for="groupTagSelect" class="text-[10px] font-semibold text-gray-600"
-				>Group by tag</label
-			>
-			<select
+			<label for="groupTagSelect" class="pl-1 font-bold">Group</label>
+			<Select
 				id="groupTagSelect"
-				class="border-chisel-100 rounded border px-2 py-1 text-xs"
+				items={groupTagItems}
+				value={groupTag ?? ''}
+				size="sm"
+				class="text-xs"
 				onchange={(e) => {
 					const val = (e.target as HTMLSelectElement).value;
+					if (val === (groupTag ?? '')) return;
 					setParam('groupTag', val === '' ? null : val);
 				}}
-			>
-				<option value="" selected={!groupTag}>None</option>
-				{#each groupableTagNames as tn}
-					<option value={tn} selected={groupTag === tn}>{tn}</option>
-				{/each}
-			</select>
+			/>
 		</div>
 	</div>
 </div>
