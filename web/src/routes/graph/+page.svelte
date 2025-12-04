@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Graph from '@features/graph/graph.svelte';
+	import Onboarding from '@features/onboarding/onboarding.svelte';
 	import { SvelteFlowProvider } from '@xyflow/svelte';
 </script>
 
@@ -7,4 +8,5 @@
 	<SvelteFlowProvider>
 		<Graph />
 	</SvelteFlowProvider>
+	<Onboarding feature="graph" />
 </div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	type CornerPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 	type CssLength = string | number;
@@ -15,18 +15,17 @@
 		position?: CornerPosition;
 		coordinates?: Coordinates;
 	};
-	const STORAGE_KEY = 'grapplemap:intro:dismissed';
 	const {
 		steps,
 		position = 'top-left',
-		coordinates,
-		storageKey = STORAGE_KEY
+		coordinates
 	} = $props<{
 		steps: InfoStep[];
 		position?: CornerPosition;
 		coordinates?: Coordinates;
-		storageKey?: string;
 	}>();
+
+	const dispatch = createEventDispatcher<{ dismiss: void }>();
 
 	const positionClasses = {
 		'top-left': 'left-4 top-4 md:left-24 md:top-12',
@@ -49,12 +48,8 @@
 	);
 
 	function markDismissed() {
-		try {
-			localStorage.setItem(storageKey, '1');
-		} catch {
-			// ignore storage errors
-		}
 		open = false;
+		dispatch('dismiss');
 	}
 
 	function next() {
@@ -70,12 +65,7 @@
 	}
 
 	onMount(() => {
-		try {
-			const dismissed = localStorage.getItem(storageKey) === '1';
-			open = !dismissed;
-		} catch {
-			open = true;
-		}
+		open = true;
 	});
 </script>
 

@@ -1,12 +1,12 @@
 <script lang="ts">
-	import '../app.css';
+	import { page } from '$app/state';
+	import logoPng from '$lib/assets/logo.png';
+	import logoSvg from '$lib/assets/logo.svg';
 	import Sidebar from '$lib/components/sidebar.svelte';
 	import { BottomNav, BottomNavItem, Tooltip } from 'flowbite-svelte';
-	import { EditOutline, HomeOutline, ShareNodesOutline } from 'flowbite-svelte-icons';
-	import { page } from '$app/state';
+	import { EditOutline, ShareNodesOutline } from 'flowbite-svelte-icons';
 	import { Toaster } from 'svelte-sonner';
-	import logoSvg from '$lib/assets/logo.svg';
-	import logoPng from '$lib/assets/logo.png';
+	import '../app.css';
 
 	let { children } = $props();
 	let activeUrl = $state(page.url.pathname);

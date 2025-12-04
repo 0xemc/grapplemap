@@ -17,7 +17,6 @@
 	import TransitionModal from '../../lib/components/transition-modal/transition-modal.svelte';
 	import BandOverlays from './components/band-overlays.svelte';
 	import FilterPanel from './components/filter-panel.svelte';
-	import IntroPane from './components/intro-pane.svelte';
 	import PositionNode from './components/position-node.svelte';
 	import TransitionEdge from './components/transition-edge.svelte';
 	import { makeBandKeyFn, parseEdgeGroupSpec, parseNodeKeySpec, sortBands } from './graph.config';
@@ -205,4 +204,3 @@
 </SvelteFlow>
 
 <TransitionModal />
-<IntroPane />
