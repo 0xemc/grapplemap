@@ -8,12 +8,17 @@
 	};
 	let { feature }: Props = $props();
 
-	const STORAGE_KEY = 'grapplemap:intro:dismissed';
+	const KEY_GRAPH = 'grapplemap:intro:graph:dismissed';
+	const KEY_EDITOR = 'grapplemap:intro:editor:dismissed';
 	let show = $state(false);
+
+	function storageKey() {
+		return feature === 'graph' ? KEY_GRAPH : KEY_EDITOR;
+	}
 
 	onMount(() => {
 		try {
-			show = localStorage.getItem(STORAGE_KEY) !== '1';
+			show = localStorage.getItem(storageKey()) !== '1';
 		} catch {
 			show = true;
 		}
@@ -21,7 +26,7 @@
 
 	function dismiss() {
 		try {
-			localStorage.setItem(STORAGE_KEY, '1');
+			localStorage.setItem(storageKey(), '1');
 		} catch {
 			// ignore storage errors
 		}

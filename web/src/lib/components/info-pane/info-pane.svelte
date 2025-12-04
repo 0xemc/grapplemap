@@ -15,7 +15,12 @@
 		position?: CornerPosition;
 		coordinates?: Coordinates;
 	};
-	const { steps, position = 'top-left', coordinates, onDismiss } = $props<{
+	const {
+		steps,
+		position = 'top-left',
+		coordinates,
+		onDismiss
+	} = $props<{
 		steps: InfoStep[];
 		position?: CornerPosition;
 		coordinates?: Coordinates;
