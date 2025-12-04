@@ -1,9 +1,9 @@
 <script lang="ts">
-	import File from './file.svelte';
-	import { liveQuery } from 'dexie';
-	import { getCodeEditorContext } from '../../code-editor.svelte.ts';
-	import { isNullish } from 'remeda';
 	import { getDbContext } from '$lib/db/context.ts';
+	import { liveQuery } from 'dexie';
+	import { isNullish } from 'remeda';
+	import { getCodeEditorContext } from '../../code-editor.svelte.ts';
+	import File from './file.svelte';
 	let context = getCodeEditorContext();
 	const db = getDbContext();
 	let files = liveQuery(() => db.files.toArray());
@@ -29,7 +29,7 @@
 </script>
 
 <div
-	class={`min-w-45 z-50 ${showOnMobile ? 'block md:hidden' : 'hidden md:block'} h-fit max-h-full overflow-auto rounded-lg border border-zinc-800 p-6 dark:border-zinc-700 ${extraClass}`}
+	class={`min-w-45 z-40 ${showOnMobile ? 'block md:hidden' : 'hidden md:block'} h-fit max-h-full overflow-auto rounded-lg border border-zinc-800 p-6 dark:border-zinc-700 ${extraClass}`}
 >
 	<div class="items_center mb-2 flex justify-between text-xs opacity-80">
 		<span class="uppercase tracking-wider opacity-70">Files</span>
