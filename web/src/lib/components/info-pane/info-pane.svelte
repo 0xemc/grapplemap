@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	type CornerPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 	type CssLength = string | number;
@@ -15,17 +15,12 @@
 		position?: CornerPosition;
 		coordinates?: Coordinates;
 	};
-	const {
-		steps,
-		position = 'top-left',
-		coordinates
-	} = $props<{
+	const { steps, position = 'top-left', coordinates, onDismiss } = $props<{
 		steps: InfoStep[];
 		position?: CornerPosition;
 		coordinates?: Coordinates;
+		onDismiss?: () => void;
 	}>();
-
-	const dispatch = createEventDispatcher<{ dismiss: void }>();
 
 	const positionClasses = {
 		'top-left': 'left-4 top-4 md:left-24 md:top-12',
@@ -49,7 +44,7 @@
 
 	function markDismissed() {
 		open = false;
-		dispatch('dismiss');
+		onDismiss?.();
 	}
 
 	function next() {

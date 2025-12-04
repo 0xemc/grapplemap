@@ -1,7 +1,6 @@
 <script lang="ts">
 	import InfoPane, { type InfoStep } from '$lib/components/info-pane/info-pane.svelte';
-	import { createEventDispatcher } from 'svelte';
-	const dispatch = createEventDispatcher<{ dismiss: void }>();
+	const { onDismiss } = $props<{ onDismiss?: () => void }>();
 
 	const steps: InfoStep[] = [
 		{
@@ -11,4 +10,4 @@
 	];
 </script>
 
-<InfoPane {steps} position="top-right" on:dismiss={() => dispatch('dismiss')} />
+<InfoPane {steps} position="top-right" {onDismiss} />

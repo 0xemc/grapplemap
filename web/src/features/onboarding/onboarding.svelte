@@ -31,8 +31,8 @@
 
 {#if show}
 	{#if feature === 'graph'}
-		<GraphIntro on:dismiss={dismiss} />
+		<GraphIntro onDismiss={dismiss} />
 	{:else if feature === 'editor'}
-		<EditorIntro on:dismiss={dismiss} />
+		<EditorIntro onDismiss={dismiss} />
 	{/if}
 {/if}
