@@ -143,7 +143,7 @@
 {#if fileTreeOpen}
 	<div class="fixed inset-0 z-50 md:hidden">
 		<div
-			class="absolute left-0 top-0 flex h-full w-64 flex-col gap-2 bg-white p-3 shadow-xl dark:bg-zinc-900"
+			class="absolute top-0 left-0 flex h-full w-64 flex-col gap-2 bg-white p-3 shadow-xl dark:bg-zinc-900"
 		>
 			<Button
 				size="xs"

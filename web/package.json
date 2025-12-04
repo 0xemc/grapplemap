@@ -58,6 +58,7 @@
 		"flowbite-svelte-icons": "^3.0.0",
 		"ohm-js": "v17.2.1",
 		"posthog-js": "^1.292.0",
+		"prettier-plugin-organize-imports": "^4.3.0",
 		"remeda": "^2.32.0",
 		"svelte-sonner": "^1.0.6"
 	}

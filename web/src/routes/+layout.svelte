@@ -52,7 +52,7 @@
 	></script>
 </svelte:head>
 
-<div class="app-shell dark:bg-chisel-900 bg-white text-zinc-900 dark:text-zinc-100">
+<div class="app-shell bg-white text-zinc-900 dark:bg-chisel-900 dark:text-zinc-100">
 	<div class="flex">
 		<!-- Desktop Nav -->
 		<div class="hidden w-[58px] md:block">

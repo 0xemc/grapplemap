@@ -29,14 +29,14 @@
 </script>
 
 <div
-	class={`min-w-45 z-40 ${showOnMobile ? 'block md:hidden' : 'hidden md:block'} h-fit max-h-full overflow-auto rounded-lg border border-zinc-800 p-6 dark:border-zinc-700 ${extraClass}`}
+	class={`z-40 min-w-45 ${showOnMobile ? 'block md:hidden' : 'hidden md:block'} h-fit max-h-full overflow-auto rounded-lg border border-zinc-800 p-6 dark:border-zinc-700 ${extraClass}`}
 >
 	<div class="items_center mb-2 flex justify-between text-xs opacity-80">
-		<span class="uppercase tracking-wider opacity-70">Files</span>
+		<span class="tracking-wider uppercase opacity-70">Files</span>
 		<button
 			onclick={onAddFile}
 			title="New file"
-			class="bg-chisel-50 hover:text-chisel-50 dark:hover:text-chisel-50 border-chisel-400 cursor-pointer rounded border px-2 py-1 text-[11px] hover:bg-zinc-700 dark:border-zinc-700 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+			class="cursor-pointer rounded border border-chisel-400 bg-chisel-50 px-2 py-1 text-[11px] hover:bg-zinc-700 hover:text-chisel-50 dark:border-zinc-700 dark:bg-zinc-700 dark:hover:bg-zinc-600 dark:hover:text-chisel-50"
 			>New</button
 		>
 	</div>

@@ -1,5 +1,5 @@
 import type { Edge } from '@xyflow/svelte';
-import { layoutByBands, findTag } from './graph.grouping';
+import { findTag, layoutByBands } from './graph.grouping';
 import type { GraphNode } from './graph.utils';
 import { getLayoutedElements } from './graph.utils';
 
@@ -41,5 +41,3 @@ export function layoutWithOrdering(
 		typeof bandOfEdge === 'function' ? bandOfEdge : undefined
 	);
 }
-
-

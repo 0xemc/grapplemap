@@ -37,7 +37,7 @@
 		<span>{transition.title}</span>
 		<div class="h-4 w-5"></div>
 	</div>
-	<ArrowUpRightDownLeftOutline class="absolute right-1 top-1 inline w-3 text-gray-600" />
+	<ArrowUpRightDownLeftOutline class="absolute top-1 right-1 inline w-3 text-gray-600" />
 
 	<!-- icons -->
 	<div class="flex w-full justify-between pt-1 opacity-90">

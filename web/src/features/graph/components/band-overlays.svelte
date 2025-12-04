@@ -76,13 +76,13 @@
 </script>
 
 <ViewportPortal target="back">
-	<div class="pointer-events-none absolute left-0 top-0 h-0 w-0">
+	<div class="pointer-events-none absolute top-0 left-0 h-0 w-0">
 		{#each extents as e (e.label)}
 			<div
 				class="absolute rounded border border-dashed border-gray-300"
 				style={`left:${e.minX - padding}px; top:${e.minY - padding}px; width:${e.maxX - e.minX + padding * 2}px; height:${e.maxY - e.minY + padding * 2}px;`}
 			>
-				<span class="absolute left-2 top-1 rounded bg-white px-1 text-[10px] text-gray-500">
+				<span class="absolute top-1 left-2 rounded bg-white px-1 text-[10px] text-gray-500">
 					{e.label}
 				</span>
 			</div>

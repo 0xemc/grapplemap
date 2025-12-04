@@ -72,14 +72,14 @@
 			filtersOpen = true;
 			desktopFiltersOpen = true;
 		}}
-		class={`${filtersOpen ? 'hidden' : 'inline-flex'} ${desktopFiltersOpen ? 'md:hidden' : 'md:inline-flex'} border-chisel-100 rounded border bg-white p-2 shadow`}
+		class={`${filtersOpen ? 'hidden' : 'inline-flex'} ${desktopFiltersOpen ? 'md:hidden' : 'md:inline-flex'} rounded border border-chisel-100 bg-white p-2 shadow`}
 	>
 		<AdjustmentsHorizontalOutline class="h-6 w-6 shrink-0" />
 	</Button>
 
 	<!-- Content box: visible on mobile when filtersOpen, on desktop when desktopFiltersOpen -->
 	<div
-		class={`${filtersOpen ? 'flex' : 'hidden'} ${desktopFiltersOpen ? 'md:flex' : 'md:hidden'} shadow-nondark:bg-chisel-700 border-chisel-100 w-60 flex-col gap-2 rounded-lg border bg-white p-2 shadow`}
+		class={`${filtersOpen ? 'flex' : 'hidden'} ${desktopFiltersOpen ? 'md:flex' : 'md:hidden'} shadow-nondark:bg-chisel-700 w-60 flex-col gap-2 rounded-lg border border-chisel-100 bg-white p-2 shadow`}
 	>
 		<div class="flex items-center justify-between">
 			<span class="text-xs font-semibold">Filters</span>

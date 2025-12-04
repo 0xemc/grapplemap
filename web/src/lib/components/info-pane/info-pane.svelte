@@ -80,12 +80,12 @@
 		>
 			<div class="flex items-start gap-3">
 				<div
-					class="bg-primary-500/10 text-primary-700 dark:text-primary-300 mt-0.5 shrink-0 rounded-md px-2 py-1 text-xs font-semibold"
+					class="mt-0.5 shrink-0 rounded-md bg-primary-500/10 px-2 py-1 text-xs font-semibold text-primary-700 dark:text-primary-300"
 				>
 					Step {stepIndex + 1}/{steps.length}
 				</div>
 				<button
-					class="-mr-1 ml-auto rounded-md p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+					class="-mr-1 ml-auto rounded-md p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-700 focus:ring focus:outline-none dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
 					aria-label="Dismiss"
 					onclick={markDismissed}
 				>
@@ -113,7 +113,7 @@
 
 			<div class="mt-4 flex items-center justify-between">
 				<button
-					class="rounded-md px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800"
+					class="rounded-md px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 focus:ring focus:outline-none disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800"
 					onclick={prev}
 					disabled={stepIndex === 0}
 				>
@@ -129,7 +129,7 @@
 					{/each}
 				</div>
 				<button
-					class="bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400 rounded-md px-3 py-1.5 text-sm font-semibold text-white focus:outline-none focus:ring"
+					class="rounded-md bg-primary-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-primary-700 focus:ring focus:outline-none dark:bg-primary-500 dark:hover:bg-primary-400"
 					onclick={next}
 				>
 					{stepIndex < steps.length - 1 ? 'Next' : 'Got it'}

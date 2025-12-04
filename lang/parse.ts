@@ -1,5 +1,5 @@
 import * as ohm from "ohm-js";
-import { syntax, transition, position } from "./operations";
+import { position, syntax, transition } from "./operations";
 import type { Position, Transition } from "./types";
 
 

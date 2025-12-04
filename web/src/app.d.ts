@@ -10,7 +10,7 @@ declare global {
 	}
 }
 
-export { };
+export {};
 
 declare module '*.ohm?raw' {
 	const src: string;

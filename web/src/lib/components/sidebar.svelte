@@ -23,10 +23,10 @@
 	isOpen={isDemoOpen}
 	closeSidebar={close}
 	params={{ x: -50, duration: 50 }}
-	class="border-chisel-200 z-40 h-full w-auto border-r bg-white pt-1 dark:border-zinc-700"
+	class="z-40 h-full w-auto border-r border-chisel-200 bg-white pt-1 dark:border-zinc-700"
 	classes={{ nonactive: 'p-2', active: 'p-2' }}
 >
-	<SidebarBrand {site} class="ml-auto mr-auto w-8 p-0" />
+	<SidebarBrand {site} class="mr-auto ml-auto w-8 p-0" />
 	<SidebarGroup>
 		<!-- <SidebarItem href="/" {spanClass}>
 			{#snippet icon()}

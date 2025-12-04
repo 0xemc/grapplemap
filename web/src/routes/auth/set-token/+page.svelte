@@ -22,5 +22,3 @@
 		// Keep the element non-empty for hydration
 	</script>
 </div>
-
-

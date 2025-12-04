@@ -64,7 +64,7 @@
 	></div>
 
 	<!-- Panel -->
-	<div class="border-chisel-200 relative mx-4 w-full max-w-5xl rounded-lg bg-white">
+	<div class="relative mx-4 w-full max-w-5xl rounded-lg border-chisel-200 bg-white">
 		{#if transition}
 			{#if url}
 				{#if isYouTube(url)}
@@ -154,7 +154,7 @@
 							{String.fromCharCode(65 + groupIndex)}
 						</div>
 						<div class="flex pl-4">
-							<div class="w-2 rounded-l-md border-b-2 border-l-2 border-t-2 border-gray-300"></div>
+							<div class="w-2 rounded-l-md border-t-2 border-b-2 border-l-2 border-gray-300"></div>
 							<ol
 								class="flex-1 -translate-x-2 list-inside list-decimal py-1"
 								start={groupIndex * 3 + 1}

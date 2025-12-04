@@ -30,7 +30,7 @@
 <div class="flex h-14">
 	{#if img}
 		<img
-			class="rounded-l-xs h-14 w-16 object-cover object-center"
+			class="h-14 w-16 rounded-l-xs object-cover object-center"
 			src={img}
 			alt={label + ' image'}
 		/>
@@ -38,7 +38,7 @@
 	<div class="flex h-full flex-col gap-1 border-none p-[10px]">
 		{#if modifier}
 			<Badge
-				class="absolute right-1 top-1 p-0.5 text-[6px] opacity-50"
+				class="absolute top-1 right-1 p-0.5 text-[6px] opacity-50"
 				size="small"
 				border
 				color={tagColor[modifier]}>{tagText[modifier]}</Badge

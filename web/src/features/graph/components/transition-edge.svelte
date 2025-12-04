@@ -29,7 +29,7 @@
 
 <BaseEdge {path} {markerEnd} {markerStart} />
 <EdgeLabel
-	class="dark:bg-chisel-700 border-chisel-100 rounded border bg-white p-12 shadow "
+	class="rounded border border-chisel-100 bg-white p-12 shadow dark:bg-chisel-700 "
 	x={labelX}
 	y={labelY}
 >
