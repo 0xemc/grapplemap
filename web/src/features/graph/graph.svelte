@@ -191,7 +191,7 @@
 	{edgeTypes}
 	connectionLineType={ConnectionLineType.SmoothStep}
 	defaultEdgeOptions={{ type: 'smoothstep', animated: true }}
-	maxZoom={1.8}
+	maxZoom={1.4}
 	minZoom={0.4}
 >
 	<FilterPanel />
