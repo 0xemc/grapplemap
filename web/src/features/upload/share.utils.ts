@@ -1,4 +1,5 @@
 import { generateId } from '$lib/utils/id';
+import type { UploadType } from './upload.types';
 import { uploadFile } from './upload.utils';
 
 export type ShareResult = {
