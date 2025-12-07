@@ -14,7 +14,8 @@ const config = {
 		adapter: adapter(),
 		alias: {
 			'@lang': '../lang',
-			'@features': 'src/features'
+			'@features': 'src/features',
+			'@components': 'src/lib/components'
 		}
 	}
 };

@@ -1,4 +1,4 @@
-This is a Svelte 5 project. As such use Svelte 5 conventions over any previous version.
+This is a Svelte 5 project. As such use Svelte 5 conventions over any previous version. This includes runes over stores and callbacks over events.
 
 Follow a modified version of feature driven development. Features are isolated to /features and should only be imported and composed in /route pages.
 
