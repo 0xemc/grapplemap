@@ -1,5 +1,7 @@
 This is a Svelte 5 project. As such use Svelte 5 conventions over any previous version. This includes runes over stores and callbacks over events.
 
+The project uses https://flowbite-svelte.com/ as a base for it's components
+
 Follow a modified version of feature driven development. Features are isolated to /features and should only be imported and composed in /route pages.
 
 The general structure is as follows:
