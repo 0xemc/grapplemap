@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Input, Badge } from 'flowbite-svelte';
 	import type { SelectOptionType } from 'flowbite-svelte';
+	import { arraysEqual } from '$lib/utils/array';
 
 	type Props = {
 		items: SelectOptionType<string>[];
@@ -85,8 +86,12 @@
 		}
 	}
 
+	// Keep selection in sync with external initial prop (e.g., URL changes) without causing loops
 	$effect(() => {
-		onChange?.(selected);
+		const next = [...initial];
+		if (!arraysEqual(selected, next)) {
+			selected = next;
+		}
 	});
 </script>
 

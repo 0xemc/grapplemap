@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { File } from '$lib/db/tables/files';
 	import { Button, Checkbox, Listgroup, ListgroupItem } from 'flowbite-svelte';
+	import { setsEqual } from '$lib/utils/set';
 
 	type Props = {
 		files: File[];
@@ -35,6 +36,14 @@
 		selectedIds = new Set();
 		notify();
 	}
+
+	// Keep selected file checkboxes in sync with external initial prop (e.g., URL changes) without loops
+	$effect(() => {
+		const next = new Set(initial ?? []);
+		if (!setsEqual(selectedIds, next)) {
+			selectedIds = next;
+		}
+	});
 </script>
 
 <div>

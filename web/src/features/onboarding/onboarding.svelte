@@ -3,7 +3,6 @@
 	import EditorIntro from './components/editor-intro.svelte';
 	import GraphIntro from './components/graph-intro.svelte';
 	import WelcomeModal from '$lib/components/welcome-modal/welcome-modal.svelte';
-	import type { WelcomeChoice } from '$lib/components/welcome-modal/welcome-modal.types';
 
 	type Props = {
 		feature: 'graph' | 'editor';

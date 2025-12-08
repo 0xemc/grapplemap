@@ -1,4 +1,4 @@
-export type WelcomeChoice = 'beginners-12-week' | 'mg-adcc-2019' | 'basic-intro';
+export type WelcomeChoice = 'beginners-12-week' | 'mg-adcc-2011' | 'basic-intro';
 
 export type WelcomeLevel = 'Beginner' | 'Intermediate' | 'Advanced';
 
@@ -7,6 +7,7 @@ export type WelcomeOption = {
     title: string;
     level: WelcomeLevel;
     description: string;
+    disabled?: boolean;
 };
 
 
