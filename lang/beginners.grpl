@@ -41,7 +41,7 @@ Closed Guard [b] -> Mount [t]
 
 [week 2] (url: https://www.youtube.com/watch?v=CVGkGGzgL34&list=PL5kA-Cs1gYP9qUhms6dphz6GGSQ2yCJQp&index=2)
 Closed Guard Escape
-Closed Guard [b] -> Military Stance [t]
+Closed Guard [t] -> Open Guard [t]
 1. V-Grips on the armpit
 2. Stand up
 3. Foot to their tailbone, one knee inside
@@ -59,7 +59,7 @@ Open Guard [t] -> Side Control [t]
 
 [week 2] (url: https://youtu.be/G5KBlWz87hs?si=4BTLgrlo3VRV3IZV)
 Outside Knee Elbow
-Mount [b] -> Half Guard [t]
+Mount [b] -> Half Guard [b]
 1. Elbow to the inside
 2. Push his foot out
 3. Catch the foot
@@ -119,7 +119,7 @@ Closed Guard [t] -> Half Guard [t]
 
 [week 4] (url: https://youtu.be/OF9GZNU0eQc?si=hwDKP1sNIa94JuxM)
 Half Guard Knee Cut
-Crossface Half Guard [t] -> Side Control [t]
+Half Guard [t] -> Side Control [t]
 1. Crossface
 2. Forehead on the mat
 3. Walk the foot up
@@ -269,7 +269,7 @@ North South [t] -> North South [t]
 
 [week 8] (url: https://youtu.be/BmT0A0rJFSg)
 Kimura
-Closed Guard [b] -> Close Guard [b]
+Closed Guard [b] -> Closed Guard [b]
 1. Break the grip
 2. Knees to chest
 3. Hold the wrist
@@ -380,8 +380,8 @@ Closed Guard [b] -> Triangle Trap [b]
 6. Fall back, lock the triangle
 
 [week 11] (url: https://youtu.be/R2y_TqertCM)
-Front Triangle
-Triangle Trap [b] -> Front Triangle [b]
+Triangle
+Triangle Trap [b] -> Triangle [b]
 1. Shoulder leg on the bottom
 2. Hips up
 3. Arm across centerline
@@ -424,3 +424,67 @@ Ashi Garami [b] -> Ashi Garami [b]
 4. Elbow hop back
 5. Arch & look back
 
+// Position Metadata
+[img:https://storage.grapplemap.com/image/bebf828b-49a4-4f66-b90e-c883a1685996.png]
+Closed Guard [b]
+
+[img:https://storage.grapplemap.com/image/622bdf07-2930-4c22-9bab-607d4e83c7a3.png]
+Closed Guard [t]
+
+//[img:https://vhx.imgix.net/jjxf/assets/c74610d3-50ef-411b-8258-800ccc961b46-2afdf842.jpg?auto=format%2Ccompress&fit=crop&h=360&w=640]
+[img:https://storage.grapplemap.com/image/311ee315-91ff-4712-959e-313a333581c0.png]
+Back Control [t]
+
+[img:https://storage.grapplemap.com/image/d3c1e190-8bc2-4b27-9234-d044a7496590.png]
+Back Control [b]
+
+[img:https://storage.grapplemap.com/image/38e4072d-6001-4e51-be3f-6fd374a05887.png]
+Mount [t]
+
+[img:https://storage.grapplemap.com/image/b29765e9-fead-4269-9058-d9757b387ab6.png]
+Mount [b]
+
+[img:https://storage.grapplemap.com/image/0463c189-7143-4df9-9eba-65618211d942.png]
+Side Control [b]
+
+[img:https://storage.grapplemap.com/image/53f2cb7b-6a19-4b54-815d-57062931e5fa.png]
+Side Control [t]
+
+[img:https://storage.grapplemap.com/image/fb8a67bc-3f52-4b79-90dd-f07ecc584520.png]
+Technical Mount [t]
+
+[img:https://storage.grapplemap.com/image/a57f98b9-7a27-45ba-83bf-a88d143c758b.png]
+Half Guard [b]
+
+[img:https://storage.grapplemap.com/image/a57f98b9-7a27-45ba-83bf-a88d143c758b.png]
+Half Guard [t]
+
+[img:https://storage.grapplemap.com/image/b2cb5432-e5fd-4418-b46c-d0e016a9ea61.png]
+Open Guard [t]
+
+[img:https://storage.grapplemap.com/image/b2cb5432-e5fd-4418-b46c-d0e016a9ea61.png]
+Open Guard [b]
+
+[img:https://storage.grapplemap.com/image/e0ee44b9-ddd3-4533-8751-c5e1a3feff54.png]
+3/4 Mount [t]
+
+[img:https://storage.grapplemap.com/image/ac1c225f-11dc-4c76-b400-0d8fee935428.png]
+North South [t]
+
+[img:https://storage.grapplemap.com/image/6979e2d5-bd37-483a-a1fb-9b756918b076.png]
+Top Lock [b]
+
+[img:https://storage.grapplemap.com/image/34731088-2c27-49e0-b3ca-940e3154abc3.png]
+Juji Gatame [t]
+
+[img:https://storage.grapplemap.com/image/a1e5a887-4a5b-423e-8524-c07faf23cef6.png]
+Triangle Trap [b]
+
+[img:https://storage.grapplemap.com/image/43459910-c8c5-419e-b344-cf0c9c05d431.png]
+Triangle [b]
+
+[img:https://storage.grapplemap.com/image/67adcabe-35c5-4230-ab20-25e763e41b09.png]
+Single Leg X [b]
+
+[img:https://storage.grapplemap.com/image/268d9b80-37d9-49a4-842a-4e144e552b32.png]
+Ashi Garami [b]

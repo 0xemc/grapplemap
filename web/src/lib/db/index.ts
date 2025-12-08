@@ -1,4 +1,5 @@
-import welcomeFile from '@lang/welcome.grpl?raw';
+import introFile from '@lang/intro.grpl?raw';
+import beginnersFile from '@lang/beginners.grpl?raw';
 import Dexie, { type EntityTable } from 'dexie';
 import { isNonNullish } from 'remeda';
 import { Files, type File } from './tables/files';
@@ -52,27 +53,51 @@ export class Database extends Dexie {
 				const ts = Date.now();
 
 				// 1) Seed a default file
-				const fileId = await this.files.add({
-					name: 'welcome.grpl',
+				const introId = await this.files.add({
+					name: 'intro.grpl',
 					parentId: null,
-					content: welcomeFile,
+					content: introFile,
 					order: 1,
 					createdAt: ts,
 					updatedAt: ts
 				});
 
-				// 2) Parse and seed transitions so the graph renders immediately
-				const welcome = parseFile(fileId, welcomeFile);
-				const welcome_transitions =
-					welcome?.transitions.filter(isNonNullish).map((t) => ({ ...t, file_id: fileId })) ?? [];
-				const welcome_positions =
-					welcome?.positions.filter(isNonNullish).map((t) => ({ ...t, file_id: fileId })) ?? [];
+				const beginnersId = await this.files.add({
+					name: 'beginners.grpl',
+					parentId: null,
+					content: beginnersFile,
+					order: 2,
+					createdAt: ts,
+					updatedAt: ts
+				});
 
-				const transitions = [...welcome_transitions];
-				if (transitions?.length) {
+
+				//Intro file
+				const intro = parseFile(introId, introFile);
+				const intro_transitions =
+					intro?.transitions.filter(isNonNullish).map((t) => ({ ...t, file_id: introId })) ?? [];
+				const intro_positions =
+					intro?.positions.filter(isNonNullish).map((t) => ({ ...t, file_id: introId })) ?? [];
+
+				// Beginners file
+				const beginners = parseFile(beginnersId, beginnersFile);
+				const beginners_transitions =
+					beginners?.transitions.filter(isNonNullish).map((t) => ({ ...t, file_id: beginnersId })) ?? [];
+				const beginners_positions =
+					beginners?.positions.filter(isNonNullish).map((t) => ({ ...t, file_id: beginnersId })) ?? [];
+
+
+				const transitions = [
+					...intro_transitions,
+					...beginners_transitions,
+				];
+				if (transitions.length) {
 					await this.transitions.bulkPut(transitions);
 				}
-				const positions = [...welcome_positions];
+				const positions = [
+					...intro_positions,
+					...beginners_positions,
+				];
 				if (positions.length) {
 					await this.positions.bulkPut(positions);
 				}
