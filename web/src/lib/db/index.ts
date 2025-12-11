@@ -1,5 +1,6 @@
 import introFile from '@lang/intro.grpl?raw';
 import beginnersFile from '@lang/beginners.grpl?raw';
+import lachlanMarceloFile from '@lang/lachlan-marcelo.grpl?raw';
 import Dexie, { type EntityTable } from 'dexie';
 import { isNonNullish } from 'remeda';
 import { Files, type File } from './tables/files';
@@ -71,6 +72,14 @@ export class Database extends Dexie {
 					updatedAt: ts
 				});
 
+				const lachlanId = await this.files.add({
+					name: 'lachlan-marcelo.grpl',
+					parentId: null,
+					content: lachlanMarceloFile,
+					order: 3,
+					createdAt: ts,
+					updatedAt: ts
+				});
 
 				//Intro file
 				const intro = parseFile(introId, introFile);
@@ -86,10 +95,17 @@ export class Database extends Dexie {
 				const beginners_positions =
 					beginners?.positions.filter(isNonNullish).map((t) => ({ ...t, file_id: beginnersId })) ?? [];
 
+				// Lachlan Marcelo file
+				const lachlanmarcelo = parseFile(lachlanId, lachlanMarceloFile);
+				const lachlan_marcelo_transitions =
+					lachlanmarcelo?.transitions.filter(isNonNullish).map((t) => ({ ...t, file_id: lachlanId })) ?? [];
+				const lachlan_marcel_positions =
+					lachlanmarcelo?.positions.filter(isNonNullish).map((t) => ({ ...t, file_id: lachlanId })) ?? [];
 
 				const transitions = [
 					...intro_transitions,
 					...beginners_transitions,
+					...lachlan_marcelo_transitions
 				];
 				if (transitions.length) {
 					await this.transitions.bulkPut(transitions);
@@ -97,6 +113,7 @@ export class Database extends Dexie {
 				const positions = [
 					...intro_positions,
 					...beginners_positions,
+					...lachlan_marcel_positions
 				];
 				if (positions.length) {
 					await this.positions.bulkPut(positions);

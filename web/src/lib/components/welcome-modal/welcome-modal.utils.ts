@@ -22,6 +22,11 @@ export function buildWelcomeHref(choice: WelcomeChoice): string {
         params.append('tag', 'week 1');
         return `/graph?${params.toString()}`;
     }
+    if (choice === 'lachlan-marcelo') {
+        const params = new URLSearchParams();
+        params.set('file', '3');
+        return `/graph?${params.toString()}`;
+    }
     return '#';
 }
 

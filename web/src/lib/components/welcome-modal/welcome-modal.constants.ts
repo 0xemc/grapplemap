@@ -16,12 +16,11 @@ export const WELCOME_OPTIONS: WelcomeOption[] = [
             'A structured plan introducing fundamentals over twelve weeks.'
     },
     {
-        choice: 'mg-adcc-2011',
-        title: '🥋 Marcelo Garcia ADCC 2011 (TBC)',
+        choice: 'lachlan-marcelo',
+        title: '🥋 Lachlan Marcelo One FC Analysis',
         level: 'Advanced',
-        disabled: true,
         description:
-            `An analysis of Marcelo's 2011 ADCC run.`
+            `An short analysis of the Lachie Lock at One FC 38`
     }
 ];
 
