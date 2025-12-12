@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import EditorIntro from './components/editor-intro.svelte';
 	import GraphIntro from './components/graph-intro.svelte';
-	import WelcomeModal from '$lib/components/welcome-modal/welcome-modal.svelte';
+	import WelcomeModal from '@features/onboarding/components/welcome-modal/welcome-modal.svelte';
 
 	type Props = {
 		feature: 'graph' | 'editor';

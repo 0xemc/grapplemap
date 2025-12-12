@@ -16,7 +16,7 @@
 // --- Tags ---
 // Blocks can include any tag you like to enable filtering, however there are some predefined tags with specific behaviours:
 //
-// [belt:blue|purple|brown|black] -- Defines the highest belt color that you've ever hit this move on. This will show an indicator of the belt on the move in the graph. Defaults to white
+// [belt:blue|purple|brown|black] -- Shows an indicator of the belt on the move, defaults to white. Can be used to keep track of the highest belt color that you've ever hit this move on or anything else belt related.
 //
 // [url: ...] -- Will embed a video from the url of the move in the modal for the transition
 //

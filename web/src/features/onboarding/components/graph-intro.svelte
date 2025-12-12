@@ -13,7 +13,7 @@
 		},
 		{
 			title: 'Transitions',
-			body: 'Moves are the connections between positions. These can be sweeps, takedowns or submissions. Click one to see more detail and/or a video of the move.'
+			body: 'Moves are the connections between positions. These can be sweeps, passes, takedowns, submissions, escapes or reversals. Click one to see more detail and/or a video of the move.'
 		},
 		{
 			title: 'Filters',
