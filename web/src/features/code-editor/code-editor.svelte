@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { getDbContext } from '$lib/db/context.ts';
-	import { parseFile, updateTransitionsPositions } from '$lib/db/utils.ts';
 	import { liveQuery } from 'dexie';
 	import { Button } from 'flowbite-svelte';
 	import { isNullish } from 'remeda';
@@ -8,6 +7,7 @@
 	import { toast } from 'svelte-sonner';
 	import { uploadMap } from '../upload/share.utils';
 	import { getCodeEditorContext } from './code-editor.svelte.ts';
+	import { saveCodeFile } from './code-editor.utils';
 	import CodeEditor from './components/editor/editor.svelte';
 	import FileTree from './components/filetree/file-tree.svelte';
 
@@ -33,7 +33,7 @@
 	function scheduleAutoSave(_e?: any) {
 		if (autoSaveTimer) clearTimeout(autoSaveTimer);
 		autoSaveTimer = setTimeout(() => {
-			onSave();
+			onSave({ showToast: false, source: 'auto' });
 		}, AUTO_SAVE_MS);
 	}
 
@@ -41,34 +41,28 @@
 		if (autoSaveTimer) clearTimeout(autoSaveTimer);
 	});
 
-	async function onSave() {
+	async function onSave(opts: { showToast?: boolean; source?: 'manual' | 'auto' } = {}) {
 		const { active_file_id } = context;
 		if (active_file_id == null) return;
 		isSaving = true;
 		try {
 			const content = editorRef?.getDoc() ?? '';
-			/**
-			 * Transactions should only exist in the database as utility for querying
-			 * Delete all transactions for the file before upserting new updates
-			 * @todo extract this
-			 * */
-			await db.transaction(
-				'rw',
-				db.files,
-				db.transitions,
-				db.positions,
-				async ({ positions: db_positions, transitions: db_transitions }) => {
-					const { active_file_id } = context;
+			if (isNullish(active_file_id)) throw new Error('Attempt to save a file with none selected');
 
-					if (isNullish(active_file_id))
-						throw new Error('Attempt to save a file with none selected');
+			await saveCodeFile(db, active_file_id, content);
 
-					await db.files.update(active_file_id, { content, updatedAt: Date.now() });
-					const { transitions, positions } = parseFile(active_file_id, content);
-					const tables = { transitions: db_transitions, positions: db_positions };
-					await updateTransitionsPositions(active_file_id, transitions, positions, tables);
-				}
-			);
+			if (opts.showToast) {
+				toast.success('Saved', {
+					description: active_file_name ? `Updated ${active_file_name}` : undefined,
+					duration: 1500
+				});
+			}
+		} catch (e) {
+			// Keep autosave failures non-fatal, but visible.
+			toast.error('Failed to save', {
+				description: e instanceof Error ? e.message : undefined
+			});
+			console.error(e);
 		} finally {
 			isSaving = false;
 		}
@@ -124,7 +118,7 @@
 					>Share</Button
 				>
 				<Button
-					onclick={onSave}
+					onclick={() => onSave({ showToast: true, source: 'manual' })}
 					disabled={context.active_file_id === null || isSaving}
 					class="cursor-pointer rounded bg-blue-600 px-3 py-1 text-xs text-white focus-within:outline-0 focus:ring-0 focus-visible:outline-0 disabled:opacity-60"
 					>Save</Button
@@ -143,7 +137,7 @@
 {#if fileTreeOpen}
 	<div class="fixed inset-0 z-50 md:hidden">
 		<div
-			class="absolute top-0 left-0 flex h-full w-64 flex-col gap-2 bg-white p-3 shadow-xl dark:bg-zinc-900"
+			class="absolute left-0 top-0 flex h-full w-64 flex-col gap-2 bg-white p-3 shadow-xl dark:bg-zinc-900"
 		>
 			<Button
 				size="xs"

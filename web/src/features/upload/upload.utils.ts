@@ -6,7 +6,7 @@ import type { DetectedType, UploadType } from './upload.types';
 
 export async function uploadFile(file: File, type: UploadType): Promise<ShareResult | null> {
 	const token = typeof localStorage !== 'undefined' ? localStorage.getItem('upload_token') : null;
-	if (!token) {
+	if (!token && type !== "file") {
 		toast.error('Uploads require a personal token. Visit /auth/set-token first.');
 		return null;
 	}
