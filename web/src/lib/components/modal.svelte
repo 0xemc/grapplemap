@@ -12,32 +12,29 @@
 	}
 </script>
 
-<!-- Keep-mounted modal overlay (prevents iframe/content unmounting) -->
-<div
-	class="fixed inset-0 z-50 flex items-center justify-center"
-	style={open ? '' : 'visibility:hidden; pointer-events:none;'}
-	aria-hidden={!open}
->
-	<!-- Backdrop -->
-	<div
-		class="absolute inset-0 bg-black/60"
-		role="button"
-		tabindex="0"
-		aria-label={backdropAriaLabel}
-		onclick={() => {
-			if (closeOnBackdrop) requestClose();
-		}}
-		onkeydown={(e) => {
-			if (!closeOnBackdrop) return;
-			if (e.key === 'Enter' || e.key === ' ') requestClose();
-		}}
-	></div>
+{#if open}
+	<div class="fixed inset-0 z-50 flex items-center justify-center" aria-hidden={!open}>
+		<!-- Backdrop -->
+		<div
+			class="absolute inset-0 bg-black/60"
+			role="button"
+			tabindex="0"
+			aria-label={backdropAriaLabel}
+			onclick={() => {
+				if (closeOnBackdrop) requestClose();
+			}}
+			onkeydown={(e) => {
+				if (!closeOnBackdrop) return;
+				if (e.key === 'Enter' || e.key === ' ') requestClose();
+			}}
+		></div>
 
-	<!-- Panel -->
-	<div class={panelClass}>
-		<slot />
+		<!-- Panel -->
+		<div class={panelClass}>
+			<slot />
+		</div>
 	</div>
-</div>
+{/if}
 
 <style>
 </style>

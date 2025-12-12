@@ -31,6 +31,7 @@ export class GraphState {
 	}
 
 	closeModal() {
+		this.#selected_transition = undefined;
 		this.#modal = false;
 	}
 }
