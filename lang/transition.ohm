@@ -35,7 +35,7 @@ Transition {
   number = digit+
 
  // Position Blocks
- position_block = skip position_tags? position_name ~(nl from_to) (~"\n" any)* skip
+ position_block = skip position_tags position_name ~(nl from_to) (~"\n" any)* skip
  position_name = position_title (position_modifier)?
  position_title = position_char+
  position_modifier = bottom_tag | top_tag | attacking_tag | defending_tag
